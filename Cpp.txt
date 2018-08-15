@@ -1,0 +1,2025 @@
+=====[declaration des variables primitives]====
+en gros ca a toujours la forme suivante
+<Standard/Special>	<classe de memorisation>	<taille>	<signed/unsigned>	<type>	nomVariable;
+
+<Standard/Special>
+-> volatile = C'est pour la programmation de pilotes de periphériques, en gros c'est une variable qui peut etre modifiée a tout moment par un processus externe
+-> <rien> = variable pas volatile = par defaut 
+
+<classe de memorisation>
+-> register = stocke la variable dans le registre et pas dans la memoire centrale = ++utile quand c'est une variable qu'on utilise frequemment = acces sans delais
+-> static = 
+-> extern = indique que la variable est definie dans un autre fichier (cas des variables globales)
+-> auto = on dit que la variable est locale
+-> <rien> = auto
+
+<taille>
+-> long = nombre entier a double capacité			[]
+-> double = nombre a virgule flottante a double precision 	[]
+-> short = entier de taille reduite				[]
+-> <rien> = taille normale
+
+<signe>
+-> signed = peut être positif ou negatif = par defaut
+-> unsigned = >=0
+
+<type>
+-> int = entier
+-> float = nombre a virgule flottante
+-> char = comme un int mais qui fera correspondre un nombre avec un caractere
+-> bool = true ou false = 0 ou 1
+
+au niveau des tailles, on a ce qui suit
+bool 				=	[1 octet]	= [8 bits]	=	[2^8=256 valeurs]	=	[true, false] ==> (meme explication que pour le C concernant la taille)
+char (=signed char)		=	[1 octet]	= [8 bits]	=	[2^8=256 valeurs]	=	[-127 à +127]
+signed char			=	[1 octet]	= [8 bits]	=	[2^8=256 valeurs]	=	[0 à 256]
+short int (= signed short int)	= 	[2 octets]	= [16 bits]	=	[2^16 = 65536 valeurs]	=	[-32767 à +32767]
+unsigned short int		=	[2 octets]	= [16 bits]	= 	[2^16 = 65536 valeurs]	= 	[0 à 65535]
+int (= signed int)		=	[4 octets]	= [32 bits]	=	[2^32 = 4294967296 valeurs]=	[-2 147 483 647 à +2 147 483 647] ==> Il est possible de declarer des int_16
+long int (=signed long int)	= 	[4 octets]	= [32 bits]	=	[2^32 = 4294967296 valeurs]=	[-2 147 483 647 à +2 147 483 647]
+float (= signed float)		= 	[4 octets]	= [32 bits]	= 	[2^32 = 4294967296 valeurs]=	[1.2e-308 à 3.4e-38]
+
+=====[iostream]===
+
+#include	<iostrream>
+
+en c++ en principe les headers n'ont plus de .h
+
+=====[std::cout]=====
+ca permet d'afficher des messages a l'ecran de facon beaucoup plus simple qu'avec printf grace a la surcharge d'operateurs
+
+En gros on fait
+std::cout << "texte" << variable << "\n";
+
+remarque, au lieu de faire un \n a la fin, et pour que ce soit plus propre, on peut utiliser le kw std::endl;
+comme ca
+std::cout << "texte" << variable << endl;
+
+===[le type bool]===
+on a maintenant un type bool qui est une sorte d'enum qui peut prendre la valeur true ou false
+
+======[Declaration des variables]=====
+
+Comme en C, on peut faire
+int	i;
+i = 3;
+
+ou alors 
+int	i = 3; // (pas a la norme ^^)
+
+Mais, nouveauté, on peut egalement faire
+int	i(3);
+
+=======[cin]===============
+pour recuperer une entree user de facon plus simple qu'avec scanf, 
+on a cin, on l'utilise comme ca 
+std::cin >> variable.
+
+En fait, quand on y reflechit, les chevrons sont completement logiques, 
+en C++ on est dans une logique de flux
+
+Quand on recolte des infos, comme c'était le cas avec scanf, on a des soucis avec ce qu'il reste dans le buffer lors de la precedent acquisition
+si on fait
+ cout << "Quel est votre prenom ?" << endl;
+    string nomUtilisateur("Sans nom"); //On crée une case mémoire pour contenirune chaine de caractères
+    cin >> nomUtilisateur; //On remplit cette case avec ce qu'écrit l'utilisateur
+
+    cout << "Combien vaut pi ?" << endl;
+    double piUtilisateur(-1.); //On crée une case mémoire pour stocker un nombre réel
+    cin >> piUtilisateur; //Et on remplit cette case avec ce qu'écritl'utilisateur
+     
+    cout << "Vous vous appelez " << nomUtilisateur << " et vous pensez que pivaut " << piUtilisateur << "." << endl;
+
+
+ca ne va prendre que la chaine qui se trouve entre le debut et le premier espace rencontré 
+et ca ne me demandera meme pas PI, ca affichera directement 0
+
+en fait c'est parce que cin recupere la chaine entrée jusqu'au premier espace rencontré, le cast dans le type de la variable dans lequel il doit stocker (genre atoi, atod, etc)
+et garde ce qui reste pour le traiter au prochain cin,
+du coup si a la premiere entree je rentre 3 mots, aux 2 prochaines cin, cin recuperer le 2e pour le stocker dans la variable, puis le 3e...
+
+Du coup ca implique 2 choses
+- le probleme où je veux recuperer une string qui contient des espaces
+==> a ce moment-la, plutot que d'utiliser std::cin >> chaine;
+je dois faire
+std::getline(std::cin, chaine); //qui remplit chaine avec toute la string entree dans cin, ++pratique
+
+Pour vider le reste du buffer, pour les cas ou on recupere une donnee genre un chiffre et ignorer ce qui se trouve au dela d'un espace, on a la fonction 
+
+
+
+Enfin, a chaque fois qu'on fait un cin >>, on doit faire juste apres
+std::cin.ignore();
+En effet, si on fait un std::cin >> variable, puis un std::getline(std::cin, autreVariable), ca va mettre une chaine vide dans autreVariable, c'est pourquoi en principe il faut toujours vider le buffer apres l'utilisation d'un cin >>
+
+
+=======[declaration de constantes]===========
+Pour declarer une constante, on rajoute le kw const apres notre type, genre
+int const variable.
+
+remarque, la declaration const de variables qui ne sont pas modifiées donne un programme plus efficace, donc faut pas hesiter
+
+
+
+=====[la lib cmath]=======
+#include	<cmath>
+(math au singulier, LA mathematique !)
+
+==> les angles sont en rad !
+
+puissance
+pow(a, b)
+
+racine carre
+sqrt()
+
+sinus
+sin()
+
+cosinus
+cos()
+
+tangeante 
+tan()
+
+exponentielle
+exp()
+
+ln
+log()
+
+log base 10
+log10()
+
+valeur absolue
+fabs()
+
+arrondi vers le bas 
+floor()
+
+arrondie vers le haut
+ceil()
+
+=======================[switch case]===============
+
+on l'utilise comme ca 
+switch (variable)
+{
+	case valeur:
+		instruction;
+		instruction;
+		break;
+
+	case valeur:
+		instruction;
+		instruction;
+		break;	
+
+	case valeur:
+		instruction;
+		instruction;
+		break;	
+
+	default:
+		instruction;
+		instruction;
+		break;		
+}
+
+ATTENTIOn, switch NE TEST QUE L'ÉGALITE ! rien d'autre.
+de plus, switch n'utilise que des nombres entiers, pas de float donc, ni de double, ni d'objets..
+
+========[la boucle for]=======
+
+for (initialisations, condition, incrementations)
+{
+	instructions;
+}
+
+concernant les initialisations, on peut faire plusieurs initialisations a partir du moment ou les variables sont de meme types
+en fait, c'est comme si on avait une ligne de declaration dans la pile, genre 
+int i;
+on a le droit de faire
+int i, j;
+et meme 
+int i = 3, j 
+ou 
+int i, j = 3; 
+ou meme
+int i = 3, j = 4;
+
+dans le for c'est pareil, on a le droit de faire 
+for (int i = 0, j = 3; i < j; i++);
+mais on n'a pas le droit de faire
+for (int i = 0, char j = 3; i < j; i++);
+
+
+===========[la boucle do while]===================
+
+do
+{
+	instructions
+} while (condition);
+
+==========[les references]==============
+pour modifier une variable externe dans une fonction, on pouvait et peut faire comme ca, avec les pointeurs 
+
+void	modif(int *nb)
+{
+	*nb = new_value;
+}
+
+int	main(void)
+{
+	int	nb = 3;
+
+	modif(&nb);
+	return (0);
+}
+
+On peut faire autrement, avec les references,
+void	modif(int &nb)
+{
+	nb = new_value;
+}
+
+int	main(void)
+{
+	int	nb = 3;
+
+	modif(nb);
+	return (0);
+}
+
+En gros, on fait comme si on voulait utiliser la variable locale de la fonction, mais en gros, c'est comme si 
+nb = (*nb)
+
+Du coup, pas besoin de passer un pointeur, en fait ca fait la meme chose mais il y a une facon de le dire pour s'eviter une syntaxe laborieuse
+
+Les references, comme les pointeurs, presentent 2 avantages
+1) on ne COPIE PAS la variable lors de l'appel de la fonction, ca economise donc de la memoire notamment lorsqu'on utilise des structures qui peuvent etre assez lourdes
+2) on peut modifier la variable directement (et non pas sa copie sans que cela ne porte donc a consequence)
+
+Du coup, même si on veut juste lire les donnees d'une variable sans la modifier mais sans avoir a la copier, on peut faire 
+
+ft_getValues(type *var);
+
+ou, plus simplement, pour eviter d'ecrire a chaque fois *machin, 
+
+ft_getValues(type &var);
+
+Si on ne veut que lire la donnee et pas la modifier, et ne pas avoir a la copier, on peut passer la variable par REFERENCE CONSTANTE 
+en gros on fait juste 
+int	fonction(int const &variable)
+
+Comme ca on s'assure que quoi qu'il arrive, notre variable n'est pas modifiée par la fonction
+
+=======[les headers]===========
+
+En principe, les fichiers c sont en .cpp
+et les fichiers h sont en .hpp
+
+Mais il y en a beucoup qui gardent l'extension .h,
+yen a qui font que les fichiers c sont .cc
+et les .h sont .hh
+
+nous ici, on fait 
+fichier c ==> .cpp
+fichier h ==> .hpp
+
+===[les fonctions]========
+
+on peut mettre des valeurs par defaut
+maintenant on peut definir des valeurs par defaut pour les fonctions
+faut le faire DANS LE PROTOTYPE, 
+du coup on peut faire 
+int ma_fonction(int a, int b = 0; int c = 0);
+
+et appeller la fonction en invoquant que le premier parmetre, ou le premier et le 2e, ou le premier, le 2e et le 3e.
+LE TRUC CHIANT, c'est qu'on ne peut pas faire ça 
+ma_fonction(1,,25)
+on est OBLIGÉ de renseigner le parametre au milieu, ce qui fait que si on modifie la valeur par defaut, faudra modifier toutes les lignes de ce type a la main (ou avec un script)
+
+
+MAINTENANT, on peut aussi surcharger les fonctions
+la signature d'une fonction c'est 
+son nom 
+le type de ses arguments
+==> du coup on peut surcharger une fonction en modifiant le type de ces parametres, genre 
+int somme(int, int)
+float somme(float, float)
+
+EN REVANCHE, on ne peut pas faire ça
+int somme(int, int)
+double somme(int, int)
+
+Cas des fonctions inline, 
+c'est genre des fonctions courtes, mais qui ne sont pas vraiment des fonctions, plutot des macros comme skon fait avec le pre-processeur
+par exemple, quand on appelle une fonction, il se passe ca
+le processeur va retenir l'adresse memoire où elle en est dans le programme pour y revenir plus tard, 
+sauter a l'adresse memoire de la fonction, executer la fonction et y revenir plus tard
+c'est donc un poil moins rapide que si on executais le code direct.
+
+Du coup, la solution, c'est declarer une fonction inline, ca fait ça 
+notre code
+inline int carre(int nombre);
+int main()
+{
+    cout << carre(10) << endl;
+
+    return 0;
+}
+
+inline int carre(int nombre)
+{
+    return nombre * nombre;
+}
+
+a la compilation
+int main()
+{
+    cout << 10 * 10 << endl;
+
+    return 0;
+}
+
+avantage, c'est plus rapide 
+inconvenient, le programme est plus gros en octets, car ya plus d'instructions
+
+=====[les tableaux = array]======
+Maintenant on peut declarer un tableau statique avec une variable genre
+
+int	size(15);
+int	array[size];
+
+
+Maintenant, on peut passer un tableau comme argument d'une fonction en declarant le prototype comme ca
+void	fonction(int	array[]);
+ce qui equivait bien entendu a faire ca
+void	fonction(int *array)
+
+auparavant, en C, si on voulait passer un tableau, il fallait faire comme ceci
+void	fonction (int array[taille]);
+
+On peut egalement faire des tableaux multi-dimensionnels
+en faisant
+int	arr[a][b];
+
+Il existe egalement les tableaux dynamiques, ce sont les VECTOR
+
+==========[les tableaux dynamiques = vector]============
+
+pour les utiliser il faut 
+#include	<vector>
+
+Ensuite, on les declare comme ca 
+std::vector<tYPE> nom(taille);
+
+En fait, quand on y reflechit, un vector, c'est un objet (malgré le fait qu'il devrait s'écrire Vector)
+qui utilise la généricité (<TYPE>) et qu'on définit en utilisant une méthode constructeur
+
+Si on veut que notre vector contienne que des valeurs données, toujours la meme, genre une valeur par defaut, on fait
+std::vector<tYPE> nom(taille, valeurDefaut);
+
+Si on veut un vector sans case, on fait
+std::vector<tYPE> nom(0);
+ou 
+std::vector<tYPE> nom; 
+==> la méthode constructeur de l'objet vector a une valeur par defaut de 0
+
+On accede aux elements d'un vector de la meme maniere qu'avec un tableaux, cad 
+nom[index]
+
+
+L'intéret d'un vector, c'est que sa taille peut changer, on peut push back et push front des trucs dedans, 
+(en fait c'est comme une liste chainée avec des index quoi, cool !)
+comme vector est un objet, il dispose de methodes pour faire ce genre de choses.
+
+genre
+vector<int> tableau(3,2);  //Un tableau de 3 entiers valant tous 2
+tableau.push_back(8);
+
+On peut egalement supprimer des case, c'est a dire qu'on peut pop back et pop front
+vector<int> tableau(3,2); //Un tableau de 3 entiers valant tous 2
+tableau.pop_back(); //Et hop ! Plus que 2 cases
+tableau.pop_back(); //Et hop ! Plus que 1 case
+
+Comme vector est un objet, il a une méthode size() qui renvoit la taille du vector
+du coup, pour connaitre la taille du vector (qui du coup peut changer), on fait 
+vector<int> tableau(3,2); //Un tableau de 3 entiers valant tous 2
+tableau.size();
+
+Du coup, en fin de compte, le mieux est de creer un vector vide et d'ajouter les elements au fur et a mesure
+genre
+vector<int> vect;
+
+vect.push_back(1);
+vect.push_back(1);
+vect.push_back(1);
+vect.push_back(1);
+
+
+vect.capacity() retourne la quantité de cases reservées pour le vector (allouée par une sort de malloc()
+vect.size() retourne le nombre de cases qui dispose d'une valeur dans le vector.
+
+En principe, selon les langages, ces 2 valeurs peuvent etre identiques ou differentes
+identiques s'il y a une valeur par defaut lors de l'initialisation, differentes si ce n'est pas le cas, 
+differentes si on decide d'avoir une capacity superieure à la size des lors que le nombre d'entree est d'un certain ordre de grandeur, etc
+afin d'optimiser tout le bordel
+
+On peut egalement inserer des elements en milieu de liste, genre
+vect.insert(value, index);
+
+pour enlever un element a la position n, on fait
+monVecteur.erase(monVecteur.begin() + n);
+
+Enfin, il est possible, comme pour les tableaux multi-dimensionnels, de faire des vector multi-dimensionnels
+on fait comme ca 
+std::vector<vector<int> > grille(taille de la premier dimension); //ATTENTION, BIEN METTRE L'ESPACE ENTRE LES DEUX CHEVRONS !!
+
+ensuite, pour les utiliser, on fait genre
+grille[i] = std::vector<int>(taille de la 2e dimension);
+
+
+==========[read et write fichiers]=======
+il faut 
+#include	<fstream>
+
+Les flux sont des objets 
+
+ofStream ofs("chemin/fichier.txt");
+Pour ouvrir un flux vers un fichier en ecriture, on fait
+
+si le fichier n'existe pas, alors il sera créé
+En revanche il faut que le chemin existe
+
+REMARQUE IMPORTANTE: 
+Il y a une grosse difference entre un objet std::string et une chaine de caracteres char* 
+en effet, le premier c'est comme ce qu'il y avait en C, cad un tableau de char dont le dernier caractere est '\0'
+Le second, c'est un objet qui dispose parmis ses attributs, d'un tableau de char qui peut être remplacé par un autre (en mode realloc)
+==> LE PROBLEME, c'est que certaines fonctions ne prennent pas en parametre un objet string, mais un char*, c'est a dire une chaine primitive quoi
+Du coup, si on a notre chaine stockée dans un string et qu'on veut la passer en argument d'une fonction, on a une méthode de la classe std::string qui est c_str
+on fait tout simplement maChaine.c_str() et ca retourne le pointeur vers le premier caractere de la chaine.
+
+OR, la méthode constructeur de l'objet ofStream prend en argument une chaine en char* et non un objet string, du coup si on fait un truc du genre
+std::string	file("./files/file.txt");
+on ne peut pas faire
+ofStream ofs(file);
+on doit faire
+ofstream(file.c_str())
+
+
+pour connaitre sa position dans un ofstream, on fait
+flux.tellp();
+
+
+
+la methode constructeur de ofStream renvoit true si pas de soucis, false sinon
+
+du coup, comme pour open et read et tout ca, on doit checker qu'il n'y a pas eu de problemes 
+genre comme ca
+if (!fos) (ca renvoit un ptr, si soucis, ca renvoit NULL)
+	//dire quelque chose
+
+
+Ensuite, pour ecrire dans un stream, on fait 
+monStream << des char*;
+genre 
+ofStream ofs("./fichier.txt");
+if (ofs)
+{
+	ofs << "coucou tout le monde" << std::endl;	
+}
+else
+	//dire que ca a merdé
+
+
+Pour se positionner a un endroit dans le fichier dans un ofStream, on fait
+ofs.seekp(nb_caracteres, position) = se positionner n caracteres apres la position de reference
+pour position on a 3 possibilités 
+- ios::beg = debut du fichier,
+- ios::end = fun du fichier
+- ios::cur = position actuelle du curseur 
+
+Pour lire un fichier, on utilise l'objet ifSteam 
+bool ifStream(char* fichier);
+
+on peut lire le fichier
+- char par char ==> utilisation de monFlux.get()
+- ligne par ligne ==> utilisation de getline()
+- mot par mot ==> utilisation de >> (du coup, derriere il faudra faire monFlux.ignore() pour pas etre emmerdé par la suite)
+
+Pour lire un fichier en entier, on peut faire une boucle du genre
+ifStream ifs("./fichier.txt");
+string line;
+if (ifs)
+{
+	while (getline(ifs, line))
+		std::cout << line;
+	
+}
+
+Pour se positionner a un endroit dans le fichier dans un ifStream, on fait
+ofs.seekg(nb_caracteres, position) = se positionner n caracteres apres la position de reference
+pour position on a 3 possibilités 
+- ios::beg = debut du fichier,
+- ios::end = fun du fichier
+- ios::cur = position actuelle du curseur 
+
+pour connaitre sa position dans un ifstream, on fait
+flux.tellg();
+
+Quand on a terminé d'utiliser un flux, on le close en faisant
+monFlux.close();
+
+Remarque, par defaut, tout flux initialisé dans un bloc est automatiquement refermé a la sortie de ce bloc
+
+
+De meme, on peut initialiser un seul flux et le diriger a un endroit, puis le refermer et l'ouvrir a un autre endroit etc en faisant comme ca 
+ifstream stream;
+
+stream.open("./fichier1");
+//faire des trucs
+stream.close();
+
+stream.open("./fichier2");
+//faire des trucs
+stream.close();
+
+
+DONC Pour resumer: 
+ofstream = objet qui permet de se connecter a un fichier en ecriture ==> 
+ifstream = objet qui permet de se connecter en lecture
+fstream = objet qui permet de se connecter en lecture et ecriture
+
+ensuite pour ouvrir le fichier on a la methode open 
+fstream.open(char* filename, cte mode);
+(ou fstream monStream(char* filename, cte mode);)
+mode = 
+	- ios::in = pour l'input
+	- ios::out = pout l'output
+	- ios::binary = pour le mode binaire
+	- ios::ate = position initiale du curseur a la fin du fichier, si ce flag n'est pas defini, alors par defaut le curseur est au debut du fichier
+	- ios::app = tous les output sont put a la fin du fichier
+	- ios::trunc = on vide le fichier et on le remplace pour le nouvel output a chaque output
+
+on peut bien-sûr combiner les flags avec un OU binaire |
+remarque, pour ifstream, si ios::in ou ios::out n'est pas defini, par defaut ce sera ios::in
+remarque, pour ofstream, si ios::in ou ios::out n'est pas defini, par defaut ce sera ios::out
+remarque, pour fstream, si ios::in ou ios::out n'est pas defini, par defaut ce sera ios::in |ios::out
+
+On peut checker si le fichier est bien ouvert en faisant
+if(monStream)
+ou plus rigoureusement en faisant
+if(monStream.isOpen())
+
+
+monStream.bad() retourne true si une operation de read ou write a foiré (genre lire un fichier qui n'a pas ete ouvert)
+monStream.fail() = pareil que bad() sauf que c'est que dans le cas ou c'est un probleme de format, genre on a essayé d'extraire un int alors que c'est une string, etc ===> surtout dans le cas des >> 
+monStream.eof() = retourne true si on a atteint la fin du fichier ouvert en lecture
+monStream.goof() = retourne false si l'une des 3 fonctions au-dessus, au moins, retourne faux.
+monStream.clear() = reinitialise les les fonctions precedentes.
+
+REMARQUE, ifstream, ofstream et fstream c'est du namespace std, faut donc ecrire
+std::ifstream
+std::ofstream
+std::fstream
+
+=========[allocatio dynamique en C++]============
+
+en gros, maintenant on a un kw qui est 
+new
+genre je fais
+int	*ptr;
+puis
+ptr = new int;
+
+en fait 
+new MACHIN
+ca equivaut a 
+(machin*)malloc(sizeof (machin))
+
+du coup, pour faire un tableau de int en allocation dynamique, avant on ferait
+int	*ptr;
+ptr = (int*)malloc(sizeof (int) * taille);
+maintenant on ferait
+ptr = new int[taille];
+
+et on appelle notre tableau comme ca
+ptr[i];
+
+
+
+Ensuite, pour free l'espace memoire pointé par le pointeur, avant on faisait
+free(ptr);
+
+maintenant on fait 
+delete ptr;
+
+en fait, 
+delete ptr = free(ptr)
+
+Pour un tableau, avant, on devait faire une boucle, 
+maintenant, on fait
+delete[] ptr;
+
+
+
+==========[les Strings]===========
+
+C'est un objet
+Malgré la convention qui consiste a mettre une majuscule aux noms de classes, string s'écrit comme ca 
+string
+
+on pourrait, si on est un peu puriste, faire un header avec
+typedef	std::string	String;
+
+Comme ca on est réglo, mais bon....
+
+Remarque, pour les variables, qu'elles soient de type primitif ou objet, on peut les initialiser soit comme ca
+type var = value;	// a l'ancienne
+
+soit en faisant appel a la methode constructeur du type de l'objet (puisque techniquement, meme un int est un objet finalement)
+type var(value);
+
+Bien entendu, la methode constructeur ne s'appelle que lors de l'initialisation d'une variable, donc on ne peut pas faire plus tard dans le code
+var(new_value);
+
+Remarque, pour vector c'est pareil, c'est un objet mais il s'ecrit
+vector
+
+Si on est un puriste, on peut faire un header ou on fait
+typedef		std::vector	Vector;	//en fait ca marche pas, la syntaxe n'est pas bonne car ne prend pas en compte le <type>... a checker plus tard
+
+
+De plus, on peut utiliser les iterateurs pour les strings (avec maString.begin() et maString.end())
+string::iterator it = chaine.begin();
+
+
+
+=========[creer une classe]==========
+
+On fait
+class	MaClasse
+{
+	//definition des attributs
+	//definition des methodes
+};
+
+pour le nom des attributs, ca peut etre pas mal que les noms commencent par m_ pour se rappelle qu'il s'agit d'attributs
+
+Au sein d'une classe, on peut rajouter un kw lors de la definition des attributs
+-> public = on peut appeler la methode ou l'attribut depuis l'exterieur de la classe pour la lire et la modifier
+-> private = on ne peut l'appeller pour la lire et la modifier que depuis l'interieur de la classe ==> un objet peut LIRE ET MODIFIER
+   des variables private d'un autre objet de même type !!!!!!! Ca n'a aucun sens mais ca fonctionne comme ca
+
+-> protected = idem mais également depuis des classes dérivées
+
+soit on le fait pour chaque truc, genre 
+public int m_a1;
+public int m_a2;
+public int m_a3;
+
+soit on peut faire comme ca
+public:
+int	a1;
+int	a2;
+int	a3;
+
+
+
+ATTENTION, on n'a pas le droit d'initialiser les attributs lors de leur declaration, il FAUT LE FAIRE DANS LA METHODE CONSTRUCTEUR 
+
+par exemple
+class Personnage
+{
+    // Attributs
+    int m_vie;
+    int m_mana;
+    string m_nomArme;
+    int m_degatsArme;    
+
+
+    // Méthodes
+    void recevoirDegats(int nbDegats)
+    {
+
+    }
+
+    void attaquer(Personnage &cible)
+    {
+
+    }
+
+    void boirePotionDeVie(int quantitePotion)
+    {
+
+    }
+
+    void changerArme(string nomNouvelleArme, int degatsNouvelleArme)
+    {
+
+    }
+
+    bool estVivant()
+    {
+
+    }
+
+};
+
+==> LE PROBLEME AVEC CETTE FACON DE FAIRE, C'EST QUE LA CLASSE N'EST ACCESSIBLE QUE DEPUIS LE FICHIER ! ==> probleme de modularité
+
+l'encapsulation, en POO, c'est faire que tous les attributs ne sont directement lisibles et modifiables que depuis la classe elle-même, 
+et on ne peut lire et modifier la variable que par des getters et des setters qui sont des methodes publiques de la classe
+
+
+FINALEMENT, une classe et une structure c'est pareil, si ce n'est que dans une structure, tous les attributs sont publiques, et bien-sûr, qu'on ne peut y mettre des fonctions qu'en mettant des 
+attributs qui sont des pointeurs sur fonction
+
+
+on peut, bien sûr, pour des raisons de modularité, definir des fichiers headers d'une classe comme suit:
+#ifndef DEF_PERSONNAGE
+#define DEF_PERSONNAGE
+
+#include <string>
+
+class Personnage
+{
+    public:
+
+    void recevoirDegats(int nbDegats);
+    void attaquer(Personnage &cible);
+    void boirePotionDeVie(int quantitePotion);
+    void changerArme(std::string nomNouvelleArme, int degatsNouvelleArme);
+    bool estVivant();
+
+    private:
+
+    int m_vie;
+    int m_mana;
+    std::string m_nomArme; //Pas de using namespace std, il faut donc mettrestd:: devant string
+    int m_degatsArme;
+};
+
+#endif
+
+en gros, on met juste les attributs et les prototypes de methodes;
+
+Ensuite, on peut, dans notre fichier cpp, #include notre fichier.hpp et definir nos méthodes sans préciser class Machin {}, en faisant comme ca 
+nomClasse::nomMethode(args)
+{
+
+}
+
+Ca permet a compilateur de savoir que telle methode est la methode de telle classe
+==> C'est ce qu'on appelle le PARADIGME HEADER/IMPLEMENTATION FILE, c'est comme ca qu'on fait en C++, c'est pas comme en java
+
+l'intéret, c'est que c'est plus modulaire car on peut definir l'architecture de notre classe dans un .hpp, avec les attributs et les methodes et tout, 
+puis implementer les méthodes dans un fichier.cpp, on se concentre donc sur les methodes et rien d'autre, c'est cool
+
+REMARQUE SUR LE MOT CLE CONST DANS LES METHODES DE CLASSE: 
+si une methode ne modifie pas l'objet mais se contente uniquement de lire des variables, 
+on peut rajouter const à la fin de son prototype afin que le compilateur optimise le code,
+cad par exemple
+dans le .hpp
+nomMethode(args) const;
+ou 
+nomClasse::nomMethode(args) const;
+
+et dans le .cpp
+nomClasse::nomMethode(args) const
+{
+}
+
+
+Enfin, il nous faut une méthode constructeur qui sera appellée lors de la creation d'un objet utilisant notre classe comme pattern.
+Par convention, pour faire comprendre au compilateur que la methode en question est la methode constructeur, elle a le meme nom que celui de la classe.
+si une classe a comme nom MaClasse, 
+la methode constructeur sera MaClasse();
+
+ENSUITE, la particularité de la methode construceur est qu'ELLE N'A PAS DE TYPE DE RETOUR
+on fait
+MaClasse()
+{
+	m_a1 = value1;
+	m_a2 = value2;
+	m_a3 = value3;
+	m_a4 = value4;
+}
+
+Bien sûr, si on a definit notre classe dans un .hpp et qu'on fait la seconde methode, cad declarer les fonctions dans un fichier .cpp en faisant MaClasse::methode(), alors notre methode constructeur
+sera comme suit: 
+MaClasse::MaClasse()
+{
+	m_a1 = value1;
+	m_a2 = value2;
+	m_a3 = value3;
+	m_a4 = value4;
+}
+
+enfin, il faut savoir qu'on a une autre syntaxe possible, un peu plus degueulasse mais faut savoir qu'elle existe si on tombe sur un code comme ca, c'est 
+MaClasse::MaClasse() : m_a1(value1), m_a2(value2), m_a3(value3), m_a4(value4)
+{
+	//tout a deja ete initialised
+}
+
+
+Remarque IMPORTANTE, 
+une variable primitive (genre int, float, etc), lorsqu'elle est créée, n'est pas initialisée par defaut,
+en revanche, pour les objets, lorsque ceux-ci sont créés, ils font d'emblée appel à leur methode constructeur par defaut, du coup il n'est pas forcement necessaire de les initialiser lors de leurs creation
+pour que ceux-ci aient une valeur, 
+ainsi, si une variable attribut de type primitif est créée, mais pas initialisée dans la methode constructeur, elle n'aura pas de valeur à la creation de l'objet
+en revenche, si une variable attribut de type objet est créée mais pas initialisée, elle aura sa valeur par defaut (si celle-ci est définie dans sa methode constructeur)
+(par exemple, une string a pour valeur par defaut "")
+
+Enfin, notre classe a egalement besoin d'une methode destructeur, qui a lieu lors de la destruction de notre objet.
+par convention, pour que le compilateur comprenne qu'il s'agit de la methode destructeur, on la note
+~MaClasse()
+{
+
+}
+
+ou alors, si on est dans la facon2, 
+MaClasse::~MaClasse()
+{
+
+}
+
+==> dedans on met des instructions de desallocation de memoire, au cas où on a utilisé de l'allocation dynamique, histoire de ne pas faire de fuite de memoire
+
+
+=======[la surcharge d'operatreur]===========
+en gros c'est utiliser des operateurs existants pour des types primitifs et leur definir un sens pour des objets
+genre qu'est ce que ca veut dire comparer 2 objets Vehicule
+Qu'est ce que ca veut dire multiplier 2 objets Vecteur, etc
+
+En gros, au lieu de faire
+Duree d1;
+Duree d2;
+Duree d3;
+
+d3 = additionner(d1, d2);
+on ferait
+d3 = d1 + d2;
+
+Pour surcharger un opérateur, genre mettons qu'on veuille surcharger == pour pouvoir comparer 2 objets entre eux: 
+on doit rajouter une methode de prototype suivant: 
+bool operator==(const Objet &a, const Objet &b); //dans notre .hpp
+et l'implementer dans notre .cpp, genre comme ca quoi normal
+bool operator==(const Objet &a, const Objet &b)
+{
+   if (a.attribut == b.attribut)
+	return (true);
+
+   return (false);
+}
+
+
+En fait, il faut le comprendre comme ca: 
+chaque operateur, est en fait une fonction 
+quand on fait (a > b)
+en fait on fait
+operator>(a, b);
+Donc quand on definit a quoi correspond une comparaison entre 2 objets (de meme type ou meme de type different !), 
+on surcharge la fonction correspondant à l'operateur, pour implementer une fonction qui prend d'autres parametres
+que ceux deja definis.
+
+Le soucis, c'est que pour comparer les elements d'une classe, il faut y avoir acces, a ce moment y a 3 solutions
+1) on a des getters pour les attributs dans la classe --> no soucy
+2) notre fonction operatorKK est amie de notre classe --> acces a tout ce qu'il veut 
+3) on crée une méthode bool isEqual(Objet aComparer) dans notre classe ==> methode la plus courante et la plus presente
+
+Du coup, ya 2 possibilités pour la derniere solution: 
+soit on implemente une methode operatorKK() dans notre classe
+soit on implemente une nouvelle methode en dehors de notre classe qui fait ca, en passant par une methode isEqual() membre de la classe
+
+SAUF QUE
+Quand on déclare la surcharge d'operateur comme une fonction membre, il faudra, lors de nos comparaisons, que le premier
+element soit du bon type, genre
+on definit a.==()
+du coupsi on fait
+a == b; ca marche 
+mais b == a; ca marche pas, si b est un int par exemple, et que la classe a, a une methode de conversion implicite d'un int en a.
+genre 
+a == 42 c'est ok
+42 == a c'est pas ok 
+
+EN REVANCHE, si on defini la méthode de comparaison en dehors de la classe, on peut faire
+a == 42 
+et 
+42 == a;
+
+(attention par contre, ya certains operateurs qu'on ne peut surcharger QUE en fonction membre, genre 
+operator[]
+operator()
+operator=
+operator->)
+
+ 
+
+On peut donc surcharger: 
+bool operator==()
+bool operator!=()
+bool operator>()
+bool operator<()
+bool operator>=()
+bool operator<=()
+
+Objet operator+()
+Objet operator-()
+Objet operator*()
+Objet operator\()
+Objet operator%()
+
+Objet& operator+=()
+Objet& operator-=()
+Objet& operator*=()
+Objet& operator\=()
+Objet& operator%=()
+
+operator[]
+operator()
+operator=
+operator->
+
+ostream& operator<<(ostream &stream, Objet);
+istream& operator>>(istream &stream, Objet);
+
+remarque, pour les opérateurs +-*/%, la fonction doit retourner le resultat de l'opération, 
+c'est a dire l'objet en question, en effet, dans le cas de + par exemple, 
+quand on fait 
+Objet a;
+Objet b;
+Objet c;
+
+c = a + b;
+ca equivaut a
+c = operator+(a, b);
+
+Enfin, quand on combine les opérateurs, genre 
+Objet a;
+Objet b;
+Objet c;
+Objet d;
+
+a = (b + c + d);
+en fait on fait
+a = (operator+((operator+(b, c)), d));
+
+De plus, pour les operateurs shortcut genre +=, -= etc, 
+par convention on renvoit une référence à l'objet, genre Objet&, 
+c'est à dire que par convention on renvoit (*this);
+
+De meme qu'on peut surcharger des opérateurs de comparaison, d'opération, et d'autres plus particuliers
+On peut egalement surcharger des operateurs de flux
+
+En fait, les chevrons << et >> sont des opérateurs
+genre quand on fait 
+std::cout << "pouet";
+en fait on fait 
+operator<<(std::cout, "pouet");
+
+de même, lorsqu'on fait
+std::cout << "pouet" << std::endl;
+on fait
+operator<<(std::cout, (operator<<(std::cout, "pouet")), std::endl);
+
+En fait, cout est un objet ostream
+et cin est un objet istream;
+Quand on fait #include	<iostream>
+un objet ostream et un objet istream est créé
+
+Pour surcharger genre << pour pouvoir afficher un objet dans cout ou pouvoir capturer un objet avec cin, on fait
+ostream& operator<<(ostream &flux, Objet p_objet)
+{
+	//faire des trucs, genre afficher les attributs
+	return (flux);
+}
+
+
+SAUF QUE DU COUP, pour la surcharge des operateurs de flux, on ne pourra pas les implementer dans la classe directement, (il fautdra passer par une fonction showInfos pour faire ce que c'est supposé faire genre afficher les infos et tout)
+En effet, << fonctionne comme ca 
+stream << machin a afficher dans le stream
+du coup, si on surcharge notre operateur comme ca
+std::ostream &MaClasse::operator<<(std::cout);
+
+Ca fera monOnbj << std::cout et pas l'inverse, 
+en fait c'est pas possible de faire comme ca dès lors que le terme à gauche de l'opérateur n'est pas l'objet !
+Du coup, il faut l'implementer a l'exterieur de la classe :)
+
+
+Pour la surcharge d'operateur d'affectation operator=();
+c'est pareil que pour le constructeur de copie, si on n'en definit pas un explicitement, le compilateur en a un implicite qui va
+juste copier les valeurs des attributs, avec les memes soucis que cela peut engendrer
+
+on fait genre
+Personnage& Personnage::operator=(Personnage const& personnageACopier) 
+{
+    if(this != &personnageACopier)
+    //On vérifie que l'objet n'est pas le même que celui reçu en argument, si c'est le cas on fait rien
+    {
+        m_vie = personnageACopier.m_vie; //On copie tous les champs
+        m_mana = personnageACopier.m_mana;
+	delete m_arme;		//comme on est dans une operation d'affectation et pas d'initialisation
+				// on travaille avec un objet qui a deja ete initialisé
+				// du coup il a deja un objet arme alloué
+				//on doit donc le supprimer pour ensuite en réallouer un nouveau qui aura les memes propriétés
+				//en utilisant son constructeur de copie
+
+        m_arme = new Arme(*(personnageACopier.m_arme));
+    }
+    return *this; //On renvoie l'objet lui-même
+}
+
+La surcharge d'operateur va de faire avec le constructeur de copie !
+On ne fait pas l'un sans l'autre, ca evite les emmerdes
+
+
+==============[Classes et pointeurs]=====================
+
+Pour utiliser des pointeurs d'une classe vers une autre classe, on fait:
+Objet *obj = new Objet(a , b, ou pas);
+ce qui théoriquement équivaut à
+Objet *obj = (Objet*)malloc(sizeof(Objet)); //allocation
+      *.obj.Objet(a, b, ou pas); //initialisation
+
+Pour free, on fait
+delete (obj);
+ce qui equivaut à
+obj.~OBJET(a, b, ou pas); //destruction des objets en allocation dynamique
+free(obj);		  //liberation de la memoire de l'objet
+
+
+Il existe un kw this, dans une classe, qui est par definition un pointeur qui pointe vers l'objet lui-même
+
+
+============[Le constructeur de copie]=========================
+C'est un constructeur particulier qui prend en parametre un objet de meme type
+ca permet de creer un objet qui soit identique à un autre objet, une copie quoi
+genre ca 
+Vehicule pouet = Vehicule(autreVehicule);
+
+En gros, le constructeur de copie copie tous les attributs d'un premier objet dans le nouvel objet
+Ca permet de pouvoir faire
+Vehicule pouet = autreVehicule; (en fait le constructeur de copie est l'operateur d'initialisation !)
+
+En effet, on se rappelle que pour initialiser une variable qu'on vient de declarer, on peut faire
+int	i(3);
+int	i = Integer(3);
+int	i = 3;
+
+et bah du coup, là c'est pareil..
+
+De la même manière, quand on passe un objet dans une fonction (sans utiliser de pointeur ni de reference), 
+cet objet et copié dans la fonction 
+et bien c'est également le constructeur de copie qui est appelé pour effectuer cette copie
+
+Bien-entendu, quand on ne defini pas de constructeur de copie dans notre classe, 
+le compilateur en défini un par defaut qui va simplement copier la valeur de chaque attribut.
+==> LE SOUCIS, C'EST QUE SI ON A DES POINTEURS PARMIS LES ATTRIBUTS, on va copier la valeur des pointeurs mais l'élément pointé 
+sera le même !! Du coup on aura un mix entre un autre objet et une partie de notre objet de depart ! SHIMERE! 
+
+Ca peut poser probleme, notamment si on detruit une des 2 copies, une partie des attributs de l'autre copie sera detruite dans la foulée
+
+Un constructeur de copie a le prototype suivant:
+Objet(const Objet &objRef);
+
+Et du coup, pour résoudre l'histoire de la copie des pointeurs, on va faire comme ca
+m_ptr_to_Objet = new Objet(objRef.(*m_ptr_to_Objet)); //c'est a dire qu'on fait une allocation dynamique EN UTILISANT LE CONTRUCTEUR DE COPIE DE L'OBJET VERS LEQUEL ON POINT ! CONTRUCTEUR DE COPIE - CEPTION !
+
+DU COUP, quand on fait un méthode ou un fonction qui renvoit un objet qu'on a initialisé dans la dite fonction, 
+On renvoit donc un objet, 
+Du coup, si on fait un truc du genre
+Objet machin = generateObjet();
+
+On utilise l'operateur d'affectation de la classe Objet ! Et du coup si on n'en a pas défini, ca appelle la methode de base du compilateur qui copie juste tous les attributs.
+
+Du coup, dans la classe ZFraction de l'exercice, c'est ce que ca faisant quand on renvoyait un objet ZFraction.
+
+
+====[L'HERITAGE]============
+
+pour faire en sorte qu'une classe herite d'une autre classe, on fait 
+
+class MaClasse : public ClasseMere
+{
+
+};
+
+==> ca fait que la classe possedera tous les attributs et toutes les methodes de la classe mere
+
+De plus, grace a la covariance des variables, une methode qui prend en parametre une classe donnée peut egalement prendre en parametre toute classe fille
+Egalement, si on a une classe ClasseMere et une classe derivee ClasseFille, on peut faire
+ClasseMere a;
+ClasseFille b;
+a = b;
+==> du coup, l'operateur d'affectation va copier tous les attrbuts de la classe fille dans l'objet mere
+
+De plus, avec les pointeurs, On a le droit de faire
+ClasseMere* = ClasseFille*
+MAIS PAS
+ClasseFille* = ClasseMere*
+
+En fait, pour comprendre ca, il faut comprendre qu'une classe heritée est constituée de 2 parties, 
+- la partie héritée, qui correspond a la classe mere
+- la partie propre, qui est celle qui se rajoute a la partie heritée
+
+==> du coup, quand on a un pointeur ClasseMere qui pointe vers un objet ClasseFille, on ne dirige le pointeur QUE vers la partie héritée
+==> C'est pareil quand on passera une reference ClasseMere qui est une ClasseFille
+
+En fait, il faut le comprendre comme ca, 
+mettons qu'on code une fonction qui prend en argument un objet ClasseMere et que cette classe mere dispose de plusieurs classes filles
+Maintenant, mettons qu'on passe dans notre methode un objet classemere ou un objet de classe heritée, 
+et bien, grace a la covariance des variables, on peut utiliser les méthodes héritées, MAIS CE SERONT LES METHODES DU TYPE MERE, si
+pas celles de la classe fille !
+mais bien sûr, pas celles qui leur sont propres, bien pratique.
+
+Du coup, si on fait un truc du genre
+ClasseMere	o1;
+ClasseFille	o2;
+
+o1 = o2; //ca on a le droit
+
+et qu'on fait
+o1.methode();
+==> on appelle la méthode de ClasseMere et non celle de classe fille. Si celle-ci a été surchargée dans la classeFille, cela n'est pas pris en compte
+
+De meme, si on fait
+ClasseMere	*o1;
+ClasseFille	*o2;
+
+o1 = new ClasseMere();
+o2 = new ClasseFille();
+
+et qu'on fait
+o1.methode();
+==> ca appellera la méthode de classemere et non celle de classefille;
+
+
+Ensuite, concernant la methode constructeur d'une classe derivée, 
+lorsqu'on crée un objet de classe dérivée, 
+1) le compilateur appelle la methode constucteur de la classe mere
+2) le compilateur appelle la methode constructeur de la classe fille
+
+Pour cela, on fait comme ca
+classe ClasseFille : public ClasseMere
+{
+	ClasseFille() : ClasseMere::ClasseMere() // appel de la methode constructeur du parent
+	{
+		//remarque, on ne peut pas appeller la méthode constructeur ici, directement genre 
+		//ClasseMere::ClasseMere(); comme on le ferait pour la méthode du masquage, il faut le faire en INITIALISATION !
+	}
+};
+
+Si on veut exploiter les parametres de la methode constructeur de la classe fille dans la classe mere, genre le std::string nom, on fait
+ClasseFille(std::string p_name) : ClasseMere(p_name) // appel de la methode constructeur du parent
+
+Concernant le destructeur, comme, lorsqu'on detruit une classe fille, le compilateur appelle le destructeur de la classe fille, puis le destructeur de la classe mere, SYSTEMATIQUEMENT, on n'a pas besoin de faire, comme pour le constructeur, un appel explicite au destructeur (en fait, on ne peut meme pas, on peut pas faire comme pour le constructeur avec l'initialisation, on peut pas le faire comme pour les autres methodes avec ClasseMere::ClasseMere();
+
+
+Remarque sur le MASQUAGE, 
+c'est le fait de redéfinir une fonction deja definie dans la classe mere
+==> ca permet d'avoir des méthodes qui existent dans toutes les classes derivées, avec les memes arguments et tout, mais ayant un comportement different en fonction de la classe derivée, 
+==> du coup si on a un pointeur classeMere qui pointe sur une classe fille et qu'on appelle sa methode qui a été masquée, ca appellera la méthode de la classe mère !
+
+Remarque, si on veut une partie commune dans nos méthode masquées, il suffit d'appeller la méthode de la classe mere lors de l'execution de notre méthode de notre classe fille, genre
+void Guerrier::sePresenter() const // remarque, on ne peut pas le faire ici en faisant : ClasseMere::ClasseMere()
+{
+   Personnage::sePresenter();
+    cout << "Je suis un Guerrier redoutable." << endl;
+}
+==> c'est ce qu'on appelle le DEMASQUAGE
+
+
+==========[le polymorphisme]=========
+Si on fait une fonction qui prend en argument un objet ClasseMere, et que dans cette fonction, on appelle une méthode de l'objet passé en parametre, genre
+objet.show();
+On pourra passer comme argument des objets ClasseMere, mais aussi des objets ClasseFille, 
+SAUF QUE ce sera systematiquement la méthode de ClasseMere qui sera appellée, donc si on a surchargé (masqué) la méthode classemere dans la classefille, on est pas bon.
+==> ce phenomene, c'est ce qu'on appelle la RESOLUTION STATIQUE DES LIENS
+
+pour faire en sorte que ce soit la bonne méthode qui soit appelleée, on utilise la 
+==> RESOLUTION DYNAMIQUE DES LIENS
+==> pour ca on a besoin de 2 choses
+	- d'utiliser un pointeur ou une reference vers notre objet (cool, c'est ce qu'il faut faire le plus souvent possible)
+	- d'utiliser une methode virtuelle
+
+une méthode virtuelle ou une fonction virtuelle
+pour declarer une fonction virtuelle on rajoute le kw virtual devant le prototype du .hpp, genre
+virtual void machin(int prout) const;r
+
+Remarque, si on surcharge / masque des méthode virtuelles dans une classe fille, on n'est pas obligé de la redéclarer virtuelle, elle est virtuelle d'emblée (mais ca peut etre pas mal de le faire quand meme pour que ce soit plus clair).
+
+
+En fait concretement, si on fait un méthode qui utilise le polymorphisme, c'est a dire qui prend en argument un objet ClasseMere et qui peut donc prendre des ClasseMere et des ClasseFille, et que dans cette méthode, ca appelle des methode de notre objet 
+et qu'on veut que ca soit la méthode specifique de l'objet et pas celle de la ClasseMere qui soit appellée
+1) on declare la méthode objet comme virtual dans la ClasseMere
+2) dans notre methode qui utilise le polymorphisme, celle qui prend en argument des ClasseMere, on ne prend pas en parametre
+   un objet ClasseMere, mais une REFERENCE ou un POINTEUR vers notre objet (meme s'il est const)
+
+==> C'EST UNE HABITUDE A PRENDRE car comme les objets sont rapidement lourds, il est plus optimisé d'utiliser des pointeurs et des
+    references (const si c'est que du read) dans les méthodes plutôt que des variables directement,
+    l'idéal étant de n'utiliser des variables directement que pour les types primitifs.
+
+
+ATTENTION: 
+- un constructeur n'est jamais virtuel (si on utilise des methodes virtuelles dans le constructeur, la resolution dynamique de liens ne se fait pas)
+- un destructeur, idéalement, doit TOUJOURS  être virtuel. En effet, si j'ai un pointeur ClasseMere *obj, que je fais objet = new ClasseFille();, pas de soucis, on appelle bien la méthode constructeur de ClasseFille, c'est pourquoi il n'y a jamais besoin de la rendre virtuelle, en revanche, au moment du delete, c'est la méthode destructeur de ClasseMere qui est appellée. C'est pourquoi un destructeur doit toujours etre virtuel pour eviter les emmerdes
+
+
+======[methodes virtuelles pures]======
+
+Une metode virtuelle pure c'est une methode de ClasseMere qui sera presente dans toutes les ClasseFille, mais qui n'a de sens que dans les ClasseFille, 
+genre int getNbWheels();
+==> cette methode a un sens dans la classe Moto, Voiture, Camion, mais pas dans la classe Vehicule.
+
+Du coup, on peut definir la methode getNbWheels() comme virtuelle pure dans la classe Vehicule, 
+pour definir une methode virtuelle pure, on le fait, comme pour les virtuelles, dans le .hpp, en rajoutant const = 0;
+c'est a dire
+virtual int nbrRoues() const = 0;
+
+==> Et il n'y aura pas besoin d'implémenter la méthode dans vehicule.cpp
+
+
+==> DES QU'UNE CLASSE A UNE METHODE VIRTUELLE PURE, CETTE CLASSE EST UNE CLASSE ABSTRAITE, et donc elle n'est pas instanciable
+==> c'est a dire qu'on ne peut pas faire Vehicule pouet; ni Vehicule *pouet = new Vehicule();
+==> par contre, on peut faire Voiture v; puis Vehicule *ptr = &v;
+==> REMARQUE IMPORTANTE, si on cree une ClasseFille, il faudra redefinir la methode virtuelle pure, sinon, elle heritera de la methode de ClasseMere et sera donc virtuelle pure et donc ce sera une classe abstraite et donc non instantiable
+
+
+
+=====[les methodes statiques]=====
+
+C'est des methodes d'une classe, qui appartiennent a la classe mais pas aux objets instancies par la classe
+en fait c'est des fonctions qui sont rangées dans une classe, un peu comme un namespace
+
+Pour declarer une methode statique dans une classe, on fait 
+static retour fonction(args) dans le .hpp
+
+et on l'implemente dans le .cpp comme ca
+void MaClasse::fonction(args)
+{
+
+}
+
+==> c'est comme virtual, on ne remet pas le kw static dans le .cpp
+
+ensuite, on appelle la fonction dans n'importe quel fichier qui a include le header en faisant
+MaClasse::fonction(args);
+
+Par contre, on ne POURRA PAS faire
+MaClasse obj;
+obj.fonction(args);
+
+Une méthode statique ne PEUT PAS acceder aux attributs de la classe.
+Faut le voir comme une juste une fonction rangée dans le namespace MaClasse::
+
+========[ATTRIBUT STATIQUE]===============
+
+De même, on peut declarer des attributs static dans une classe
+en gros ca fait comme une variable globale, mais qui est declaree dans une classe;
+En revanche, il faudra l'INITIALISER DANS l'ESPACE GLOBAL ! donc en dehors de toute fonction dont main()
+(generalement on le fait dans l'espace global du fichier .cpp de la classe)
+
+Remarque, on peut declarer un attribut static comme private ou protected, si on veut y avoir acces ou le modifier, il faudra le faire par un getter / setter
+
+Le principal truc d'utilisation des attributs statiques, c'est pour connaitre et compter le nombre d'objets instanciés
+genre on declare un attribut statique en private  dans la classe,
+static int	valeur;
+on l'initialise dans le .cpp à 0 dans l'espace global 
+int MaClasse::valeur = 42;
+on l'incremente dans le constructeur et on le decremente dans le destructeur
+++valeur;
+on cree une methode statique pour get la valeur
+
+
+=============[amitié / fonctions amies]==============
+
+En gros, une fonction est amie d'une classe <==> cette fonction, qui est exterieure a la classe, a acces à TOUS les elements de la classe en lecture et en ecriture
+
+L'utilisation a bon escient de fonctions amies peut, contre toute attente, AMELIORER l'encapsulation !
+En effet, on peut alors declarer des fonctions en dehors de la classe mais dans le meme fichier, qui fasse des trucs
+==> tres utile pour la surcharge d'operateurs, du coup on peut s'affranchir des defauts de les declarer dans la classe, sans etre obligé de passer pas une fonction à l'interieur de la classe.
+
+pour declarer une fonction amie, on fait:
+friend retour fonction(args); //dans le .hpp, c'est a dire friend suivi du prototype de la fonction
+
+Il y a 2 regles en principe pour les fonctions amies
+==> elles ne font que lire les données (mais ya moyen de les modifier, c'est pas pour rien, ca reste possible mais a eviter)
+==> on ne doit les utiliser que si on ne peut pas faire autrement
+
+
+
+=======[la SL = standard librairy de c++]===================
+
+l'interet c'est que ca fonctionne avec tous les compilateurs 
+
+en 2011, le c++ a subi une revision majeure qui lui apporte de nombreuses nouvelles fonctionnalités
+- new kw
+- simplification des templates
+- nombreux ajout d'elements a la lib standard
+==> c'est le c++11
+
+on a donc
+- iostream
+
+====ancetre du c=====
+- cmath
+- cctype = pour utiliser les fonctions genre isDigit(), isAlpha(), isUpper() des char, etc
+- ctime = pour la gestion du temps
+- cstdlib = pour toutes les fonctions du C, peu utile en C++ sauf pour le srand
+- la STL = conteneurs = templates = vector, string, etc
+
+au niveau de la STL, on a 
+
+=======[Utilisation de l'aleatoire et srand]==============
+
+il faut
+#include	<cstdlib>
+#include	<ctime>
+
+la fonction rand() renvoit un nombre aléatoire compris entre 0 et RAND_MAX
+si on veut un nombre compris entre 0 et n, on fait
+rand() % n
+
+ATTENTION, rand() se base sur une suite de nombres pré-définits, du coup si on a un programme qui fait 3 rands
+on aura a chaque fois les memes nombres tirés dans le meme ordre a chaque fois qu'on relancera le programme
+
+la liste en question est tres longue, mais si on part toujours du même point, ca sert a rien.
+le plus simple, c'est de se positionner aléatoirement dans la liste de nombre en utilisant la fonction
+void srand(unsigned int seed), où l'argument la position dans la liste. Pour que cette position soit aléatoire, on utilise 
+int time(int*), (renvoit le nombre de secondes écoulées depuis le 1/1/1970)
+definie dans <ctime>
+
+en gros on fait comme ca 
+srand(time(NULL));
+int number = rand();
+
+le probleme est que si je lance le programme 2 fois dans la meme seconde, on aura les memes nombres
+
+pour avoir un nombre aléatoire compris entre a et b (a < b) on fait
+(rand() % (b - a)) + a
+
+remarque sur l'uniformité de rand()
+Si on veut faire un pile ou face, c'est a dire un rand() de 0 ou 1, on fait 
+rand() % 2;
+
+OR si RAND_MAX = 5, 
+on aura 0 pour rand() = {0, 2, 4}; ==> P(0) = 3/5 = 0.6 != 0.5
+on aura 1 pour rand() = {1, 3};    ==> P(1) = 0.4 != 0.5
+
+==> repartition non uniforme
+MAIS cette repartition tend a s'uniformiser pour RAND_MAX -> infini
+(souvent RAND_MAX ~ 32767)
+
+MAIS du coup, pour que rand() % (b - a) + a soit uniforme, et donc fiable, il faut que 
+(b - a) soit PETIT devant RAND_MAX
+
+Si on voulait faire un tirage sans remise, le plus simple serait de generer un vector avec toutes les valeurs,
+puis de le melanger de facon aléatoire (en passant le vector dans une boucle, a chaque tour de boucle, on swap avec un autre element du vector pris au hasard)
+
+for (int i(0), lim(vect.size()); i < lim; i++)
+{
+	swap(vect, i, (rand() % lim))
+}
+
+
+====sequence====
+- vector = ne permet que de push et pop en back (optimisé pour), indexé par des int
+- deque = double ended queue = comme vector mais avec des push et pop en front (OPTIMISÉ POUR), indexé par des int
+- list = liste chainee = stockage de faćon aléatoire dans la mémoire, parcourable que avec des iterateurs, insert et erase n'importe où possible à partir du moment où on a un itérateur notamment au milieu (optimisé pour)
+- stack = structure de donne qui ne permet que de push_back = push(), pop_back = pop() et read_back() = top(); = LIFO
+- queue = idem mais LILO = FIFO, on a push(), pop(), front();
+- priority_queue = pareil qu'une queue mais les elements sont triés à chaque push(), il faut donc surcharger l'opérateur < pour les objets stockés afin de les trier avec coherence
+
+A chaque fois c'est pareil, ces objets ont des methodes
+- size() = renvoit la taille de la collection
+- clear() = vide la collection
+- empty() = renvoit un bool
+- swap(collection de même type) = echange le contenu des 2 collections
+- assign(valeur) = met la valeur en question dans toutes les cases;
+
+====associatif== = permet d'acceder aux elements avec un index, comme les sequence genre machin[42], mais aussi avec une paire clé-valeur, genre machin['truc'];
+- map = permet de faire table["pouet"] = 42; si table["pouet"] existe, ca modifie sa valeur, sinon ca push et ca trie la liste par ordre ascii des clés(organisées en std::pair<t1, t2> #include <utility>) = arbre binaire, on accede aux valeurs des pairs en faisant iterator->first (clé) et iterator->second (valeur) (attributs publics, ils voulaient pas s'emmerder avec des getters et des setters)
+on fait std::map<type clé, type valeur[ , foncteurComparaison> monMap;
+monMap["souris"] = 42;
+==> il faut donc que le type clé soit muni d'une relation d'ordre !
+Remarque, pour modifier le systeme de tri des map, on fait 
+
+(par defaut, l'objet utilise l'opérateur < de base de la l'objet clé)
+//creation d'un foncteur
+class CompareLongueur
+{
+public:
+    bool operator()(const string& a, const string& b)
+    {
+        return a.length() < b.length();
+    }
+};
+
+//initialisation de la map
+std::map<type clé, type valeur, CompareLongueur> monMap;
+==> LES MAP NE SE PARCOURENT QUE AVEC DES ITERATEURS
+
+- multimap = idem mais chaque clé peut exister en plusieurs exemplaires
+- set = utile pour representer des ensembles, ya pas d'index ni de clé-valeur, les clés et les valeurs sont comme confondus, on accede aux elements via une methode de recherche, les éléments sont triés. Parcourable que avec des iterateurs
+- multiset = idem mais chaque clé peut exister en plusieurs exemplaires
+
+
+pour faire le bon choix du conteneur/template, on a ce diagramme decisionnel
+https://user.oc-static.com/files/313001_314000/313596.png
+
+===========[iterateurs et foncteurs]================
+
+un iterateur est un objet qui ressemble aux pointeurs et qui permet de parcourir un conteneur
+un foncteur c'est un objet qui possède une surcharge de l'operateur () et ressemble donc a une fonction qu'on applique à tous les éléments d'un conteneur (eliminer les doublons, trier, inverser, chercher, remplacer, supprimer)
+ils s'utilisent de la meme maniere quelle que soit le conteneur
+
+l'itérateur en fait c'est un objet, pas un pointeur, mais qui s'utilise comme un pointeur 
+c'est comme si c'était un pointeur vers un élément du conteneur et qu'on pouvait passer à l'élément suivant en faisant iterateur++
+et on accede à la valeur de l'element pointé en r et w en faisant *iterateur
+
+pour creer un iterator on fait 
+conteneur<type>::iterator	monIterator;
+genre
+vector<int>::iterator	it;
+
+tout conteneur a une methode begin() renvoyant un premier iterator sur le premier element du conteneur et une methode end() qui renvoit un iterator sur un element en dehors du conteneur
+on parcourt donc de begin() à end() exclu
+
+
+du coup, pour parcourir un vector, on peut faire
+for (int i = 0; i < lim; i++)
+	std::cout << vect[i] << std::endl;
+
+ou alors,
+for (std::vector<int>::iterator it = vect.begin(), lim = vect.end(); i != lim; i++)
+	std::cout << *it << std::endl;
+
+Remarque, les iterateurs ne sont pas optimisés pour les operateurs de comparaison
+il vaut donc mieux faire it != lim 
+plutot que it < lim
+
+Remarque, pour les map et list, on n'a pas les crochets comme pour les vector et deque
+
+on a vu, avec les conteurs, comment push et pop en front et back
+maintenant, si on veut insert à un endroit, on ne peut le faire qu'avec les iterateurs, pareil pour erase
+insert(iterator, value) ća insert un element à une position donnée et décale vers la droite celui qui y était et tous les suivants
+erase ca supprime un maillon de la chaine a une position donnée et decaler vers la gauche tous les suivants
+
+On a 5 types d'iterators qu'on peut préciser par redefinition de type, seuls 2 sont utilisés pour les conteneurs
+- bidirectionnal iterator = permet d'avancer et de reculer dans le conteneur avec les ++ et --
+  -> on ne peut avancer que d'un element par un element
+  -> utilisés pour les list, set et map
+  -> on ne peut pas acceder à l'element d'index X directement
+
+- random access iterator = permet d'avancer de plusieurs blocs d'un coup, ya ++, -- + et - d'acceder au milieu du conteneur
+  -> utilisé pour les vector et les deque
+
+
+map est doté d'une méthode find(clé) qui renvoit un itérateur sur l'element ou sur end() s'il ne le trouve pas
+(on ne peut pas avoir un truc genre table["pouet"] qui vaut la valeur si elle existe ou null si elle n'existe pas car si elle n'existe pas elle est créée)
+
+pour les foncteurs, on cree une classe genre 
+class Addition
+{
+
+}
+
+qui surcharge l'opérateur ()
+class Addition
+{
+	operator()(int a, int b)
+	{
+		return (a + b);
+	}
+}
+
+
+Puis faire
+Addition add;
+
+int a(5), b(3);
+add(5, 3);
+==> du coup on utilise l'objet comme si c'était une fonction
+
+Comme les foncteurs sont des objets instanciables, on peut leur creer une sorte de mémoire !
+genre 
+class feed
+{
+	private:
+	m_value;
+
+	public:
+	feed()
+	{
+		m_value = 0;
+	}
+
+	int operator()()
+	{
+		m_value += 5;
+		return (m_value);
+	}
+
+}
+
+==> c'est un moyen d'éviter d'utiliser des variables static
+
+
+Il existe des foncteurs prédéfinis, dans le #include <functional>
+c'est tres pratiques et ils utilisent la généricité, genre
+plus<int> foncteur;    //On déclare le foncteur additionnant deux entiers
+int a(2), b(3);
+cout << a << " + " << b << " = " << foncteur(a,b) << endl;
+
+
+
+
+=====[les predicats]=========
+ce sont des foncteurs un peu particulieres
+ils prennent un arg et renvoient un bool
+ils servent a tester une propriété d'un objet passé en arg (genre int > 10, chaine avec des voyelles, Personnage vivant, etc)
+
+
+=======[algorithmes de la stl]===========
+
+il faut 
+#include <algorithm>
+
+remarque importante, tous ces algorithmes utilisent des itérateurs, et parfois des foncteurs, pour fonctionner
+En fait, il peuvent également prendre des pointeurs (sur tableau par exemple) et des pointeurs sur fonction.
+==> ca permet d'utiliser les algorithmes, et sur des objets genre template, et sur des objets primitifs genre les arrays
+
+
+pour remplir un vector, soit on fait une boucle for avec des [i] ou des iterators
+soit on utilise l'algorithme generate qui le fait mieux 
+
+generate(tab.begin(), tab.end(), f);
+où f est un foncteur
+
+le vrai prototype c'est
+template <class ForwardIterator, class Generator>
+  void generate (ForwardIterator first, ForwardIterator last, Generator gen)
+
+
+Pour compter le nombre d'elements ayant une certaine valeur, on fait 
+int nombre = count(tab.begin(), tab.end(), 2); //pour la valeur 2
+
+on a aussi count_if qui prend en 3eme parametre, non pas une valeur mais un predicat c'est a dire un foncteur de test
+int const compteur = count_if(tableau.begin(), tableau.end(), TestVoyelles());
+
+de meme, on a l'algorithme
+find(tab.begin(), tab.end(), value)
+
+et
+find_if(tab.begin(), tab.end(), predicat)
+
+chacun renvoient la premiere occurence OU tab.end() s'il ne trouvent pas 
+
+on a aussi min_element() et max_element() qui renvoient le majorant et le minorant
+
+on a aussi, pour trier, 
+sort(tab.begin, tab.end())
+ATTENTION, sort ne peut etre utilisé QUE par des conteneurs proposant des random access iterator, donc vector et deque
+Par defaut, sort utilise l'opérateur < pour trier, si on veut une autre relation d'ordre, on peut la mettre en 3eme arg
+sort(tab.begin, tab.end(), strcmp())
+
+
+Enfin, on a également l'algorithme for_each() qui permet d'executer une fonction prenant en argument la valeur de l'item, pour chaque item
+genre
+for_each(tab.begin(), tab.end(), do);
+==> Do est un foncteur qui prend en argument (ou pas) la valeur de la collection.
+
+ATTENTION for_each utilise (et donc modifie) une copie de l'objet foncteur passé en parametre, du coup si on veut acceder aux attributs qu'il aurait pu modifier, il faut utilise le foncteur renvoyé par for_each (il ne renvoit pas un pointeur mais bien un objet foncteur, très chelou)
+
+
+On a egalement la fonction transform() qui prent 2 collections, fait une operation sur chaque valeur genre additionner les 2 valeurs et stocker le resultat (ce que retourne le foncteur) dans un 3e collection, 
+    transform(a.begin(), a.end(), b.begin(), c.begin(), plus<double>());
+ou alors prend une collection input, une collection output (en fait, un iterateur sur cet output) et un foncteur
+    transform(a.begin(), a.end(), b.begin(), foncteur); 
+
+IL FAUT QU LES TAILLES SOIENT IDENTIQUES (ou du moins que b et c soient de taille > a)
+
+Pour pallier à ce probleme, plutot que d'utiliser l'iterateur b.begin(), 
+on utilise l'iterateur back_insert_iterator<type de b>(b)
+
+genre
+std::transform(a.begin(), a.end(), std::back_insert_iterator<Type de b>(b), foncteur);
+
+======[iterateurs de flux]======
+
+pour rappel, pour utiliser n'importe quel iterateur, on doit 
+#include	<iterator>
+
+Ces iterateurs NE PEUVENT QU'AVANCER
+Ils n'ont que l'opérateur++ et *
+
+pour declarer un iterateur sur un outputstream genre cout, on fait 
+ostream_iterator<double>	monIterateur(cout);	//L'iterateur permet d'ecrire des doubles
+
+en gros c'est une syntaxe
+typestream_iterator<type de données qui transitent>	nomIterateur(stream[, string delimiteur);
+
+et apres on peut afficher des trucs dans le stream en faisant
+*it = valeur
+
+genre faire 
+std::ostream_iterator<std::string>	it(std::cout);
+*it = std::string("coucou ");
+*it = std::string("tout le monde !\n");
+
+c'est comme faire
+std::cout << "coucou " << "tout le monde \n";
+
+le delimiteur sert a mettre un separateur entre chaque affichage
+ 
+
+pour les flux entrant, genre un fichier, c'est un peu pareil, on fait
+par contre, là il faut explicitement faire avancer l'iterateur avec un ++
+genre
+std::ifstream file("./fichier.txt");
+std::istream_iterator<int>	it(file);
+
+pour connaire la fin du fichier, on fait 
+it != end
+avec end = std::istream_iterator<double> end;	//la valeur par defaut d'un istream iterator est un end-of-stream-iterator
+
+Avec ces iterateurs, il existe des algorithmes tres utiles pour copier, par exemple, le contenu d'un fichier dans un vector
+std::copy(stream_iterator<type> debut, stream_iterator<type> fin, std::vector<type>::iterator begin_cible)
+
+genre
+vector<int> tab(100,0);
+ifstream fichier("C:/Nanoc/data.txt");
+istream_iterator<int> it(fichier);
+copy(it, fin, tab.begin());     //On copie le contenu du fichier du debut à la fin dans le vector
+istream_iterator<int> fin;
+
+ATTENTION ! Il faut absolument que le vector soit initialisé avec une taille suffisante !
+==> du coup, il peut etre interessant d'avoir un moyen de push back dans le vector
+==> c'est possible avec les back insert iterators
+
+On peut egalement utiliser copy pour copier des elements dans n'importe quel autre stream qui a un iterateur sur lui, pas seulement un vector
+Genre std::cout, comme ca 
+copy(tab.begin(), tab.end(), ostream_iterator<int>(cout, "\n");
+
+du coup, pour afficher simplement un vector dans la console, on fait
+copy(vect.begin(), vect.end(), ostream_iterator<int>(std::cout, "\n");
+
+vector<string> tableau; //Un tableau vide de chaînes de caractères
+//Un itérateur capable de faire grandir le tableau
+back_insert_iterator<vector<string> >  it2(tableau);
+
+en gros c'est
+std::back_insert_iterator<std::vector<type dans le vector> >   it(monVector de depart);
+
+
+==> TRES INTERESSANT, car il permet d'obtenir une collection2 sur la base d'une collection1 et d'un foncteur!
+
+=======[les flux sur les string]========
+
+#include	<sstream>
+
+c'est
+ostringstream 
+et 
+istringstream
+
+c'est super puissant car on n'a pas besoin de transformer chaque donnée à ajouter dans le string en string (genre itoa)
+On fait
+std::ostringstream	flux;
+
+flux << "coucou";
+flux << 3.05;
+
+et pour recuperer la chaine on fait 
+flux.str();
+
+ou alors
+std::istringstream	flux;
+int number;
+
+flux >> number;
+
+
+On peut, bien sûr, comme pour tout stream, utiliser des iterateurs sur les stringstreams
+
+
+
+
+=====[autres trucs de la SL]===========
+
+on les declare comme ca
+std::complex<double>	z(2, 3);
+//le 1er arg est Re(z), le second est Im(z);
+
+On a aussi les valarray, qui sont des objets tableau de valeurs, utiles pour faire des calculs en comparant 2 tableaux
+en gros tous les operateurs sont surchargés et ca renvoit un valarray de resultat
+
+
+======[Gestion des erreurs avec les exceptions]=========
+
+Le principe general est le suivant: 
+on va creer des portions dans le code où le programme essaye des trucs, en sachant qu'une erreur peut survenir, c'est le bloc try {}
+si cette erreur survient, on lance un objet qui contient les informations de cette erreur, c'est le kw throw
+dans un autre bloc, on attrappe l'objet et on gere l'erreur. c'est le bloc catch (const typeException &e) {} (toujours par reference pour faire des economies ET pour pouvoir utiliser le polymorphisme si besoin)
+
+pour throw, on fait 
+throw maVariable;
+genre
+throw (std::string("ca deconne severe")); // on peut throw n'importe quel objet
+ou alors
+throw (123); // on peut le faire avec des variables litterales
+ou alors
+throw (int(3)); // on peut aussi le faire avec des types primitifs
+ou enfin 
+throw (maVariable); //n'importe quelle variable
+
+remarque: on peut throw n'importe ou dans le code mais si on le fait en dehors d'un bloc try {}, elle ne pourra pas etre catch
+dans un bloc catch {}
+
+exemple
+try
+{
+    // Le bloc sensible aux erreurs.
+}
+catch(int e) //On rattrape les entiers lancés (pour les entiers, une référencen'a pas de sens)
+{
+   //On gère l'erreur
+}
+catch(string const& e) //On rattrape les strings lancés
+{
+   // On gère l'erreur
+}
+catch(Personnage const& e) //On rattrape les personnages
+{
+   //On gère l'erreur
+}
+
+==> on peut mettre autant de bloc catch qu'on veut, tant qu'ils sont differents
+==> on peut throw par exemple, une phrase decrivant l'erreur, un numero d'erreur, le niveau de l'erreur genre fatale etc, l'heure a laquelle l'erreur est survenue, 
+
+Concretement, un bloc try catch ca fonctionne comme ca 
+dans le bloc try, ya du code, on declare des variables, des objets, on instancie, etc
+s'il tombe sur un throw, on saute tout ce qui suit, on ne l'execute pas, ca appelle le destructeur de tous les objets instanciés dans le bloc try, 
+et ca va direcement au catch concerné
+L'execution reprendra alors apres le bloc catch executé.
+
+remarque, on peut utiliser throw dans une fonction qui, elle, sera appellee dans un bloc try {}
+
+==> un bon moyen de faire est de faire deriver la classe exception de la lib standard du c++
+la classe exception est la classe de base de toute exception de la lib standard
+elle est concue de facon a etre facilement derivee pour faire ses propres exceptions
+#include <exception>
+
+Cette classe dispose de fonctions virtuelles et de desctructeur virtuel
+dans cette classe, la definition de chaque methode est suivie de throw() genre
+int maMethode() throw()
+{
+//machin
+}
+==> c'est pour spécifier que la FONCTION DE THROW RIEN DU TOUT (c'est un mecanisme tres rarement utilisé en c++)
+
+le pattern d'une classe exception ou qui derive de exception c'est
+class exception 
+{
+public:
+    exception() throw(){ } //Constructeur.
+    virtual  ~exception() throw(); //Destructeur.
+ 
+    virtual const char* what() const throw(); //Renvoie une chaîne "à la C" contenant des infos sur l'erreur.
+};
+
+
+du coup, pour creer sa propre classe d'erreur, on fait
+#include <exception>
+using namespace std;
+ 
+class Erreur: public std::exception
+{
+public:
+    Erreur(int numero=0, string const& phrase="", int niveau=0) throw()
+         :m_numero(numero),m_phrase(phrase),m_niveau(niveau)
+    {}
+ 
+     virtual const char* what() const throw()
+     {
+         return m_phrase.c_str();
+     }
+     
+     int getNiveau() const throw()
+     {
+          return m_niveau;
+     }
+    
+    virtual ~Erreur() throw()
+    {}
+ 
+private:
+    int m_numero;               //Numéro de l'erreur
+    string m_phrase;            //Description de l'erreur
+    int m_niveau;               //Niveau de l'erreur
+};
+
+
+du coup, si on veut voir un message de l'erreur on fait
+e.what() dans le catch
+si on veut voir les valeurs de l'erreur on peut utiliser des getters 
+etc, comme d'hab
+
+dans la lib standard, ya 5 grands types d'exception 
+bad_alloc = si erreur de memoire alloc
+bad_cast = si ya une erreur lors d'un dynamic cast
+bad_exception = si AUCUN CATCH NE CORRESPOND A L'EXCEPTION THROW
+bad_typeid = lors d'une erreur sur un typeid
+ios_base::failure = s'il se produit une erreur avec un flux 
+
+Il existe tout un tas d'exceptions standards, ca nous evite de tout recoder
+c'est dans le fichier 
+stdexcept, ya 9 classes d'exception separees en 2 categories
+- logic errors = 
+- runtime errors = 
+elles derivent toutes de exception et leur constructeur prend une string qui decrit le probleme (pour le what)
+
+logic error:
+- domain_error = erreur de domaine mathematique 
+- invalid_argument = argument invalide passe a une fonction
+- length_error = taille invalide
+- out_of_range = erreur d'indice de tableau 
+- logic_error = autre probleme de logique
+
+runtime error: 
+- range_error = erreur de domaine
+- overflow_error = voila
+- underflow_error = voila
+- runtime_error = autre probleme de runtime
+
+si on ne sait pas quoi prendre, on prend runtime_error
+
+Et apres pour les utiliser on fait 
+throw (runtime_error("probleme de mes deux"))
+
+
+std::vector leve des exceptions quand il y a des emmerdes
+si un user cherche a acceder a la case 10 d'un vector a 8 emplacements, avec les [], ca fait rien 
+par contre si on utilise la methode at(), genre vect.at(10), là, si l'emplacement n'existe pas, ca throw une exception
+
+Parfois, il peut etre utile de RELANCER L'EXCEPTION = dans le bloc catch, relancer la meme exception pour la recatcher plus loin et la traiter une seconde fois
+pour ca, on fait tout simplement
+throw;
+//sans expression derriere
+
+Remarque: parfois, les blocs try catch qui s'enchainent ca devient lourd,
+pour pallier a ca on a assert, ca vient du C
+#include <cassert>
+
+et on fait
+assert(a==b);
+ou simplement
+assert(assertion);
+SI l'assertion est FAUSSE, ca kille le programme
+===> c'est VENER
+==> il est possible de generer un programme où les assert sont desactivées (plus de liberté, hack, programme plus rapide), il faut rajouter un parametre ou autre, google man
+==> c'est un outil pour les developpeurs, pas pour les utilisateurs
+
+
+===============[creer des templates]===============
+
+c'est la genericite quoi
+Pour declarer un type generique, on fait 
+template<typeName T>
+
+et apres on peut faire
+T maximum(const T &a, const T &b)
+{
+if (a > b)
+return (a);
+
+return (b);
+}
+
+et apres on peut faire 
+int a(4);
+int b(5);
+maximum<int>(a, b);
+//ou simplement 
+maximum(a, b) // car le compilateur devine le type a utiliser en se basant sur le type des variables mais attention au cast implicite
+
+ATTENTION: pour les fonctions template, TOUT DOIT SE TROUVER DANS LE .hpp SINON CA COMPILE PAS
+==> on doit avoir la definition du template, les fonctions generiques et leur implementation dans le .hpp !
+
+On peut egalement definir le type de sortie de la fonction template, comme ca 
+template<typename T, typeName S>
+S moyenne(T v1, int v2)
+{
+  // faire des trucs
+}
+
+
+
+Il est possible de surcharger une fonction template pré-definie
+genre la methode maximum() qui utilise l'opérateur < des objets passés en parametre
+mais si on passe des strings, et qu'on veut comparer les longueurs de chaines et pas l'ordre lexicographique, 
+on ne va tout de meme pas surcharger l'operateur < pour les strings
+pour ca, on va surcharger la methode template maximum dans le cas de string, 
+ON DIT QU'ON LA SPECIALISE
+on fait comme ca
+template <>  // on met rien dans les chevrons
+std::string maximum<std::string> (const std::string &a, const std::string &b)
+{
+if (a.size() > b.size)
+return (a);
+
+return (b);
+}
+
+Il faut bien entendu définir les fonctions génériques, PUIS ENSUITE definir leurs versions specialisées
+(lors d'un appel de fonction generique, le compilateur cherche la fonction specialisée et s'il ne la trouve pas, il appelle la version generique)
+
+
+
+
+On peut utiliser des methodes template dans des classes
+- si on implemente les methode directement dans la declaration de la classe, il suffit de faire
+  template<typename T>
+  class machin
+  {
+    T methode(T truc) {machin}
+  };
+
+- on implemente les methodes en dehors de la declaration de la classe (mais toujours dans le hpp attention), on fait
+  template<typename T>
+  class machin
+  {
+    T methode(T truc);
+  };
+
+  template<typename T>
+  T machin::methode(Ttruc)
+  {
+     machin;
+  }
+
+
+ON PEUT EGALEMENT FAIRE DES CLASSES TEMPLATES
+c'est facile, il suffit de faire une methode constructeur template
+genre
+template<typename T>
+class Rectangle
+{
+  Rectangle(T a, T b, T c, T d)
+  {
+    //implementation
+  }
+};
+
+et on instancie un objet rectangle comme ca
+Rectangle<int>  monRectangle(1, 2, 3, 4);
+
+En fait, c'est comme vector
+std::vector<int>  vect;
+
+
+
+======[les pointeurs sur fonction]=======
+
+dans le c++ moderne on utilise des foncteurs, c'est a dire des objets qui surchargent l'operateur ()
+(voire carrement des fonctions lambda depuis c++11: ( = closure = objet fonction anonyme)
+[capture](params, params)) -> typeRetour { body }
+genre
+[](int p_nb) -> int { return (p_nb * 2) };
+
+
+
+Pour declarer un pointeur sur fonction, on fait 
+typeRetour (*nomPointeur) (type1, type2, ...);
+
+pour affecter son pointeur, on fait 
+nomPointeur = &nomFonction;
+//on a meme le droit de faire
+nomPointeur = nomFonction //car l'identifiant de la fonction correspond à son adresse en fait, mais c'est peut-être moins explicite)
+
+pour dereferencer, on fait
+(*nomPointeur)(arg1, arg2);
+Mais, comme on l'a dit plus haut, comme un identifiant de fonction est en fait déjà un pointeur sur cette fonction (*f = f), on peut faire
+nomPointeur(arg1, arg2);
+
+pour recupere l'adresse d'une fonction membre d'une classe on fait
+nomPointeur = &(nomClasse::nomFonction);
+
+ensuite, pour utiliser ce pointeur sur methode de classe, on fait 
+//instanciation de notre objet
+nomClasse objet;
+//appel de la methode par le pointeur
+objet.(*nomPointeur)(arg1, arg2);
+
+
+
+
+
+
+
+
+
+

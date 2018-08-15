@@ -1,0 +1,1170 @@
+grub est un boot loader
+on peut faire tourner des programmes windows sous linux grace a un programme appelle wine, mais ca tourne plus lentement et ca marche pas a tous les coups
+
+unix a ete cree en 1969
+ms-dos etait leader en 1984
+et en 1984, Richard Stallman (chercheur en IA au MIT) créa le projet GNU qui devait etre un os comme unix avec les memes commandes mais fait par lui et gratos, car unix etait payant et de plus en plus cher.
+
+linux et mac os X sont bases sur unix
+ms-dos et windows sont a part et ont un noyau particulier.
+
+dans le meme temps, en 1991, linus dorvalds (etudiant a l'universite d'helsinki en Finlande) entreprend de creer son propre OS du nom de linux contraction de linus et unix
+
+du coup, linux c'était principalement le noyau, et GNU, les fonctions genre copier un fichier, coller, tout ca 
+la fusion des 2 a donné GNU/linux 
+
+la difference entre differentes distributions de linux se fait sur
+- la facon de l'installer, de la plus simple a la plus compliquée
+- la gestion de l'installation de nouveaux logiciels 
+- les programmes pre-installés 
+
+X est la brique de base du mode graphique de linux 
+par-dessus X vient se greffer un gestionnaire de bureau gere les fenetres, leur apparence, ..
+les 4 gestionnaires de bureau les plus connus sont gnome, kde, xfce et unity xfce est plus light, les 3 autres sont plus lourds.
+
+pour aller dans les differents terminaux de base, on fait ctrl+alt+fn ou n compris entre 1 et 7
+par defaut sur ubuntu on est sur le 7
+remarque: en fait quand on est dans l'interface graphique, pour aller sur les autres terminaux c'est ctrl+alt+fn, quand on est dans un terminal sans IG, c'est alt+fn
+pour redemarrer un serverX on fait ctrl+alt+backspace
+dans les dernieres versions de ubuntu c'est ctrl+imprEcran+K (peut-etre pour eviter les accidents)
+
+
+en cas de plantage, on a aussi des raccourcis claviers sous unity
+Synchronisation des disques 		Alt–Syst–s
+Stoppe les programmes gentiment 	Alt–Syst–e
+Tue tous les programmes 		Alt–Syst–i
+Disque principal en lecture seule 	Alt–Syst–u
+Redémarrage brutal de l'ordinateur 	Alt–Syst–b
+Arrêt brutal de l'ordinateur 		Alt–Syst–o 
+
+
+Il est possible d'acceder à un ordi sous linux en mode console a distance avec putty qui encrypte la connexion en ssh 
+
+en principe, tout machine linux connectee sur un reseau est accessible en mode console. on peut s'y logger avec son nom de machine ou son ip, un loggin user et son pw
+
+pour communiquer entre 2 machines, il faut un PROTOCOLE cad un ensemble de regles pour que les ping-ping soient coherents
+pour les communications en ligne de commande, ya 2 protocoles principaux: 
+- telnet = ne crypte pas la connexion, 
+- ssh = idem mais crypte le truc (avant yavait ssl mais c´était moins secure) 
+
+pour ce faire, on a putty. 
+pour ca on a juste besoin de l'executable putty, qui peut tourner sur n'importe quel os
+
+on distingue 2 types de parametres 
+les parametres courts, precedes d'un tiret, on peut faire commande -a -b ou commande -ab
+les parametres longs, precedes de 2 tirets, on peut faire commande --param1 --param2
+==> on considere un param comme long s'il a plus d'un caractere
+
+genre -a c'est la forme court, --all c'est la forme longue
+
+pour affecter une valeur au parametre on le fait simplement suivre de la valeur, genre 
+en court
+commande -p 5
+en long 
+commande --param=5
+
+on a aussi une autocompletion des commandes avec tab
+si ya plusieurs trucs possibles, on fait une 2e fois tab et ća affiche les possibilités
+
+quand on pipe un texte vers more, 
+entree = afficher la ligne suivante
+espace = page suivante 
+q = quitter
+
+on peut recherche une commande tapée avec ctrl+r
+ctrl+l clear la consol 
+ctrl+d envoie un message EOF (end of file) a la console. Si on fait ća dans une ligne de commande vide, ća fermera la console
+shift+pgUp = remonte dans les messages envoyés a la console
+shift+pgDown = idem mais en redescendant
+
+ctrl+a = positionne le curseur au debut de la chaine de commande
+ctrl+e = idem mais a la fin 
+
+ctrl+u = supprime tout ce qui se trouve a gauche du curseur
+ctrl+k = supprime tout ce qui se trouve a droite du curseur
+ctrl+w = supprime le premier mot a gauche du curseur
+
+ctrl+y = colle le texte qu'on vient de "supprimer", en fait, couper
+
+ya 2 grands types de fichiers sous linux
+- les fichiers classiques, genre .odt, .mp3, etc
+- les fichiers speciaux, genre une partition ou un lecteur
+  ==> windows fait la distinction entre les fichiers, les dossiers et les lecteurs
+      pour linux, tout est fichier
+
+sous windows, ya plusieurs racines, c:, d: etc
+sous linux, ya qu'une seule racine qui est /
+concernant les dossiers: 
+bin = contient tous les executables de la machine, suceptibles d'etres utilises par tous les utilisateurs 
+boot = fichihttps://www.google.fr/?gws_rd=sslers pour le demarrage de linux 
+dev = fichiers pour les peripheriques, il contient les fichiers pointant vers les lecteurs par exemple 
+etc = fichiers de configuration
+home = repertoire personnel
+lib = bibliotheque partages = fichiers .so, equivalent des dll de windows
+media = là où on mount des trucs
+mnt = pareil que media, mais pour des usages plus temporaires 
+opt = repertoire utilise pour les add-on de programme 
+proc = contient des infos systeme
+root = c'est le dossier personnel du user root
+sbin = contient des programmes systemes importants
+tmp = dossier temporaire utilise par les programmes pour stocker des fichiers
+usr = c'est un des plus grands dossiers, la où s'installent la plupart des programmes, c'est un peu comme program files dans windows
+var = contient des données variables, genre des logs
+===> tous ces dossiers sont egalement presents dans unix
+
+
+which nomCommande retourne l'emplacement de la commande (cad l'emplacement de l'executable de la commande) 
+dans linux, les executables n'ont pas d'extension (sous windows c'est .exe)
+
+
+dans la console quand on fait un ls, les raccourcis ont un @ a la fin de leur nom (un peu comme l'extension .ink sous windows)
+quand on fait ls
+-h = pour human readable, cad que la taille des fichiers n'est pas que en octet, mais aussi en ko, Mo, etc = fonctionne pour beaucoup d'autres commandes qui retournent des tailles
+
+-t = tri par date de last mod
+-r = renverse l'ordre d'affichage des fichiers
+-F = precise le type d'element = surtout utile si ya pas de couleur dans la console
+
+du = retourne la taille de chaque fichier du repertoire en cours (ou celui passé en parametre)
+-h = humand readable
+-s = juste la taille du total (size)
+
+pour cat
+-n = affiche les numeros de ligne
+
+pour less = afficher le fichier page par page
+==> less et more, en fait less c'est comme cat machin | more mais en plus rapide et avec plus d'options (pour more on a q pour quitter, entree pour passer a la ligne suivante, espace pour passer a la page suivante)
+(on a pareil que more plus d'autres trucs)
+entree = page suivante
+b = retour en arriere d'un ecran
+pgUp = idem
+espace = ligne suivante 
+y = retourne une ligne en arriere
+up = idem
+q = quitter 
+d = affiche les 11 lignes suivantes soit une moitié d'ecran
+u = retourne en arriere de 11 lignes
+= = indique en bas le numero de ligne ou on est et le pourcentage du document
+/texte = surligne toutes les occurences de texte (regexp acceptees !)
+n = passe a la prochaine occurence recherchee
+N = passe a la precedent occurence recherchee 
+
+concernant tail
+-f = follow = suivre l'evolution du fichier ATTENTION, ća update le tail a chaque fois que celui-ci est modifié PAR UN > OU UN >>, si on le modifie par vim, ća marche pas !!!! (et en plus ća bloque l'update a suivre des prochains > ou >>)
+-F = idem mais en plus ća suit le fichier si celui-ci est renommé ou déplacé
+-s x = checker tous lss x secondes
+
+pour creer un fichier on utilise touch
+a la base, cette commande est faite pour modifier la date de derniere modification du fichier (pour la remplacer par celle de maintenant), 
+on peut creer plusieurs fichiers comme ća 
+touch fichier1 fichier2
+
+mkdir = cree un dossier
+-p = cree les sous-dossiers dans la foulée (s'il n'existent pas) 
+
+cp source dest = copie un fichier
+-R = recursif = copie un dossier et ses sous-dossiers s'il existent
+==> on peut utiliser le wildcard * pour copier tous les fichiers qui ont un certain pattern, genre 
+cp *.jpg ./mesImages/
+
+mv source destination = deplace un fichier (ou le renomme si la destination est la meme) 
+
+rmdir = supprime un dossier vide
+
+rm = supprime un fichier ou un dossier plein sans confirmation, sans corbeille 
+-i = demander confirmation
+-f = forcer la suppression quoi qu'il arrive
+-v = view = retourne un feedback a la suppression de chaque fichier supprime de la commande, pratique quand on supprime plusieurs centaines de fichiers et qu'on attend le retour...
+==> pareil que pour les autres commandes, on peut cumuler genre 
+rm fichier1 fichier2 fichier3
+
+la commande ln = cree des liens entre fichiers, genre des raccourcis (ln fichierPointe NouveauRaccourcis)
+ya 2 types de liens 
+- lien physique = un fichier dont il est dit qu'il a le même contenu qu'un autre fichier vers lequel il pointe = fichier qui pointe sur un inode = permet d'acceder a un contenu par differents fichiers (on ne peut pas creer de liens physiques sur des repertoires) = LIEN DUR
+- lien symbolique = fichier qui pointe sur le nom du fichier (et non sur son contenu)
+  = IL FAUT FAIRE ln -s (LE PARAMETRE -s)
+==> un fichier est constitué de 3 parties distinctes stockées a des endroits differents: (le nom, le contenu, les droits d'acces)
+==> chaque nom de fichier se voit attribuer un id = inode
+==> pour connaitre les inode d'un fichier, on fait ls -i
+==> quand plus aucun fichier ne pointe sur l'inode, celui-ci est supprimé
+
+quand on fait un ls -l, on a la 2e colonne qui est le nombre de fichiers qui partagent le même inode que celui de notre fichier, notre fichier compris ! du coup c'est comme ća qu'on sait qu'il y a un lien physique mais on ne peut pas savoir lequel, genre quel est le raccourcis. en revanche, on peut utiliser ls -i pour voir l'inode de 2 fichiers et constater qu'ils modifient le meme contenu
+
+par contre quand c'est un lien symbolique (ln -s), quand on fait ls -l, on a notre raccourcis -> notre fichier pointé (et dans la liste des droits, la premiere lettre ne sera pas - comme un fichier ou d comme un dossier mais l pour link)
+
+si on cree un lien physique entre f1 qui a un contenu et f2,
+en gros si on modifie f1, ća modifie f2 (pour simplifier, en fait c'est juste que les 2 fichiers pointent sur le meme inode qui pointe sur le même contenu)
+de même, si on modifie f2, ća modifie f1.
+sauf que si je rm f1, en gros il reste f2 qui a toujours le même contenu et qu'on peut modifier a loisir, etc
+
+si on cree un lien symbolique entre f1 qui a un contenu et f2, 
+en gros, si on modifie f1, ća modifie f2 (pour simplifierm en fait c'est juste que f2 pointe sur f1) et si on modifie f2, ća modifie f1 (en gros on modifie f1 en passant par f2 qui pointe sur f1)
+du coup si on rm f1, on a un lien symbolique cassé, c'est a dire que f2 pointe sur un fichier qui n'existe pas. ce sera un lien mort
+
+===============[ADMINSTRATION DES DROITS]===========================
+
+
+si on tape sudo su autre user
+on switch vers le compte de l'autre user
+si on tape juste sudo su
+on switch sur le compte root
+
+pour ajouter des utilisateurs, on fait
+adduser nomMembre
+pour ajouter des utilisateurs a un groupe precis on fait 
+adduser nomUser nomGroupe
+pour le supprimer on fait 
+deluser nomMembre
+
+pour ajouter un groupe on fait
+addgroup nomuGroupe 
+pour supprimer un groupe on fait 
+delroup nomDuGroupe
+
+==> REMARQUE IMPORTANTE, quand on del un user, on del juste l'acces, tous les repertoires homes sont proprio sont conservés, 
+ća veut dire que si plus tard je re cree un user du meme nom, il recupere tout le bordel
+
+Pour afficher les users du system on fait 
+cat /etc/passwd | awk -F: '{print $ 1}'
+
+le fichier /etc/passwd se lit comme suit
+nom_utilisateur:mot_de_passe:uuid:guid:commentaire:home:shell
+
+pour afficher les groupes du systeme on fait
+cat /etc/group | awk -F: '{print $ 1}'
+
+le fichier /etc/group se lit comme suit 
+nom_du_groupe:mot_de_passe:GID:liste_utilisateurs
+
+pour modifier un compte, il faut le faire DEPUIS UN COMPTE ADMIN AUTRE QUE LE COMPTE MODIFIÉ, ET, QUE LE COMPTE MODIFIÉ SOIT DÉLOGUÉ
+
+pour modifier l'identifiant d'un user, on fait 
+sudo usermod --login identifiant_nouveau_compte_a_modifier  --home /home/identifiant_nouveau_compte_a_modifier --move-home identifiant_initial_compte_a_modifier
+
+pour modifier le mot de passe, on fait
+passwd nomUser
+si on fait paswd sans preciser de compte user, ća modifiera notre pw a nous, de la session qui a lancé la commande 
+
+
+remarque: sous unix et donc sous pas mal de distrib linux, c'est les commandes useradd et userdel. C'est des fonctions plus basiques et il faut nous meme appeller passwd pour le compte nouvellement crée pour que celui-ci ai un mot de passe et qu'il soit ainsi activé
+
+pour modifier les parametes d'un compte, on utilise usermod
+-l = renomme le user (ou --login) (genre usermod -l user newUser 
+-g = change de groupe. (genre usermod -g groupe user)
+-h = change le nom du dossier home.
+
+on peut faire en sorte que le user appartienne a plusieurs groupes, grace a l'option -G
+usermod -G groupe1,groupe2,group3 nomUser
+ATTENTION, cela modifie la liste d'appartenance au groupe, pour AJOUTER des groupes, il faut utiliser -a, ce qui donne, si on combine à ce qu'on disait, 
+usermod -aG groupe1,groupe2,group3,groupe4 nomUser
+
+pour changer le groupe d'un fichier, on fait 
+chgrp newGroupe fichier
+
+chown pour changer le propriétaire d'un fichier, genre 
+chown newUser fichier
+il peut egalement changer le proprio ET le groupe, comme ceci
+chown newUser:newGroupe fichier
+-R = recursif = tres utiles pour les dossiers qui ont des fichiers et des sous-dossiers
+
+chmod pour modifier les droits d'acces (on a le droit si on est le proprio du fichier) 
+(r=4,w=2,x=1) = chmod ABSOLU
+chmod code nomfichier
+on peut aussi jouer mode par mode avec le chmod RELATIF
+chmod code fichier
+où code c'est genre (u=user, g=groupe, o=other, +=ajouter le droit, - = retirer le droit, = = affecter les droits)
+exemple 
+chmod u+x,g-r fichier (ajouter le droit de lecture au proprio du fichier et retirer le droit de lecture aux autres indiv du groupe)
+chmod o=rwx (affecter les droits rwx aux autres individus que le owner et le groupe)
+idem, on a l'option -R pour les dossiers arborescents
+
+Pour savoir de quels groupes fait partie le user logged, on fait 
+groups
+pour un user particulier, on fait 
+groups user
+
+
+==============[NANO]====================
+-m = pouvoir utiliser la souris
+-i = respect de la tabulation
+-A = quand on appuie sur la touche debut, ća va a gauche du premier caractere visible de la ligne et non au tout debut de la ligne (utile pour la programmation)
+
+on peut configurer nano avec .nanorc
+chaque user peut creer son propre fichier de config .nanorc qui se trouve dans son ~
+si le fichier .nanorc n'existe pas, nano se lance avec les options par defaut 
+
+dans le fichier de config, il y a une commande par ligne 
+on peut mettre des commentaires avec #
+chaque commande commence par un set pour activer ou un unset pour desactiver suivi de l'option qui nous interesse
+genre pour activer la souris on fait
+set mouse
+et du coup, automatiquement quand on lance nano c'est comme si on avait fait -m 
+
+en gros on fait man nano 
+on check les parametres longs (genre --param)
+si on les veut activés par defaut on fait
+set param
+si on les veut desactivés par defaut on fait 
+unser param
+
+il existe egalement un fichier nanorc (sans point cette fois !) global, commun a tous les users, pour avoir des config communes (qui sont alors modifiées en fonction des config persos dans ~)
+qui ne peut etre modifié que par root
+il est dans 
+/etc/nanorc
+
+============[CONFIGURER LA CONSOLE]===================
+on peut le faire avec .bashrc
+le .bashrc c'est pour la modification des consoles dans lesquelles on ne se logge pas (genre la console en GUI ou l'emulateur Xterm) 
+(pour les tty, qui sont des terminaux ou on se loggue, c'est le fichier .profile qui est utilisé, mais qui fait appel au bashrc donc si on modifie le bashrc on est penard)
+
+
+le fichier se trouve dans ~ (et yen a probablement un global)
+
+le bashrc global se trouve dans 
+/etc/bash.bashrc
+
+on peut creer des alias en faisant comme ća 
+alias monNouvelAlias='ma commande deja existante avec les parametres'
+le truc c'est que cet alias existera que le temps de l'execution de la console, apres il n'existe plus 
+pour qu'un alias soit perenne il faut le mettre dans le fichier ~/.bashrc
+
+en tapant juste alias dans la console, on a tous les alias definis pour l'utilisateur en cours 
+
+
+====================[APT-GET]==========================
+ce qui est decris ici est le fonctionnement de l'installation de programmes sur des linux debian ou dérivé (pour d'autres distrib c'est différent).
+sous linux, contrairement a windows, ya pas de programmes d'installation genre un executable qui fait tout le taff
+on a des paquets=sorte de fchier zippé qui a tous les fichiers du programme, et d'extension .deb
+il y a 2 caracteristiques pour les paquets
+- il gere la dependance du programme = le fait qu'on programme fonctionne rarement seul mais requiert d'autres programmes pour fonctionner (= des bibliotheques)
+- tout ce dont on a besoin est déja rassemblé sur un serveur qu'on appelle dépot(repository)
+
+
+la liste des repository sont dans /etc/apt/sources.list
+
+apt-get update = mise a jour du cache de paquets, en gros ća stocke les paquets dispo dans le repository pour anticiper une prochaine demande d'installation = utile si on change de depot ou quand on n'a pas mis a jour le cache depuis plusieurs semaines
+apt-cache search monPaquet = pour rechercher le paquet qu'on veut si on connait pas son nom exact
+apt-get install monPaquet = pour telecharger et installer notre paquet.
+
+apt-cache show nomPaquet = liste les informations du paquet.
+
+apt-get install nomPaquet = installe le paquet
+
+apt-get remove nomPaquet supprime le programme de l'ordinateur
+apt-get autoremove nomPaquet supprime le programme de l'ordinateur (et les dependances non utilisées)
+
+apt-get upgrade = mise a jour de tous les paquets
+
+
+================[le manuel]==================================
+    NAME : le nom de la commande dont vous êtes en train d'afficher le manuel ainsi qu'une courte description de son utilité.
+
+    SYNOPSIS : c'est la liste de toutes les façons d'utiliser la commande. Nous y reviendrons un peu plus loin car il est vital de comprendre ce qui est écrit dans cette section.
+
+    DESCRIPTION : une description plus approfondie de ce que fait la commande. On y trouve aussi la liste des paramètres et leur signification. C'est en général la section la plus longue.
+
+    AUTHOR : l'auteur du programme. Il y a parfois de nombreux auteurs ; c'est souvent le cas d'ailleurs avec le logiciel libre.
+
+    REPORTING BUGS : si vous rencontrez un bug dans le logiciel, on vous donne l'adresse de la personne à contacter pour le rapporter.
+
+    COPYRIGHT : le copyright, c'est-à-dire la licence d'utilisation de la commande. La plupart des programmes que vous utilisez sont certainement des programmes open source sous licence GPL, ce qui vous donne le droit de voir la source et de redistribuer le programme librement.
+
+    SEE ALSO : cette section vous propose de « voir aussi » d'autres commandes en rapport avec celle que vous êtes en train de regarder. C'est une section parfois intéressante.
+
+souvent, dans les commandes, ya un parametre -v (ou --verbose) qui correspond au mode bavard, cad qu'il y a un feedback de ce que la commande fait, genre ligne par ligne.
+
+
+pour retrouver une commande relative a un truc en particulier (en l'occurence un truc dont il est question dans le manuel)
+on fait apropos terme
+et ća va retourner toutes les commandes dont il est question du terme dans le man
+
+
+=====================[gestion de fichiers]=======================
+on peut utiliser locate nomFichier pour retrouver des fichiers dans le dd
+sauf que locate cherche dans une bdd qui contient les infos des fichiers, 
+bdd regulierement actualisée.
+
+du coup si je fais touche salut, puis que je fais locate salut, locate ne me renverra pas mon fichier 
+l'update de la bdd se fait regulierement (genre tous les n jours), mais on peut forcer 
+sa mise a jour en faisant 
+updatedb (en root)
+
+quand locate ne suffit pas, on utilise une commande encore plus puissante, la commande find
+find lui cherche dans le DD et non dans une bdd (du coup c'est plus long)
+find OU QUOI QUEFAIREAVEC
+OU = a partir de quel dossier 
+QUOI = nom du fichier, ou date de creation, ou taille, etc (on a des param pour specifier, genre -name, -size)
+QUEFAIREAVEC = les afficher, ou faire d'autres trucs, par defaut c'est -print (les afficher) mais ća peut etre different
+
+exemples
+find ./ -name "test.c" = rechercher dans le dossier courant un fichier du nom de test.c
+find ./ -size +10M - rechercher dans le dossier courant un fichier de taille de plus de 10 Mo
+find ./ -size -10M - rechercher dans le dossier courant un fichier de taille de moins de 10 Mo
+find ./ -size 10M - rechercher dans le dossier courant un fichier de taille exactement de 10 Mo
+find ./ -atime -7 = recherche das le dossier courant un fichier dont la date de dernier acces est inferieure à 7 jours.
+find ./ -type d = retourne tous les repertoires du dossier en cours
+fond ./ type f = retourne tous les ficiers du dossier en cours
+find ./ type f -printf "%p - %u \n" = retourne tous les fichiers du dossier avec un format nomFichier-nomProprio
+
+find ./ type -f -name "*.txt" -delete = supprime du dossier en cours tous les fichiers texte
+find ./ type -f -name "*.txt" -exec commande {} \ = execute la commande pour tous les fichiers trouvés, où {} dans la commande sera remplacé par le fichier trouvé, genre 
+find ./ type -f -name "*.txt" -exec chmod 600  {} \ (la commande ne doit pas etre entre guillemets et finir par un \)
+
+Concernant le -name, on peut avoir des pseudo ER, en l'occurence, * = n'importe quel caractere, du coup on peut faire des trucs genre '*~' ou '#*#'
+
+remarque pour la commande -exec, si on veut une confirmation pour chaque fichier, on peut le faire en faisant -ok 
+
+remarque, on peut utiliser un OU de cette facon
+find ./ \( -name '*~' -o -name '#*#' \)
+(ATTENTION AUX ESPACES DANS LA PARENTHESE)
+
+Enfin, si on veut explicitement dire qu'on veut afficher le resultat, a la fin de la commande on print 
+-rajoute
+
+=====================[grep]===========================
+grep retrouve un mot dans un fichier et affiche les lignes dans lesquelles ce mot est trouvé
+on peut l'utiliser avec des ER
+tres utile pour filtrer les données texte d'un fichier ou d'un input
+-i = pas case sensitive
+-n = preciser les numéros de ligne
+-v = inverser la recherche = ignorer le mot (genre tout sauf le mot)
+-r = recursif = ultra utile quand on cherche des chaines dans un dossier qui contient des fichiers et des sous-dossiers, on fait 
+grep -r chaine dossier/
+
+-E = utilisation d'ER
+
+remarque, la commande rgrep equivaut a grep -r
+et la commande egrep correspond a grep -E
+
+on peut egalement utiliser des ER, cad 
+. =Caractère quelconque
+^ = Début de ligne
+$ = Fin de ligne
+[] = Un des caractères entre les crochets
+? = L'élément précédent est optionnel (peut être présent 0 ou 1 fois)
+* = L'élément précédent peut être présent 0, 1 ou plusieurs fois
++ = L'élément précédent doit être présent 1 ou plusieurs fois
+| = Ou
+() = Groupement d'expressions
+
+remarque: en vrai le -E est facultatif puisque dans GNU, grep gere d'emblee les ER
+mais ce n'est pas le cas sous unix
+le -e et egrep ont ete conservés pour des raisons de compatibilité
+
+==================================[sort]======================
+sert a trier des chaines de caractere
+
+-o = ecrire le resultat dans un fichier texte (on aurait aussi bien pu faire > ou >> mais attention, parfois j'ai eu des soucis ou le fichier source et destination etaient le meme, on remplacait le texte quoi, sauf que ća me stockait une chaine vide, donc par securité, plutot utiliser -o je pense)
+-r = reverse
+-R = tri aléatoire = peut etre tres utile pour generer un classement aléatoire par exemple
+-n = trier des nombres du plus grand au plus petit (sinon le tri se fera par ordre alphabetique, cad le 1 puis le 11 puis le 111 etc puis le 12 etc puis le 2)
+
+
+===============[wc]=============
+= word count
+en principe c'est un compteur de mots
+tres utiles egalement pour compter le nombre de lignes 
+mais egalement compter le nombre de caractere
+ća renvoit 3 infos separées par un tab
+le nombre de ligne [tab] le nombre de mots [tab] le nombre d'octets du fichier
+
+-l = retourne juste le nombre de lignes 
+-w = retourne juste le nombre de mots
+-c = compter le nombre d'octets
+-m = compte le nombre de caracteres (EOL et \n compris)
+
+
+=======[uniq]================
+= permet de detecter et supprimer les doublons
+= tres pratique quand on a des fichiers avec des lignes en doublons
+
+= ne repere que les lignes successives identiques et si elles sont identiques, il n'en affiche qu'une seule
+
+de meme que sort, on peut rediriger pour ecrire dans un autre fichier avec > ou >> 
+ou alors on peut faire genre 
+uniq monFichier monFichierNouvellementEcrit
+
+
+-c = precise le nombre de fois où la ligne est présente en début de ligne 
+-d = afficher que les lignes doublon (si une ligne est ecrite 2 fois identique successivement, elle sera retournee, mais une fois quoi)
+
+
+================[cut]=========
+pour ne conserver que les caracteres i à j de chaque ligne., genre 
+cat -c 2-5 "salut tout le monde"
+retourne
+"alut"
+==> ATTENTION, ici le premier caractere on considere qu'il est en position 1 et non pas 0 comme c'est souvent le cas
+
+==> ATTENTION, cut, pour couper, se base sur le nombre d'octets, sauf que ća marche pour des caracteres ascii compris entre 0 et 255, si ya des caracteres spéciaux genre avec des accents et tout, ća va pas couper comme on s'y attend
+
+-d = cuter en fonction d'un delimiteur 
+-f = indique le numéro du ou des champs a couper (genre a,b,c si on cut avec -d , avec -f 1 on renvoit a, avec -f 2 on renvoit b et avec -f 3 on renvoit , si on fait -f 4, ća renvoit les lignes vides)
+
+on peut egalement conserver plusieurs champs en faisant -f 2- par exemple
+
+================[la redirection]==============
+
+quand on ne veut rediriger le resultat nulle part, ni dans un fichier, ni dans une commande, ni dans la console, on le redirige vers 
+/dev/null qui est le trou noir de linux
+
+ya 2 types de sorties en console, 
+la sortie standard et la sortie erreur
+
+dans les 2 cas, ća s'affiche dans la console
+
+pour rediriger ce qui va dans la sortie standard vers un autre truc, on fait 
+> ou >>
+
+pour rediriger ce qui va dans la sortie erreur vers un autre turc, on fait 
+2> ou 2>> 
+
+
+si on veut fusionner les sorties, genre on veut que ce qui sort dans la sortie standard et dans la sortie erreur soient coupler pour aller au meme endroit, on fait (redirection de la sortie err vers la sortie standard)
+2>&1 = on redirige avec 2>, vers la sortie standard qui est notée &1
+
+on fait genre 
+cat fichierinexistant > fichiererreur.txt 2>&1
+
+
+remarque, sous linux il est rare d'avoir besoin de redemarrer le systeme, en general on a besoin de reboot que quand on met a jour le noyau c'est tout 
+pour lancer gnome depuis un tty on fait /usr/bin/gnome
+
+on a vu que | > et >> permettait de rediriger l'output vers un fichier, genre 
+cat fichier | more
+ou bien genre 
+cat fichier >> fichierTexte
+
+Ya une variante mais pour l'input, c'est < et <<
+on fait genre 
+cat < notes.txt
+cad qu'on dit explicitement que l'input de cat, ça va etre ce qu'il y a dans notes.txt
+remarque, on aurait egalement pu faire 
+cat fichier | cat 
+qui revient a la meme chose, cad qu'on afficher cat et on redirige la sortie standard sur cat qui va donc afficher le texte quoi
+
+quand on fait
+cat fichier
+le programme cat recoit en input le nom du fichier fichier
+le programme cat ouvre ensuite le fichier en question pour afficher son contenu lui-même, 
+
+quand on fait 
+cat < fichier
+le programme cat recoit directement le contenu du fichier, qu'elle affiche directement dans la console. 
+c'est le shell qui fait le taff d'ouvrir le fichier et d'envoyer son contenu au programme cat
+
+concernant <<, ça sert a entrer des trucs au clavier
+genre 
+sort << FIN
+ca va nous permettre d'entrer des trucs jusqu'à ce qu'on tape FIN et alors chaque ligne tapée sera triée sauf la derniere qui est FIN
+
+on peut genre compter le nombre de caracteres comme ça 
+wc -m << fin
+combien de char dans la phrase ? 
+fin
+31
+
+on peut bien sur combiner tout skon a vu comme ça 
+sort -m << FIN > fichierTri 2>&1
+coucou tout le monde 
+FIN
+
+enfin, le pipe sert a chainer les commandes, cad que l'output d'une commande soit l'input d'une autre
+
+exemple de chainage sympa, afficher le nom des fichiers de /var/log qui contiennent le kw log
+
+w affiche qui est loggé et ce qu'il fait
+(uptime c'est la durée de fonctionnement de l'ordi) ==> ya une commande uptime qui retourne ça 
+(les 3 nombres qui sont a la fin c'est la charge, c'est a dire le pourcentage du temps ou le CPU est sollicité par des programmes, pour un 1coeur, au delà de 1 il est sursollicité et ça va pas, pour un dualcoeur, c'est 2, pour un ncoeur c'est n)
+(le premier nombre c'est depuis une minute, le second depuis 5 min, le 3e depuis 15min).==> on peut avoir une interpretation graphique de l'evolution de cá avec la commande tload
+
+la commande ps permet de lister de facon statique les processus lancés, cad la liste des processus au moment ou je fais la commande
+ya alors 3 colonnes, 
+le pid
+la durée durant laquelle le processus a occupé le cpu
+cmd = le truc qui a lancé le processus
+
+ps sans arg, ça affiche tous les processus lancés par le meme user, donc pas grand chose
+pour lister tous les processus on fait ps -ef
+
+
+ps -ejH = afficher les processus en arbre
+ps -u username = liste que les processus lancés par username (si on met pas username, ça considere que username=nous) 
+
+top en revenche liste les processus de facon dynamique, cad que la liste est mise a jour tous les 
+pour afficher l'aide de top on fait h 
+pour fermer top on fait ctrl C ou q
+B = mettre en gras certains elements 
+f = ajoute ou supprime des colonnes de la liste
+F = filter = change le parametre sur lequel on se base pour trier
+u = filtre en fonction du user qu'on veut
+k = pour killer un processus 
+s = pour changer le temps de rafraichissement 
+
+pour killer un processus on fait 
+kill pid
+ça le tue gentillement 
+si c'est pas suffisant, on le tue mechamment en faisant
+kill -9 pid
+on peut aussi tuer plusieurs processus en faisant
+kill -9 pid1 pid2 pid3 
+ou simplement gentillement 
+kill pid1 pid2 pid3
+
+
+on a aussi killall qui kill tous les processus issus d'un meme programme, le parametre c'est le nom du programme et non un pid, genre 
+killall chrome = tue tous les processus chrome
+
+Il est possible de lancer dans le mode console des programmes en arriere-plan (super utile quand on a lancé une commande qui met du temps a s'executer)
+pour ça on fait commande & 
+on rajoute & a la fin
+ça retourne 
+[n] pid (n le numéro du programme lancé en arriere-plan, si c'est le premier, c'est [1] si c'est le 5e c'est [10] etc) et pid le pid du processus lancé
+
+du coup, je peux continuer a taper des commandes mais j'aurais quand meme un retour dans la console avec les output, c'est tres chiant et casse l'interet du rtuc
+mais ça peut etre utile si j'output le resultat dans un fichier et que au lieu d'attendre devant la console bloquée, je puisse a nouveau prendre la main
+
+par contre, si je ferme la console, le programme en arriere plan s'arrete, 
+==> pour ça, on peut detacher le processus de la console, avec nohup en faisant 
+nohup macommande
+==> et ça ecrit les output dans ~/nohup.out (ça les ajoute a la suite a chaque fois qu'on fait une commande, on peut le vider quand on veut, ou rediriger la sortie avec > ou >>)
+tres utile sur un server notamment, où on lance un programme et on se casse, bah on va fermer la console donc ça marche pas, heureusement, nohup est là
+==> en fait, nohup commande, c'est pareil que faire commande > ~/nohup.out 2>&1 &
+
+ctrl + C = cancel un programme 
+ctrl + Z = met en pause le programme
+
+une fois qu'on a un processus en pause, on peut le relancer en foreground en faisant
+fg %n (n c'est le numéro du processus, != pid)
+
+pour faire pareil mais en background, on fait
+bg %n 
+
+pour avoir la liste des processus en arriere-plan (qui tourne en bg ou en pause)
+on fait 
+jobs
+
+il existe un programme du nom de screen qui permet d'avoir plusieurs consoles dans une seule
+ça permet notamment de mettre une console en veille par exemple, genre quitter la console et revenir plus tard pour la retrouver dans l'état dans lequel on l'a retrouvé
+quand on fait 
+screen 
+ça ouvre une console émulée
+
+sous screen, tout fonctionne a base de raccourci ctrl+a+touche
+Les raccourcis les plus utiles sont
+Ctrl + a puis c : créer une nouvelle « fenêtre ».
+Ctrl + a puis w : afficher la liste des « fenêtres » actuellement ouvertes. En bas de l'écran vous verrez par exemple apparaître : 0-$ bash  1*$ bash. Cela signifie que vous avez deux fenêtres ouvertes, l'une numérotée 0, l'autre 1. Celle sur laquelle vous vous trouvez actuellement contient une étoile * (on se trouve donc ici dans la fenêtre n° 1).
+Ctrl + a puis A : renommer la fenêtre actuelle. Ce nom apparaît lorsque vous affichez la liste des fenêtres avec Ctrl + a puis w.
+Ctrl + a puis n : passer à la fenêtre suivante (next).
+Ctrl + a puis p : passer à la fenêtre précédente (previous).
+Ctrl + a puis Ctrl + a : revenir à la dernière fenêtre utilisée.
+Ctrl + a puis un chiffre de 0 à 9 : passer à la fenêtre n° X.
+Ctrl + a puis " : choisir la fenêtre dans laquelle on veut aller.
+Ctrl + a puis k : fermer la fenêtre actuelle (kill).
+Ctrl + a puis d : mettre en pause screen pour revenir a la console de depart. (en fait, les consoles screen continuent de tourner comme un nohup)
+			==> on retrouve notre screen en faisant screen -r
+
+Ctrl + a puis S : split horizontal
+Ctrl + a puis | : split vertical
+Ctrl + a puis Q : Unsplit All
+Ctrl + a puis tab: passe d'un split a l'autre
+
+
+pour découper le screen en plusieurs parties, on fait ctrl+a puis S (split)
+ça découpe l'éran en 2 pour avoir 2 consoles a la fois
+on peut le faire indéfiniement pour en avoir 3, 4, 5, 6, etc 
+
+
+pour passer d'une console a l'autre on fait ctrl+a+tab
+pour fermer la fenetre split active (sans fermer la console correspondante) on fait 
+ctrl+a+X
+
+on peut mettre en pause screen et retrouver la console de depart, on parle de detacher l'écran, en faisant ctrl+a+d (les consoles continuent de tourner derriere comme nohup)
+pour retrouver les écrans on fait screen -r
+si on a plusieurs sessions de screen ouvertes, on nous les listera (avec leur id) et on devra rerentrer la commande en precisant quelle session on veut
+screen -r 20930
+
+pour afficher les screen ouverts, on fait 
+screen -ls
+
+il est possible de configurer screen avec le fichier .screenrc qui se trouve dans ~/
+yen a un pas mal avec systematiquement l'heure, le nom de la machine ou on est, la charge et la liste de fenetres ouvertes, c'est celui de "bennyben"
+
+================
+
+la commande sleep n (n=nombre de secondes) met en pause pendant n secondes
+
+remarque, on peut effectuer plusieurs commandes dans une seule instruction en les separant par un ; genre 
+on peut aussi utiliser && qui fait pareil mais que si l'instruction precedent s'est correctement executée, cad si elle ne renvoit pas d'erreur
+
+
+on peut egalement executer des commandes en differé, cad retarder leur lancement 
+pour ça on fait 
+at hh:mm(:ss) (MM/JJ/AA)
+ya un prompt qui s'affiche et qui nous demande de rentrer les commandes, on les rentre les uns a la suite des autres
+puis quand on a fini on fait ctrl+D, ce qui affiche <EOT> et voila
+
+remarque, 
+on peut aussi utiliser le kw tomorrow plutot que la date 
+on peut egalement utiliser now pour designer maintenant 
+on peut egalement utiliser des operateurs, genre now +5 minutes
+cad
+now +n unites (minutes/hours/days/weeks/months/years)
+
+pour avoir la liste des taches planifiées on fait 
+atq
+
+pour supprimer/annuler une tache en attente, on fait 
+atrm numtache (num qu'on obtient en faisant atq)
+
+
+crontab permet de planifier des commandes, cad des executions a intervalle regulier, (c'est le programme cron qui s'occupe d'executer les trucs selon la planification, crontab lui, permet de modifier la liste et les caracteristiques des programmes planifiés)
+-l afficher la liste
+-e = modifier la liste
+-r = supprimer la liste ATTENTION C'EST IMMEDIAT ET SANS CONFIRMATION 
+
+en principe il y a un crontab par user,
+quand on fait crontab -l ça affiche le crontab du user en cours
+quand on fait crontab -e, ça va ouvrir le fichier de config de crontab (crontabrc) pour pouvoir le modifier
+on fait une plannification par ligne, avec cette syntaxe
+minutes(0-59) heure(0-23) jourDuMois(1-31) Mois(1-12) jourDeSemaine(0-6, 0=dimanche) commande
+si on met une * a la place du parametre, ça veut dire "pour tout"(mois, année, etc)
+genre si je veux effectuer une commande tous les jours a 15h47, je fais
+47 15 * * * commande
+
+pour chaque champs, on peut mettre 
+- un nombre, genre 5
+- * = pour dire que c'est pour n'importe quel nombre
+- nombre,nombre,nombre genre 3,4,5 = pour dire que c'est pour les valeurs 3 ou 4 ou 5
+- nombre-nombre genre 3-5 = pour fire que c'est pour les valeurs comprises entre 3 et 5
+- */nombre genre */3 = executé tous les multiples de 3 (genre 0h, 3h, 6h, etc) = plus généralement, executé toutes les nombre unité
+
+remarque, d'habitude on modifie directement le fichier de config, genre vim .crontabrc  
+mais là on passe par la commande crontab -e, ça permet a crontab de parser skon a fait et de valider ou pas pour eviter qu'on fasse des conneries, pourquoi pas.
+
+on ne peut pas avoir de frequence plus elevée que toutes les minutes avec cron
+
+remarque importante, avec crontab, c'est cron qui execute la commande et non la console, il n'y aura pas de retour console, si on veut capter le retour de la commande, il faut rediriger sa sortie vers un fichier, genre 
+#effectuer la commande tous les jours a 7h et recuperer le resultat de sa sortie standard et erreur
+0 7 * * * commande >> ~/resultat.log 2>&1
+
+
+==============================[compression]========================================
+Ya des formats tres utilisés et proprietaires qui existent genre zip ou rar
+ya aussi des alternatives libres comme gzip et bzip2
+==> gzip est plus utilisé et plus rapide mais moins performant que bzip2
+==> bzip2 est mois utilisé et compresse mieux que gzip mais il est plus lent
+
+ces 2 alternatives ne peuvent compresser qu'un seul fichier a la fois, on ne peut donc pas créer de paquetages 
+pour faire des paquetages on utilise tar
+
+du coup le mieux c'est de prendre tous les fichiers, les compresser dans un tar, puis de compresser le fichier tar avec gzip ou bzip2
+
+tar nomNouvelArchive dossier/
+-c = cree une archive tar
+-v = afficher le detail de l'operation = verbose
+-f = assembler l'archive dans un fichier
+
+on peut afficher le contenu de l'archive sans l'extraire
+pour ça on fait 
+tar -tf archive.tar
+
+pour ajouter un fichier a un tar pre-existant, on fait 
+tar -rvf archive.tar fichierAajouter
+
+pour décompresser un tar, on fait
+tar -xvf archive.tar
+
+
+
+concernant gzip et bzip2, 
+pour compresser on fait 
+gzip fichier
+==> ça genere un fichier.tar.gz
+ATTENTION, ça REMPLACE le fichier existant ! (a la difference de tar qui concerve le dossier)
+
+pour décompresser on fait 
+gunzip fichier.tar.gz
+
+
+pour bzip2 c'est pareil, pour compresser on fait 
+bzip2 fichier.tar
+et pour décompresser on fait 
+bunzip2 fichier.tar.bz2
+
+remarque: historiquement on divisait en ces 2 etapes, mais on a fait evoluer tar pour qu'il appelle gzip un bzip2 pour faire ce qu'il a à faire: 
+on fait comme ça (-z pour utiliser gzip, -j pour utiliser bzip2, option A METTRE EN PREMIER POUR QUE ÇA FONCTIONNE)
+tar -zcvf nomNouvelleArchive dossier/
+ou 
+tar -jcvf nomNouvelleArchive dossier/
+pour décompresser il suffira de faire
+tar -zxvf archive.tar.gz
+ou 
+tar -jcvf archive.tar.bz2
+
+
+de meme qu'on peut afficher le contenu d'un fichier tar sans le decompresser,
+il est possible d'afficher le contenu d'un fichier gzip sans le decompresser 
+pour ça on fait
+zcat fichier  (decompresse a la volée et afficher le resultat dans la sortie standard)
+(zmore pareil mais avec un more
+zless pareil mais avec un less)
+
+pour pas s'emmerder on pourrait faire simplement 
+zcat fichier | more
+ou 
+zcat fichier | less
+mais bon...
+
+
+on peut décompresser 
+un fichier zip ou rar sous linux, pour ça on fait
+unzip archive.zip
+(on peut voir le contenu de l'archive sans la décompresser en faisant unzip -l archive.zip)
+
+si on veut creer un zip, on fait 
+zip -r nomNouvelleArchive.zip dossier/
+(si on ne met par le -r, ça compresse juste le dossier vide, -r pour recursif)
+
+pour les rar, on fait comme ça
+unrar e fichier.rar (ouais ouais, pas de tiret devant le param du e, faut le savoir, chiant a souhait !)
+(on peut lister le contenu sans décompresser avec l'option l, genre unrar l fichier.rar)
+PAR CONTRE ON NE PEUT PAS CREER DE RAR, c'est un format propriétaire, la méthode de décompression est publique mais pas la compréssion, pour le faire il faut acheter le logiciel
+
+===================[SSH ET PUTTY]=======================
+
+pour que linux soit capable d'accepter des connexion depuis la distance (intranet ou internet) on fait 
+sudo apt-get install openssh-server 
+
+une fois que le truc est installé, on peut, depuis un autre ordinateur, se connecter au linux
+- depuis n'importe quel autre linux, en faisant
+ssh loginLinux@ipLinux (si on est sur linux, il faut donc connaitre l'ip du server et avoir un login et le mot de passe du user du server) 
+- depuis un ordi windows avec putty, 
+on ouvre le logiciel, on rentre l'ip et il nous demande un login et un mdp et voila (c'est plus lent qu'avec un linux ou un linux beta sur windows)
+
+
+pour telecharger des fichiers, on fait 
+wget url
+
+on peut arreter le telechargement a tout moment avec ctrl+C
+on peut le reprendre a tout moment en faisant 
+wget -C url (si le fichier tronqué n'a pas été supprimé)
+
+pour lancer un dl en tache de fond, on peut bien entendu faire 
+nohup wget url
+ou meme
+wget url > /dev/null 2>&1 & 
+ou tout simplement 
+wget --bacground url
+
+on connaissait la commande cp source destination pour copier un fichier sur les ordis 
+il y a aussi la commande scp (secure copy) qui fait pareil d'un server a l'autre 
+on fait 
+scp source destination 
+
+pour copier un truc d'un server vers notre ordi, on fait 
+scp login@ip:chemin/fichier chemin/fichierDL
+
+pour copier un truc de mon ordi vers un server je fais
+scp chemin/monfichier login@ip:chemin/monfichierUL
+
+remarque, dans les 2 cas, si je ne veux pas changer le nom, je fais
+scp login@ip:chemin/fichier chemin/
+ou
+scp chemin/ login@ip:chemin/monfichierUL
+
+remarque2: si on veut utiliser un port autre que le port 22 proposé par défaut, on fait 
+scp -P port <le reste de la commande reste inchangée> 
+
+
+======================[FTP]=======================
+
+on peut egalement utiliser le protocole ftp
+FTP (File Transfer Protocol) est un protocole permettant d'échanger des fichiers sur le réseau. Il est assez ancien (1985) et toujours utilisé à l'heure actuelle pour transférer des fichiers.
+
+pour se connecter a un serveur ftp on fait 
+ftp serveur.ext
+genre 
+ftp ftp.debian.org
+
+on entre alors notre login et mdp et voila
+(remarque, pour les ftp publiques on utilise le login anonymous)
+
+les commandes sont les memes que dans linux, 
+ls 
+pwd 
+cd
+
+put = envoie un fichier sur le serveur ftp 
+get = dl un fichier depuis le serveur 
+
+pour connaitre dans quel dossier on est sur l'ordi (et donc savoir où seront dl les trucs qu'on va dl sur le ftp), on fait 
+!pwd
+de meme, pour changer de localisation on fait 
+!cd 
+on peut egalement faire !ls
+
+pour supprimer un fichier sur le ftp par contre c'est delete 
+on a toutes les infos en faisant man ftp
+
+ATTENTION, ftp n'est pas crypté (l'échange de données se fait en clair), du coup il vaut mieux utiliser un protocole securisé
+pour ća ya 
+sftp
+qui repose sur ssh 
+
+(remarque, avec sftp, pour delete on fait rm cette fois ! )
+
+on fait donc genre 
+sftp login@serveur.ext
+(on nous demande le pw par la suite)
+
+on peut egalement spécifier un port en faisant
+sftp -oPort 123456 login@serveur.ext 
+
+
+========================[rsync]=========================
+rsync est un programme permettant de synchroniser 2 dossiers sur la meme machine ou sur 2 machines reliées par un reseau 
+en general, rsync sert pour les sauvegardes INCREMENTIELLES, cad copier que les nouveaux elements du dossier dans le 2e dossier lorsque celui-ci est modifié (c'est le meme principe que dropBox quoi...)
+
+en general, on le fait plutot pour 2 dossiers sr 2 ordis différents pour faire des backup, mais bon, ća peut etre pour le meme dossier genre pour 
+modifier les 2 en meme temps puis arreter le rsync pour faire une sorte de fork.
+
+on fait comme ća 
+rsync dossierSource dossierDestination
+    -a : conserve toutes les informations sur les fichiers, comme les droits (chmod), la date de modification, etc. ;
+    -r : sauvegarde aussi tous les sous-dossiers qui se trouvent dans le dossier à sauvegarder ;
+    -v : mode verbeux, affiche des informations détaillées sur la copie en cours.
+
+ATTENTION, dans ce cas, rsync ajoute les nouveaux fichiers sans detruire les anciens du dossier dest 
+pour cela, il faut ajouter l'option 
+--delete
+
+si on veut que les fichiers qui ont été supprimés restent mais prennent un nom special pour spécifier qu'ils ne sont plus dans le repertoire source 
+on fait --backup-dir=/cheminVersLeRepertoireAbsolu
+
+pour copier entre 2 ordis via ssh, on fait: 
+rsync -arv --delete --backup --backup-dir=/home/mateo21/fichiers_supprimes dossierSource/ login@IP_du_serveur:DossierDest/
+
+remarque, si ssh ecoute sur un autre port que celui par defaut ou autre, on peut comme d'hab spécifier le port comme suit
+rsync -arv --delete --backup --backup-dir=/home/mateo21/fichiers_supprimes dossierSource/ login@IP_du_serveur:DossierDest/ -e "ssh -p 123456"
+(en fait, le -e permet de spécifier une chaine qui correspond a la facon dont on va lancer ssh pour faire le transfert, ultra pratique)
+
+======================[ecouter le trafic]===================================
+
+ipv4 c'est un truc comme ça: 
+92.102.174.166
+
+les ipv6 c'est plutot un truc comme ça
+fe80::209:62fa:fb80:29f2.
+
+comme c'est generalement plus simple de retenir des mots que des nombres, c'est pour ça qu'on utilise des noms d'hotes
+
+pour connaitre l'ip un hote ou le nom d'hote d'une ip, on fait 
+host hote 
+ou 
+host ip
+
+il est possible de creer nos propres correspondances personnalisées sur notre ordi linux entre ip et host, genre je tape www.grosSite2merde.com et hop je tombe sur le site de la has
+
+pour ça on a le fichier /etc/hosts 
+dnas lequel ya une liste de correspondance 
+ip<tab>	nomHote
+
+ça peut etre pratique quand on est sur le réseau, avec d'autres machines, de ne pas avoir a se focaliser sur leur ip mais directement sur le fait que ce soit telle machine, en utilisant un nom d'hote. 
+
+
+tout nom de domaine doit specifier (c'est obligatoire)
+- un nom et un prenom 
+- une adresse
+- un moyen de contact 
+
+==> le programme commande whois permet d'obtenir ça facilement
+
+ifconfig liste les interfaces reseau = les moyens de se connecter aux reseaux
+en general on a 
+eth0 = connexion par cable ethernet rj45 (si ya plusieurs ports ethernet sur l'ordi on peut avoir aussi eth1, eth2, eth3, etc). 
+
+lo = c'est la boucle locale, c'est genre tout ce qu'on envoit par là arrive directement sur l'ordi, un truc qui pointe sur nous-meme quoi. ça peut parfois etre utile
+
+wlan0 = connexion sans fil type wifi (de meme, si l'ordi en a plusieurs, on pourra egalement avoir wlan1, wlan2, wlan3, etc)
+
+concernant ifconfig, on peut s'en servir pour activer ou desactiver une interface reseau
+on fait comme ça
+ifconfig interface etat(up pour activer, down pour desactiver)
+genre 
+ifconfig eth0 down
+
+
+
+on peut avoir des statistiques de reseau en utilisant netstat -i 
+affiche l'activité de chaque interface reseau (pour plus d'infos faut aller se documenter)
+
+netstat -uta affiche toutes les connexions en cours et leur statut
+-u = afficher les connexions udp
+-t = afficher les connexions tcp
+-a = afficher toutes les connexions quelles que soient leur etat (udp c'est plus pour les trucs comme skype, tcp c'est le protocole le plus utilisé)
+-n = afficher les numeros de ports de maniere claire 
+-s = afficher les stats resumées
+
+niveau statut on a: 
+listen = a l'écoute des connexions entrantes = en gros ya pas de connexion mais on ecoute au cas ou il y aurait une demande de connexion (exemple ssh)
+established = connexion etablie avec un ordi distant
+time_wait = la connexion attend le traitement de tous les paquets encore sur le reseau avant de commencer la fermeture
+close_wait = le serveur distant a fermé la connexion lui-meme parce que (inactivité trop longue, traitement trop long, etc ya pleins de raisons) 
+closed = connexion non utilisée 
+closing = fermeture de connexion entamée mais toutes les données n'ont pas encore été envoyées
+
+generalement les pages web utilisent le port 80
+pour les emails c'est en general le port 110
+pour le ftp c'est 21
+pour le ssh c'est 22
+
+pour n'afficher que les connexions listen, on fait
+netstat -lt
+
+
+=====================[le pare-feu iptables]=================================
+
+en gros ça permet de determiner des regles genre
+- qui a le droit de se connecter a la machine via tel port, en entrée ou en sortie
+- filtrer en fonction du user, de l'ip, du programme, etc
+
+genre si je veux empecher toute connexion ftp, je dis que personne n'a le droit de faire de stream en entrée ou en sortie sur le port 21
+
+on va voir la base de iptable, mais il est capable de faire bien plus et est mega puissant
+
+pour manipuler iptable il faut etre root
+
+ATTENTION C'EST IPTABLES AU PLURIEL
+
+pour afficher les regles on fait 
+iptables -L
+
+on a alors 3 sections
+- Chain input = correspond aux regles concernant le trafic entrant
+- Chain forward = regles concernant la redirection du trafic
+- chain output = regles concernant le trafic sortant
+
+quand ya marqué policy accept, ça veut dire que tout le traffic est accepté
+en gros ça veut dire que le pare-feu ne fait rien 
+
+quand ya marqué policy drop, ça veut dire qu'on bloque tout sauf les stream spécifiés
+
+
+quand ya des regles definies, ya differentes colonnes
+- target = ce que fait la regle (genre autoriser un port ou une ip sur un port)
+- prot = le protocole utilisé (tcp, udp, icmp) icmp c'est pour les requetes de type ping
+- source = l'IP de la source. genre pour INPUT, la source est l'ordinateur distant qui se connecte a nous
+- destination = l'IP de destination, pour OUTPUT c'est l'ordinateur auquel on se connecte
+- la derniere colonne = indique le programme : le port (écrit en toute lettre, pour l'avoir en numérique on fait iptables -Ln)
+
+iptable -F = reinitialise toutes les regles de iptables (genre all open pour tous les ports, pas de regles)
+
+pour ajouter ou supprimer des regles, on fait comme suit: 
+iptables -A chain = (ajoute une regle pour la chaine spécifiée genre input ou ouput p.ex, E FIN DE LISTE !) 
+iptables -D chain rulenum = del la regle num rulenum de chain 
+iptables -I chain rulenum = insere une regle a la position rulenum dans la chaine chain. SI ON NE SPECIFIE PAS DE RULENUM, ÇA L'AJOUTE EN DEBUT DE LISTE)
+
+iptables -R chain rulenum = remplace la regle spécifiée
+iptables -P chain regle = modifie la regle par defaut pour la chain (pour definir genre policy drop ou policy accept)
+
+
+de maniere generale, pour ajouter une regle on fait 
+iptables -A chain(INPUT/OUTPUT) -p protocole(TCP/UDP/ICMP) --dport  port -j decision(ACCEPT/REJECT/DROP=ignorer)
+
+exemple 
+iptables -A INPUT -p tcp --dport ssh (on pourrait mettre 22) -j ACCEPT
+
+on peut également rajouter -i interface pour spécifier une interface, 
+et -m qui specifie le statut des connexions (genre celles qui sont déja ESTABLISHED par exemple) 
+
+ATTENTION, LES MODIFICATIONS DE IPTABLES REVIENNENT AUX REGLAGES PAR DEFAUT AU REDEMARRAGE DE LA MACHINE !!
+
+le seul moyen pour que ça soit tout le temps comme ça au démarrage c'est de créer un script qui va s'executer au démarrage et modifier iptables
+
+========================[installation particuliere de programmes]==================
+
+parfois il y a des programmes qu'on ne peut pas installer via apt-get ou apt install 
+
+dans ce cas il faudra faire une installation manuelle en recuperant les sources et en les compilant pour obtenir le programme...
+
+en gros
+- on recupere les sources, dans un gzip 
+- on les dezip 
+- on les compile
+==> et voila
+
+les paquetages de debian et derivés sont des fichiers.deb (pour redhat c'est .rpm)
+on peut convertir des .rpm en .deb avec le programme alien
+
+le truc c'est que si jamais ya pas de paquetage generique pour toute machine, et qu'on trouve pas de .deb compatible avec notre machine c'est la merde
+
+du coup skon fait c'est qu'on recupere le code source du programme et on le compile sur notre machine comme ça on a le programme optimisé spécifiquement pour notre machine. 
+
+
+pour ça on fait comme ça
+1) on telecharge les dernieres sources du programme (en tar) 
+2) on les detar dans un dossier 
+3) on lance l'executable ./configure = il va parser notre linux pour voir si on a tout skil nous faut pour compiler le programme comme il faut
+4) s'il nous manque des trucs, faut aller les chercher sur le net en mettant le message d'erreur
+5) une fois que configure ne retourne plus d'erreur, on lance la compilation avec la commande make
+6) une fois la compilation faite, on lance l'installation de l'executable en faisant
+sudo make install 
+7) et voila
+8) pour desinstaller, on fait sudo make uninstall
+
+
+
+
+
+
+
+==========================[Scripting shell]==================
+
+il existe differents shell, plus ou moins adaptés a skon veut faire 
+
+sh : Bourne Shell. L'ancêtre de tous les shells.
+
+bash : Bourne Again Shell. Une amélioration du Bourne Shell, disponible par défaut sous Linux et Mac OS X.
+
+ksh : Korn Shell. Un shell puissant assez présent sur les Unix propriétaires, mais aussi disponible en version libre, compatible avec bash.
+
+csh : C Shell. Un shell utilisant une syntaxe proche du langage C.
+
+tcsh : Tenex C Shell. Amélioration du C Shell.
+
+zsh : Z Shell. Shell assez récent reprenant les meilleures idées de bash, ksh et tcsh.
+
+
+un script sh est compatible avec tous les shells, mais un script csh n'est pas compatibles avec les autres shell (sauf zsh)
+
+
+il est possible de télécharger et installer tout shell qui tourne sur linux, avec genre apt-get 
+
+ensuite, pour changer de shell on fait 
+chsh 
+= change shell 
+==> on nous demandera alors de rentrer le chemin du shell a utiliser
+
+===========[sed]================
+permet de remplacer du texte dans un stream avec des regexp
+
+
+
+=========[tr]==========
+remplace ou supprime des char dans une string
+
+========[diff]=======
+permet de comparer 2 fichiers texte ligne par ligne
+
+
+
+
+
+
+
+
+
+
+
+

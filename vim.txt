@@ -1,0 +1,235 @@
+pour afficher le numero des lignes on fait 
+:set nu
+
+pour enlever les numeros de lignes on fait 
+:set nonu
+ou 
+:set nu! 
+
+
+pour se deplacer dans le document, on peut faire
+- les fleches haut-bas-gauche-droites
+- les lettres k-j-h-l
+
+pour se placer en debut et fin de ligne on fait
+- ^ et $ 
+- 0 et $
+- origine et fin
+
+pour se déplacer de mot en mot on fait
+w
+
+pour enregistrer on fait 
+:w
+
+pour quitter on fait 
+:q
+
+pour enregistrer et quitter on fait
+:wq
+
+pour effacer la lettre au dessus du curseur c'est 
+x
+
+pour effacer les k lettres du curseur vers la droite, c'est
+kx
+(ça n'affichera pas le k quand on le tapera mais il sera pris en compte). 
+
+pour supprimer la ligne entiere (couper en fait) on fait 
+dd
+
+pour pour supprimer k lignes (vers le bas) on fait 
+kdd
+
+
+pour supprimer un mot, on fait 
+dw
+
+pour supprimer k mots, on fait 
+kdw
+(je crois que t'as pigé le truc...)
+ou alors 
+d3w
+
+
+pour supprimer les letters du curseur au debut de la ligne, on fait
+d0
+
+pour supprimer du curseur a la fin de la ligne on fait
+d$
+
+pour copier une ligne, on fait
+yy
+pour copier k lignes on fait 
+kyy
+
+pour copier un mot on fait 
+yw
+pour copier k mots on fait 
+kyw
+
+pour copierla ligne du curseur au debut de la ligne on fait 
+y0
+pour copier la ligne du curseur a la fin de la ligne, on fait 
+y$
+
+pour coller le texte copié on fait 
+p
+(ce qui insère le texte collé depuis le curseur, \n compris)
+si on veut copier lachaine k fois, on fait 
+kp
+
+
+pour remplacer une lettre par une lettre L on place le curseur surune lettre et on fait 
+rL
+
+si on fait R, on passe en mode remplacement, qui est comme le mode insertion mais saufque on ne peut que remplacer ou supprimer des caracteres, pas en rajouter.
+
+pour undo on fait 
+u 
+(ou ku pour le faire plusieurs fois)
+
+pour dé-annuler on fait ctrl+r
+
+en bas a droite de vim on a untruc genre x,y 
+x c'est le numero de ligne ou est le curseur
+y c'est la position charAt du curseur 
+
+pour placer le curseur a la ligne k on fait 
+kG 
+
+pour aller a la derniere ligne on fait 
+G
+
+pour aller a la premiere c'est 
+gg
+
+
+========[fonctions avancées]===========
+
+pour rechercher un mot avec des regexp, on fait 
+/exp
+genre 
+/[gb]ras
+==> ca lance la recherche depuis le debut du fichier vers la fin
+==> pour la lancer de la fin vers le debut on fait ? au lieu de / genre 
+?exp 
+genre
+?[bg]ras
+
+pour passer a l'occurence suivante on fait 
+n
+
+
+pour remplacer toutes les occurences d'une chaine, on fait 
+:s /ancien/nouveau/option
+genre
+:s /ancien/nouveau
+==> ça ne remplace que la premiere occurence.
+:s /ancien/nouveau/g
+==> remplace toutes les occurences de la ligne où se trouve le curseur 
+
+si on fait 
+:#,#s /ancier/nouveau/g
+ća remplace toutes les occurences en question des lignes # à #, genre 
+:3,10s /ancier/nouveau/g
+
+
+Enfin, un truc ultra intéressant, c'est l'insertion de fichier, genre 
+si je veux mettre le contenu d'un fichier texte dans mon fichier texte, je fais 
+:r chemin/autrefichier
+IMPORTANT: L'autocompletion du fichier fonctionne
+
+
+coucou tout le monde
+Je suis le petit lapin
+j'aime manger des carottes
+j'aime aussi ranger des chaussettes et macher des chewing gums 
+Je suis tout blanc l'hiver et tout bleu l'été. 
+Merci de me contacter au 06 78 90 12 34
+merci a touts !
+A bientôt ! 
+
+
+un truc ultra utile, c'est de pouvoir decouper l'ecran en plusieurs parties pour voir et modifier plusieurs fichiers (sans avoir a s'emmerder avec un screen ctrl+a | ou ctrl+a s) 
+pour ća on fait 
+:sp
+==> ća permet de voir le voir le fichier texte de differents endroits.
+==> c'est un split horizontal
+
+
+on peut bien sur splitter pour pouvoir modifier 2 fichiers texte differents, pour ća on fait 
+sp chemin/nomFichier
+
+on peut bien sur répéter l'action a l'infini
+
+pour faire un split vertical on fait 
+:vsp 
+ou pour un utiliser un autre fichier 
+:vsp chemin/nomFichier
+
+chaque partie d'écran splitté est appellé un VIEWPORT
+ya des raccourcis claviers
+
+Ctrl + w puis Ctrl + w : navigue de viewport en viewport. Répétez l'opération plusieurs fois pour accéder au viewport désiré.
+
+Ctrl + w puis j : déplace le curseur pour aller au viewport juste en dessous. La même chose fonctionne avec les touches h, k et l que l'on utilise traditionnellement pour se déplacer dans Vim.
+
+Ctrl + w puis + : agrandit le viewport actuel.
+
+Ctrl + w puis - : réduit le viewport actuel.
+
+Ctrl + w puis = : égalise à nouveau la taille des viewports.
+
+Ctrl + w puis r : échange la position des viewports. Fonctionne aussi avec « R » majuscule pour échanger en sens inverse.
+
+Ctrl + w puis q : ferme le viewport actuel.
+
+
+
+pour lancer une commande externe on fait 
+:!commande 
+genre 
+:!ls
+
+
+
+on peut bien sur mettre des options dans vim, la doc est ici 
+http://vimdoc.sourceforge.net/htmldoc/
+
+on les gere comme ća
+:set option 
+et on la desactive comme ća 
+:set nooption
+ou 
+:set option!
+
+certaines options doivent etre initialisées avec un valeur 
+genre 
+:set option=valeur
+
+pour connaire l'etat d'une option on fait 
+:set option? 
+
+
+on peut bien sur configuer le fichier de conf de vim ~/.vimrc
+s'il n'y est pas il faut le copier dans ~ avec 
+cp /etc/vim/vimrc  ~/.vimrc
+
+puis le modifier
+
+
+===================[configurer vim]=========================
+set number      " Affiche les numéros de ligne
+set smartindent " Indentation intelligente
+set autoindent  " Conserve l'indentation sur une nouvelle ligne
+set ruler       " Affiche la position du curseur
+set tabstop=4	" Une tab apparait comme un espacement de 4 espaces
+
+
+
+
+
+
+
+

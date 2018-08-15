@@ -1,0 +1,234 @@
+=========[les fichiers et include]================
+ca fonctionne pareil, les fichiers .c on l'extension .cpp ou .cc, c'est pareil 
+les fichiers header ont l'extension .h ou .hh
+
+on include pareil mais on met plus l'extension normalement (yen a qui le font quand meme mais ils ont pas pris le plis)
+genre 
+#include <iostream> (= stdio et stdlib)
+
+
+===============[namespace std::]===================
+normalement en cpp, tout kw doit etre precede de 
+std::
+genre 
+std::cout << "Hello world!" << std::endl;
+
+pour plus etre emmerdé avant la premiere fonction, on met
+using namespace std;
+
+cout << "Hello world!" << endl;
+
+le std::endl c'est comme un "\n", mais on a créé ça pour faciliter la lisibilité du code, pour la confondre avec le texte
+
+std::cout c'est pour afficher du texte, comme printf mais en mille fois plus simple
+
+
+pour recuperer des trucs sur l'entree standard, on a cin
+genre 
+std::cin >> ma_variable;
+
+genre
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    int age = 0;
+    cout << "Quel age avez-vous ?" << endl;
+    cin >> age;
+    cout << "Ah ! Vous avez donc " << age << " ans !" << endl;
+    return 0;
+}
+
+
+=================[nouveuté sur les variables]================= 
+
+on a un nouveau type bool (qui existait deja en c99)
+et on a aussi un kw true et false (qui est 1 et 0)
+
+On peut egalement desormais declarer des variables n'importe ou dans le code, 
+peu d'interet
+
+ensuite, meme si c'etait deja le cas en C99
+on a le droit de faire 
+for (int i=0; i<lim; i++)
+{
+
+}
+
+alors qu'avant, on etait obligé de faire 
+int i
+for (i = 0; i<lim; i++)
+{
+
+}
+
+
+=====================[les allocations dynamiques]==========================
+on peut continuer a utiliser malloc et free, mais on a des kw qui font appel à ces fonctions et a d'autres et qui fonctionnent mieux
+c'est 
+new 
+et
+delete
+
+genre avant on faisait
+int* variable;
+variable = NULL;
+/* machin */
+variable = malloc(sizeof(int));
+*variable = 3;
+free(variable);
+
+maintenant on pourrait faire
+int *variable;
+variable = NULL;
+/* machin */
+variable = new int;  (ça fait un malloc, c'est comme faire variable = malloc(sizeof(int));
+*variable = 3;
+delete variable; (ça fait free(variable))
+
+en gros, 
+new TYPE = malloc(sizeof (TYPE))
+et
+delete VAR = free(VAR)
+
+pour les tableaux, avant on faisait
+int *tab;
+tab = NULL;
+/* machin */
+tab = malloc(size*sizeof(int));
+for (int i=0; i<size; i++)
+{
+*(tab+i) = i;
+}
+/* utilisation du tableau */
+free(tab);
+
+maintenant on ferait
+int *tab;
+tab = NULL;
+/* machin */
+tab = new int[size]; (comme un malloc(size*sizeof(int))) ==> DU COUP, LA ON A LE DROIT DE FOUTRE UNE VARIABLE ENTRE CROCHER POUR DECLARER UN TABLEAU
+for (int i=0; i<size; i++)
+{
+*(tab+i) = i
+}
+/* utilisation du tableau */
+delete[] tab;   //NE PAS OUBLIER LES CROCHETS !
+
+en gros
+new TYPE[taille] = malloc(taille * sizeof(TYPE))
+et
+delete[] VAR = for (int i = 0, i < taille, i++) { free(VAR++); }
+
+====================[typedef automatique]======================
+struct Coord
+{
+//...
+}
+
+struct Coord point;
+
+pour pas avoir besoin d'utiliser le kw struct, on faisait au tout debut ou dans le header
+typedef struct Coord Coord
+
+maintenant, le typedef se fait tout seul par defaut, du coup on peut faire direct
+Coord point;
+
+================[les references]===========================
+
+En gros ça sert a simplifier l'utilisation des pointeurs, mais les pointeurs sont toujours utilisables pareil
+ca sert a pouvoir passer simplement une variable dans une fonction pour la modifier
+
+on fait comme ça 
+int &mareference = mavariable; (c'est comme faire int *mareference = &mavariable) 
+SAUF QUE une reference a une valeur constante, on ne peut pas modifier l'adresse qu'elle contient
+et en plus, une reference doit etre initialisée A LA DECLARATION !
+
+
+du coup, si on avait une fonction
+void set_zero(int* p_var)
+{
+     *p_var = 0;
+}
+
+maintenant on peut faire 
+void set_zero(int &p_var)
+{
+p_var = 0;
+}
+
+du coup pour les structure, 
+si on a un pointeur sur struct, pour acceder aux elements, on fait
+ptr->element 
+ou 
+*(ptr).element
+
+pour les references sur structure, on fait tout simplement
+ref.element
+
+du coup, pour
+ref = (*ptr)
+
+===============[pour les fonctions]======================
+maintenant on peut definir des valeurs par defaut pour les fonctions
+faut le faire dans le prototype, 
+du coup on peut faire 
+int ma_fonction(int a, int b = 0; int c = 0);
+
+et appeller la fonction en invoquant que le premier parmetre, ou le premier et le 2e, ou le premier, le 2e et le 3e.
+LE TRUC CHIANT, c'est qu'on ne peut pas faire ça 
+ma_fonction(1,,25)
+on est OBLIGÉ de renseigner le parametre au milieu, ce qui fait que si on modifie la valeur par defaut, faudra modifier toutes les lignes de ce type a la main (ou avec un script)
+
+
+MAINTENANT, on peut aussi surcharger les fonctions
+la signature d'une fonction c'est 
+son nom 
+le type de ses arguments
+==> du coup on peut surcharger une fonction en modifiant le type de ces parametres, genre 
+int somme(int, int)
+float somme(float, float)
+
+EN REVANCHE, on ne peut pas faire ça
+int somme(int, int)
+double somme(int, int)
+
+Cas des fonctions inline, 
+c'est genre des fonctions courtes, mais qui ne sont pas vraiment des fonctions, plutot des macros comme skon fait avec le pre-processeur
+par exemple, quand on appelle une fonction, il se passe ca
+le processeur va retenir l'adresse memoire où elle en est dans le programme pour y revenir plus tard, 
+sauter a l'adresse memoire de la fonction, executer la fonction et y revenir plus tard
+c'est donc un poil moins rapide que si on executais le code direct.
+
+Du coup, la solution, c'est declarer une fonction inline, ca fait ça 
+notre code
+inline int carre(int nombre);
+int main()
+{
+    cout << carre(10) << endl;
+
+    return 0;
+}
+
+inline int carre(int nombre)
+{
+    return nombre * nombre;
+}
+
+a la compilation
+int main()
+{
+    cout << 10 * 10 << endl;
+
+    return 0;
+}
+
+avantage, c'est plus rapide 
+inconvenient, le programme est plus gros en octets, car ya plus d'instructions
+
+
+
+
+

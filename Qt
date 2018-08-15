@@ -1,0 +1,1163 @@
+Chaque OS propose au moins un moyen de dessiner des pixels sur un ecran, c'est a dire de faire des GUI
+le probleme c'est que du coup notre programme n'est pas portable
+
+Heureusement, ya des gens qui ont fait des lib qui s'adaptent à l'os sur lequel on compile ! Nice !
+
+Concernant les moyens de faire des GUI sous windows, on a
+le framework .NET = lib tres completes pour C++, C#, visual basic. Remarque, on peut utiliser .NET sous linux grace au projet mono, mais c'est plus limité que sous windows
+
+sous linux, on a tous les WM (windows managers) qui reposent sur X
+la lib Xlib
+GTK+ (Gnome)
+QT (KDE)
+WXWidget (code::blocks)
+FLTK = beaucoup plus legere que les 2 precedentes, dediée uniquement a la creation d'interfaces graphiques multiplateformes
+
+Sous Mac OS X
+Cocoa
+Objective C
+
+
+======[presentation de Qt]=========
+
+elle est a l'origine concue pour C++ mais maintenant on peut l'utiliser avec d'autres langages genre
+Python ou Java
+
+Qt est un framework, donc c'est un tres gros truc
+c'est composé de differents modules:
+module GUI = c'est pour la creation de GUI
+Module OpenGL = Permet d'ouvrir une fenetre contenant de la 3D generee par opengl
+Module de Dessin = pour ouvrir une fenetre avec des illustrations 2D
+Module Reseau = pour acceder au reseau, creer un logiciel de chat, un client ftp, un client bittorent, un lecteur de flux rss
+Module SVG = pour creer des images et animations vectorielles, comme flash !
+Module script = permet de gerer le javascript, pour faire genre des plugins et ajouter des fonctionalités
+Module XML = pour échanger des données au format XML
+Module SQL = pour echanger avec les bdd en langage SQL
+
+
+Qt est multiplateforme, du coup les fenetres s'adaptent a l'OS que l'on utilise
+c'est pas comme Java qui a une apparence unique, ici comme on genere les fenetres de base de l'OS, Qt transcrit ca en 
+instructions natives propres a l'os
+
+
+Bien qu'il soit possible de developper avec Qt en utilisant vim ou autre ide
+il existe un ide qui s'appelle Qt Creator
+En fait, c'est a la fois 
+un IDE
+un editeur de fenetre, pour dessiner facilement une interface a la souris
+une documentation (avec une possible auto-completion tres pratique du coup)
+
+=====[installer les trucs pour utiliser Qt dans ses programmes]=======
+on a besoin du sdk déjà, pour ca il faut faire
+sudo apt-get install qt-sdk
+
+Ensuite, on peut installer qtcreator, en faisant
+sudo apt-get install qtcreator
+
+Enfin, il faut installer qmake pour pouvoir generer un makefile qui permet de compiler son programme, ce qui simplifie grandement la compilation (sinon faudrait tout faire a la main et tout, pas beaucoup d'interet)
+sudo apt-get install
+
+
+
+======[compiler un programme utilisant qt]==========
+
+Le plus simple c'est de, dans le repertoire du projet, faire
+qmake -project
+==> ca va genere un fichier .pro qui est un fichier texte permettant de generer un makefile
+
+puis
+
+qmake fichiergenere.pro
+==> qui va generer le makefile du projet
+
+puis
+
+make
+==> qui va generer le binaire
+
+
+
+=======[QTCREATOR]==========
+
+Pour creer un projet avec qtcreator, idealement il faut faire 
+new project
+autre projet
+empty qmake project
+
+
+Ensuite, si on veut avoir QApplication et tout, c'est a dire utiliser les widget, 
+il faut modifier notre fichier .pro en rajoutant tout en haut la ligne
+Qt += widgets
+
+puis faire un click droit sur le nom de notre projet et de faire "executer qmake"
+et voila, 
+
+
+Apres, si on veut pas s'emmerder avec tout ca, on fait juste 
+nouveau projet avec widget, et hop c'est plied
+
+pour generer le binaire et toutes les dll necessaire a l'exportation du programme et a sa diffusion, 
+Compiler le projet
+et ensuite, bah faut ajouter les dll a la main. 
+Ouais c'est chiant... mais il doit y avoir un moyen de faire mieux
+
+
+=====[Code minimal]=======
+
+//pre-requis obligatoire, QApplication est la classe de base de Qt
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    // l'objet QApplication prend en argument constructeur les parametres passes dans main
+    QApplication app(argc, argv);
+ 
+    return app.exec(); //lance tout le bazard et retourne un int
+}
+
+==> ici, le programme ne fait rien
+
+Remarque: pour avoir acces a notre objet app n'importe ou dans le programme, on a le pointeur qApp, defini dans le header
+#include	<QApplication>
+
+
+pour quitter le programme à tout moment, on a la fonction close();
+======[les widgets]========================
+
+un widget c'est un composant de la fenetre, genre un bouton, un champ texte, etc
+Si on veut voir notre fenetres, il faut y mettre quelque chose dedans (ou alors definir une taille)
+
+on peut y ajouter un widget bouton en faisant comme ca
+#include <QApplication>
+#include <QPushButton>
+ 
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+ 
+    QPushButton bouton("Salut les Zéros, la forme ?");
+    bouton.show();
+ 
+    return app.exec();
+}
+
+remarque, si on n'a pas defini de fenetre ou mettre nos widget, cela cree une fenetre qui ne contiendra que le widgets
+
+donc pour utiliser les boutons, on a la classe QPushButton
+pour utilise les fenetres, c'est QWidget
+
+
+Du coup, un widget c'est un objet qui a des attributs et des methodes et il a des valeurs par defaut
+pour le personnaliser, on a differents moyens
+
+avec Qt, on n'utilise pas string de la classe standard mais QString, un objet string amélioré
+
+Avec Qt, pour lire un attribut on fait Attribut()
+pour le set on fait setAttribut();
+
+ce qui est cool avec Qt, comme bcp de lib en POO c'est l'heritage, genre on a des sous-sous-sous types d'objets
+
+Comme tous les widgets sont des classes derivées de QWidget, 
+ils ont tous les attributs suivants
+- largeur
+- hauteur
+- position x
+- position y 
+- la font
+- la forme du curseur
+- l'info-bulle
+
+
+Si un widget n'a pas de parent, on considere que c'est une fenetre a part.
+
+=========[classe QWidget]=======
+on a les attributs (modifiables avec des methodes set):
+- cursor = qui determine la forme du curseur quand on survole le widget
+- enabled = indique s'il est activé ou grisé
+- size = width et height
+- width 
+- height
+- visible = visible on caché
+
+Ensuite, concernant les fenetres, on a differents presets setWindowFlag(); 
+et avec l'enum Qt::WindowType
+genre pour avoir une fenetre de type outil avec une petite croix et pas de possibilité de redimensionnement, on fait
+maFenetre.setWindowFlags(Qt::Tool);
+pour que la fenetre reste au premier plan, on fait
+maFenetre.setWindowFlags(Qt::WindowStaysOnTopHint);
+
+
+
+========[cas de QPushButton]=====
+
+on peut modifier le texte du bouton en faisant
+bouton.setText(Qstring texte);
+Si on veut ajouter le bouton dans un truc, on fait
+QPushButton b("texte", &parent) // c'est a dire l'adresse de parent
+
+On peut egalement modifier la police d'ecriture
+On peut aussi modifier comment le curseur se comporte en survolant le bouton, en faisant
+bouton.setCursor(Qt::PointingHandCursor);
+==> on a le choix parmis
+http://doc.qt.io/qt-5/qt.html#CursorShape-enum
+
+Au niveau signal, on a clicked()
+et pressed()
+et released()
+
+
+====[gestion de font]=====
+
+On a un objet QFont qui dispose de 3 attributs principaux
+- le nom de la police
+- la taille du texte en px
+- le style du texte (gras, italique, etc)
+
+la methode constructeur de QFont c'est
+QFont (const QString &family, int pointSize = -1, int weight = -1, bool italic = false)
+
+On peut egalement definir une icone au bouton en faisant
+bouton.setIcon(QIcon("smile.png")); //La methode ne prend que les png
+
+Pour definir une icone a la fenetre (icone qui apparait lorsqu'on fait alt+tab notamment)
+on fait tout simplement 
+this->setWindowIcon(QIcon("chemin du png"));
+
+Remarque, en mode console ya pas de soucis mais avec QtCreator, on considere le chemin relatif sur la base de HOME,
+du coup pour avoir le chemin relatif sur la base du dossier du programme, là ou ya l'executable, on fait
+QCoreApplication::applicationDirPath() + "/image etc"
+
+=======[widgets conteneurs]===========
+
+genre les fenetres
+
+une fenetre c'est un objet QWidget
+
+pour creeer une fenetre on fait
+#include	<QWidget>
+QWidget w1;
+w1.setFixedSize(300, 150);
+w1.show();
+
+Pour ajouter un composant, il suffit de creer un composant comprenant qui a comme argument parent l'adresse de notre fenetre
+pour deplacer le composant dans la fenetre, on fait
+composant.move(x, y);
+
+on peut aussi, en meme temps que placer le composant, le redimensionner avec
+composant.setGeometry(x, y, largeur, hauteur);
+
+
+=============[Signaux et slots]==================
+C'est le moyen de gerer les events
+- un signal = message envoyé PAR UN WIDGET quand un event se produit sur lui
+- un slot = fonction appellée lorsque ce signal est emis, c'est une methode d'une classe
+
+Par exemple, le slot Quit() de la classe QApplication induit l'arret du programme
+Il est bien sur possible de connecter un meme signal a plusieurs slots, et un meme slots a plusieurs signaux
+
+Pour connecter un signal à un slot, on utilise la methode statique
+QObject::connect(Widget *ptr_widget, le nom du signal qu'on veut intercepter, pointeur vers l'objet qui contient le slot, le nom du slot c'est a dire de la methode);
+
+Il existe aussi une methode
+QObject::deconnect()
+Pour deconnecter le signal du slot, mais c'est rare qu'on en ai besoin
+
+
+Ensuite, concernant le signal a specifier, on l'écrit comme ca
+SIGNAL(clicked()) pour le click, en fait SIGNAL() c'est une macro pre-processeur
+Si on voulait utiliser une fonction de notre QApplication de depart, on pourrait le faire en faisant
+qApp->methode();
+genre
+qApp->quit();
+
+De meme, pour le slot, on fait
+SLOT(quit())
+pour specifier le slot en question, ici la methode quit()
+
+Remarque, qApp a d'autre methodes genre
+aboutQt() qui affiche des infos a propos de Qt
+
+De plus, entre les parentheses de la fonction dans SIGNAL, on peut mettre le type de retour de la fonction, genre 
+SIGNAL(ValueChanged(int)) qui retourne la nouvelle valeur int du widget, 
+et mettre entre parenthese de la fonction dans SLOT, le type du parametre qu'il prend
+==> ca permet de faire que la valeur de retour du premier truc (en fait c'est pas tout a fait une valeur de retour, on le verra plus tard) soit l'argument du second, genre
+	QObject::connect(m_slider, SIGNAL(valueChanged(int)), m_lcd, SLOT(display(int)));
+
+On peut avoir des trucs où le signal c'est genre 
+SIGNAL(fonction(int, double))
+et du coup faudra avoir un slot genre 
+SLOT(fonc(int, double))
+
+=====[creer ses propres signaux et slots]====
+
+Pour creer un signal ou un slot dans une classe, il faut que la classe derive directement ou indirectement de QObject
+Un widget quelconque derive de la classe QWidget qui derive de QObject, donc c'est good
+
+Pour creer un slot (qui n'est rien d'autre qu'une methode a executer dans le cas où on a un signal), on fait comme ca
+Dans le .hpp, avant la declaration de quoi que ce soit, on rajoute la macro pp
+Q_OBJECT 
+==> il faudra executer qmake pour prendre en compte ce facteur
+==> ca permet de traduire les kw genre slots et signals
+
+Ensuite, on fait, parmis les declarations de methodes
+public slots:
+void	methode(int param);
+//Il est important de definir les slots comme public car on doit pouvoirs y avoir acces depuis l'exterieur de la classe, logique...
+
+Ensuite, il ne reste plus qu'a connecter cela dans la classe du widget qui emet le signal
+
+Pour faire son propre signal, on fait, dans le .hpp
+public signals:
+la liste des methodes, comme pour les slots
+ATTENTION, UN SIGNAL RENVOIT TOUJOURS VOID
+genre
+void	signalAgrandissementMax(void);
+
+SAUF QUE apres on ne les implemente pas dans le .cpp, c'est Qt qui le fait pour nous
+(Si on le fait, a la compilation on aura une erreur genre definition multiple de la methode)
+
+Et ensuite, pour emettre le signal, il suffit, dans la partie du code concerné, de faire
+emit	signalAgrandissementMax();
+
+Bien sûr, si on voulait envoyer un parametre, il suffirait de faire
+emit	signalAgrandissementMax(valeur);
+
+=====[QSlider]==========
+C'est un widget qui est une barre de curseur, comme le truc pour regler le son de l'ordi
+On l'initialise comme ca 
+QSlider		slider = new QSlider(Qt::Horizontal, QWidget *conteneur);
+et on peut regler sa taille et sa localisation avec setGeometry
+
+Par defaut, le slider prend des valeurs entre 0 et 99
+Pour changer cela, on peut utiliser sa methode 
+setRange(int min, int max) qui definit une nouvelle gradation
+
+Son signal le plus utilisé est d'ailleurs
+valueChanged()
+
+===========[QLCDNumber]==========
+
+On peut egalement afficher un truc cadran avec des nombres avec l'objet QLCDNumber
+QLCDNumber machin(QWidget *conteneur);
+
+On peut ensuite definir son style comme ca
+machin.setSegmentStyle(QLCDNumber::Flat);
+
+et on peut definir son emplacement et sa taille avec setgeometry
+
+De base, ca affiche 0
+on peut lui dire d'afficher un autre nombre avec 
+machin.display(int);
+
+=========[Les boites de dialogue QMessageBox]============
+
+Les boites de dialogue usuelles
+pour ca il faut 
+#include	<QMessageBox>
+
+Ensuite on cree un slot (c'est a dire une methode d'une classe qu'on connecte a un signal)
+et on fout le code de la msgBox dedans
+
+Pour appeller une msgBox, c'est comme en autoit, on appelle une methode statique de la classe QMessageBox
+et cette methode nous retourne une valeur qui correspond a ce qui a ete entre dans la msgBox, simple
+
+QMessageBox::methode()
+
+pour afficher une msgBox information, on fait
+	QMessageBox::information(QWidget *parent, "titre", "message");
+le vrai prototype de la methode c'est 
+StandardButton information ( QWidget * parent, const QString & title, const QString & text, StandardButtons buttons = Ok, StandardButton defaultButton= NoButton );
+
+Pour le parametre button, on peut personnaliser pour ne pas juste avoir un ok mais avoir un oui/non, ou autre
+en faisant
+QMessageBox::Yes | QMessageBox::No
+
+Remarque: le message des boutons sont en anglais par defaut, pour que la langue des boutons soit celle de l'OS, on rajoute la ligne qui suit dans le main.cpp dans main()
+Juste apres la definition du QApplication
+    QString locale = QLocale::system().name().section('_', 0, 0);
+    QTranslator translator;
+    translator.load(QString("qt_") + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&translator);
+
+
+On a la msgBox:
+- information
+- warning
+- critial
+- question 
+
+pour recupere ce qu'a entré l'utilisateur on fait
+QMessageBox::StandardButton retour;
+(ou alors int retour, vu que pour le moment c'est un enum, mais avec l'evolution, pour que le code reste durable dans le temps, il vautmieux utiliser les types definis)
+
+puis retour = QMessageBox(this, "titre", "message");
+
+et genre 
+if (retour == QMessageBox::Yes)
+	machin;
+
+=============[boites de dialogue QInputDialog]=============
+
+Pour s'en servir il faut
+#include	<QInputDialog>
+ca sert a pouvoir rentrer des trucs, on a
+
+Pour get une string:
+-------
+QInputDialog::getText();
+de vrai prototype
+QString getText(QWidget *parent, const QString &title, const QString &label, QLineEdit::EchoMode mode = QLineEdit::Normal, const QString &text = QString(), bool *ok = Q_NULLPTR, Qt::WindowFlags flags = Qt::WindowFlags(), Qt::InputMethodHints inputMethodHints = Qt::ImhNone)
+
+Pour get un int
+-------
+QInputDialog::getInt();
+de vrai prototype
+int getInt(QWidget *parent, const QString &title, const QString &label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, bool *ok = Q_NULLPTR, Qt::WindowFlags flags = Qt::WindowFlags())
+
+Pour get un double
+-------
+QInputDialog::getDouble();
+de vrai prototype
+double QInputDialog::getDouble(QWidget *parent, const QString &title, const QString &label, double value = 0, double min = -2147483647, double max = 2147483647, int decimals = 1, bool *ok = Q_NULLPTR, Qt::WindowFlags flags = Qt::WindowFlags())
+
+Pour get un element dans une liste
+-------
+QInputDialog::getItem();
+de vrai prototype
+QString QInputDialog::getItem(QWidget *parent, const QString &title, const QString &label, const QStringList &items, int current = 0, bool editable = true, bool *ok = Q_NULLPTR, Qt::WindowFlags flags = Qt::WindowFlags(), Qt::InputMethodHints inputMethodHints = Qt::ImhNone);
+
+
+
+==> ATTENTION: bien tester ce qui se passe quand on ne passe pas les bonnes infos dans un input
+
+===========[Boite de dialogue pour selectionner une police]===========
+
+On a la methode statique de QFontDialog
+QFont QFontDialog::getFont ( bool * ok, const QFont & initial, QWidget * parent, const QString & caption );
+
+QFont &initial c'est pour dire quelle police est pre-selectionnee
+
+Remarque, pour obtenir la font d'un widget, ya un getter font, on fait juste comme ca 
+monWidget.font();
+
+=======[boite de dialogue pour selectionner une Couleur]=========
+
+Qcolor	QcolorDialog::getColor( const QColor & initial = Qt::white, QWidget * parent = 0 );
+
+Remarque, les widget n'ont pas de methode setColor, 
+Ils utilisent des objets QPalette
+
+En gros, pour set une color à un widget, on fait
+Qcolor color = QColorDialog::getColor(Qt::white, this); //recuperation de la couleur
+QPalette palette;
+palette.setColor(QPalette::ButtonText, color); //assignation de la QColor à la QPalette
+monWidget->setPalette(palette);	//assignation de la palette à mon objet
+
+===================[Boite de dialogue pour selectionner un fichier]==============================
+
+pour selectionner un dossier
+QString QFileDialog::getExistingDirectory(QWidget *parent = Q_NULLPTR, const QString &caption = QString(), const QString &dir = QString(), Options options = ShowDirsOnly)
+genre
+QString QFileDialog::getExistingDirectory(this);
+==> ouvre une boite de dialogue et renvoit le chemin du dossier selectionne dans un QString
+
+Pour selectionner un fichier, on fait
+QString	QFileDialog::getOpenFileName(QWidget *parent = Q_NULLPTR, const QString &caption = QString(), const QString &dir = QString(), const QString &filter = QString(), QString *selectedFilter = Q_NULLPTR, Options options = Options())
+
+genre:
+QString fichier = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
+//on a un parametre a la fin qui permet de n'afficher que les fichiers ayant une certaine extension
+
+
+==> ces boites de dialogues permettent de definir un dossier ou un fichier existant, mais pas de l'ouvrir / modifier etc
+pour ca, c'est a partir du chemin du fichier avec les methodes qu'on connait ^^
+
+
+Pour enregistrer un fichier
+QString	getSaveFileName(QWidget *parent = Q_NULLPTR, const QString &caption = QString(), const QString &dir = QString(), const QString &filter = QString(), QString *selectedFilter = Q_NULLPTR, Options options = Options());
+
+==> ca fait pareil mais ca laisse la possibilité d'entrer le nom du fichier, 
+ca retourne la string avec le chemin du fichier et le nom du fichier, afin de faire ce qu'on a a faire apres avec les methodes qu'on a deja vues.
+
+==[Boites de dialogues QDialog]===========
+
+On distingue 2 types de boites de dialogue
+- les modales = tant qu'on n'a pas validé la fenetre, on ne peut pas acceder aux autres fenetres du programme
+- les non modales = on peut acceder au reste
+
+par defaut les QDialog sont modales
+Les objets QDialog ont une methode exec() (qui est un slot) qui permet d'ouvrir la boit de dialogue en modale
+
+Donc en gros, les QDialog c'est des fenetres, qu'on peut ouvrir grace a leur slot exec() en mode modal
+
+
+============[input text = QLineEdit]=====
+on doit 
+#include	<QLineEdit> pour l'utiliser
+
+le reste est dans la doc 
+
+text permet de connaitre le texte dedans
+alignment c'est l'alignement du texte a l'interieur
+echoMode c'est le type d'afichage du texte dedans. ca peut etre QLineEdit::Normal ou QLineEdit::Password ou autre
+
+on a aussi un attribut inputMask, qui permet d'imposer a l'utilisateur un type de pattern precis (genre numero de telephone, adresse email, etc)
+on a aussi les validators dans le genre
+on a un parametre maxLength
+on a aussi un parametre enabled, comme tout widget
+on a enfin un parametre readOnly, on peut copier-coller mais pas modifier le contenu du field
+
+on a egalement des slots qui permettent de copier, coller, couper, vider et annuler le contenu
+
+on a aussi des signaux
+returnPressed() quand le user a appuye sur enter
+textChanged() quand le user a modifier le contenu
+
+=======[QSpinBox]====
+C'est un QLineEdit qui permet de ne rentrer que des entiers et d'avoir des petites fleches pour augmenter et diminuer la valeur
+
+accelerated = autoriser d'accelerer l'augmentation du nombre si on reste longtemps appuye sur le bouton
+minium = valeur minimale autorisée
+maximum = max
+singleStep = increment (1 par defaut), ca peut etre de 200 en 200
+value = valeur contenue dans la spinbox
+prefix = texte a afficher avant le nombre
+suffix = texte a afficher apres le nombre
+
+
+on a aussi 
+QDoubleSpinBox
+pour les decimaux
+qui a un attribut decimals pour le nombre de decimales apres la virgule
+
+
+=============[QTextEdit]=========
+c'est un textarea
+un textedit gere le texte enrichi (html)
+
+ya 2 attributs interessants pour choper le texte
+plaintext et 
+html
+
+
+
+
+===========[les layout]===================
+
+Les layouts c'est pratique quand on a une fenetre redimensionnable ou qu'on veut un programme qui s'adapte a la resolution de l'ecran.
+
+l'utilisation des layout est toujours la meme
+1) on cree les widgets
+2) on cree le layout
+3) on met les widgets dans le layout (avec monLayout.addWidget(*monWidget))
+4) on dit a notre fenetre d'utiliser tel layout (genre maFenetre.setLayout(*monLayout))
+
+Du coup, comme les widgets doivent etre places dans le layout et pas dans la fenetre parent, lors de l'initialisation, dans la partie parent on met NULL.
+
+
+Ils derivent de la classe QLayout qui est une classe abstraite
+on a 
+- QStackedLayout = permet la gestion des widgets sur plusieurs pages (Il existe des widgets qui le reutilisent comme QWizard qui permet de creer des assistants)
+- QFormLayout = 
+- QGridLayout = 
+- QBoxLayout = 
+  - QHBoxLayout
+  - QVBoxLayout
+
+
+Remarque, quand on place des widgets alloués dynamiquement dans un layout que l'on place dans une fenetre, quand on ferme/supprime la fenetre, Qt free tous les widget que contenait le layout
+mais bon, par principe, vaut mieux prendre l'habitude de faire des delete
+
+
+==========[cas de QGridLayout]===========
+
+puissant mais complexe
+En gros, ca decoupe notre fenetre en cases
+et on place nos widgets avec des coordonnees
+genre 
+0, 0 c'est la premiere ligne et premiere colonne
+
+les coordonnees sont les 2e et 3e parametre de la methode addWidget
+du coup on fait 
+layout.addWidget(&widget, line, col);
+
+Sachant que, en gros, par defaut, le nombre de lignes et de colonnes de la grille correspond au nombre d'objets max qu'on y met.
+Du coup, si j'ai des widgets de coord genre 
+0,1
+0,2
+1,1
+1,2
+1,3
+et 
+213156456,1234564564
+
+En fait le dernier, il aura les coordonnées
+2, 4
+
+On peut faire en sorte qu'un widget utilise plusieurs cases (on utilise une methode surchargee de addWidget)
+genre
+layout.addWidget(&widget, line, col, rowSpan, colSpan);
+rowSpan c'est le nombre de lignes occupees
+colSpan c'est le nombre de colonnes occupees
+
+par defaut, l'alignement dans la case est centrée, cela est probablement modificable => cf documentation
+
+============[QFormLayout]===========
+Layout de formulaire, 
+tres utile pour faire un truc genre 
+nom:		<input>
+prenom:		<input>
+etc
+
+
+en fait, QFormLayout, c'est un QGridLayout de 2 colonnes et plusieurs lignes, mais dont la mise en forme s'adapte aux habitudes de l'OS
+(genre alignement a gauche ou a droite, etc)
+
+Normalement, pour entrer du texte, on utilise le widget QLabel
+mais avec QFormLayout ca nous genere des QLabel tout seul
+
+A la difference des autres layout, au lieu d'avoir une methode addWidget, 
+on a une methode addRow();
+elle prend 2 args 
+- le champs du libellé
+- un ptr vers le champs du formulaire
+
+remarque: pour mettre une image avec qt, on fait
+QLabel *image = new QLabel(&secondeFenetre);
+        image->setPixmap(QPixmap("icone.png"));
+
+
+du coup on fait un truc genre
+QFormLayout	layout;
+QLineEdit	*name;
+
+layout.addRow("Nom: ", name);
+
+
+Remarque, souvent dans les formulaires, on peut indiquer qu'une lettre est soulignee pour dire qu'elle sert de raccourcis pour acceder au champs
+pour ce faire, dans le nom du libellé, on rajoute un &devant la lettre en question
+si on veut mettre un vrai & dans le texte, on fait &&
+
+
+
+======[Combinaison de layout]===========
+
+dans un layout, on peut positionner des widget et des layout !
+pour ajouter un widget, on a addWidget(&widget);
+pour ajouter un layout on a addLayout(&layout);
+genre 
+#include <QApplication>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QFormLayout>
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+
+    QWidget fenetre;
+
+    // Création du layout de formulaire et de ses widgets
+
+    QLineEdit *nom = new QLineEdit;
+    QLineEdit *prenom = new QLineEdit;
+    QLineEdit *age = new QLineEdit;
+
+    QFormLayout *formLayout = new QFormLayout;
+    formLayout->addRow("Votre &nom", nom);
+    formLayout->addRow("Votre &prénom", prenom);
+    formLayout->addRow("Votre â&ge", age);
+
+    // Création du layout principal de la fenêtre (vertical)
+
+    QVBoxLayout *layoutPrincipal = new QVBoxLayout;
+layoutPrincipal->addLayout(formLayout); // Ajout du layout de formulaire
+
+    QPushButton *boutonQuitter = new QPushButton("Quitter");
+    QWidget::connect(boutonQuitter, SIGNAL(clicked()), &app, SLOT(quit()));
+layoutPrincipal->addWidget(boutonQuitter); // Ajout du bouton
+
+    fenetre.setLayout(layoutPrincipal);
+
+    fenetre.show();
+
+    return app.exec();
+}
+
+
+
+====[QCheckBox]========
+ca permet de faire des checkbox
+genre
+new QCheckBox("J'aime les frites", &fenetre);
+
+Quand on clique dessus, ca emet un signal
+stateChanged(bool)
+
+pour savoir si c'est coché on a la methode 
+isChecked() qui renvoit un bool
+
+
+Si on a plusieurs cases à cocher, on peut les regrouper dans un meme QGroupBox
+
+====[QRadioButton]=========
+
+On les rassemble dans un meme QGroupBox pour qu'on ne puisse en choisir qu'un seul parmis ceux-la
+On fait
+QRadioButton *steacks = new QRadioButton("Les steacks");
+
+On peut le check en faisant
+machin.setChecked(true);
+
+=======[QProgressBar]==========
+
+c'est une barre de progression
+ya 3 parametres interessants
+maximum = valeur max de la barre
+minimum = valeur min
+value = valeur de la barre
+
+on peut donc modifier la valeur de la barre avec la methode setValue()
+quand sa valeur change, elle envoit un signal valueChanged()
+
+
+
+====[QComboBox]====
+
+c'est une liste deroulante
+QComboBox *liste = new QComboBox(&fenetre);
+
+on lui ajoute des valeurs avec la methode addItems
+genre
+liste->addItem("pouet");
+
+attributs:
+- count = nombre d'elements
+- currentIndex = index surligné (0 à n-1)
+- currentText = texte selectionne
+- editable = false par defaut, si on veut pouvoir ajouter de nouvelles valeurs dans le comboBox, on tape la valeur et on appuie sur entree, les nouvelles valeurs sont placeees par defaut a la fin de la liste
+
+au niveau des signaux, on a
+currentIndexChanged() = changement d'element
+highLighted() = indique l'element survolé par la souris
+==> peuvent envoyer un int pour l'index ou un string pour la valeur
+
+
+
+============[Les conteneurs]======
+
+En principe, tout widget peut en contenir un autre 
+mais il existe des widgets faits pour en contenir d'autres, genre
+QFrame = widget qui a une bordure
+QGroupBox = pour la gestion des cases a cocher et les boutons radio (on peut mettre une checkbox pour les activer ou les desactiver avec setCheckable(true))
+QTabWidget = un widget qui gere differentes pages d'onglet
+
+
+Pour le cas de QTabWidget, il ne peut contenir qu'un seul widget par onglet
+du coup, le mieux c'est que ce widget soit set avec un un layout, dans lequel on va foutre d'autres trucs
+
+
+======[QMainWindow]===========
+QWidget c'est cool pour faire des trucs simples, mais pour avoir une fenetre complete, avec une barre de menu et tout, il vaut mieux utiliser QMainWindow
+Elle herite de QWidget
+
+c'est un objet utilisé UNE SEULE FOIS PAR PROGRAMME
+ca cree la fenetre principale de l'application
+
+ca a toujours la meme structure 
+- une menu bar en haut 
+- une statut bar en bas
+- entre les 2, de facon concentrique
+  - des toolbars
+  - des dockwidgets = des conteneurs qui peuvent contenir genre des outils ou d'autres trucs
+  - un central widget = coeur de la fenetre = un seul widget qui peut bien sur en contenir d'autres
+
+On distingue 2 types de QMainWindow
+- les SDI = single document interface = ne peut afficher qu'un document a la fois = genre bloc note
+- les MDI = multiple '' = on peut en afficher plusieurs a la fois = genre firefox 
+
+pour definir la zone centrale de la sdi, on utilise la méthode setCentralWidget(QWidget *)
+
+Pour les mdi, on utilise QMdiArea qui est une sorte de gros widget qui affiche plusieurs sous-fenetre = en gros on s'en sert comme widget conteneur central
+on fait donc
+QMdiArea *zoneCentrale = new QMdiArea;
+Puis
+zoneCentrale->addSubWindow(&Qwidget)
+==> Pour chaque widget ajouté, on peut lui définir une icone, un titre, etc...
+
+addSubWindow renvoit un pointeur sur une QMdiSubWindow,
+ca peut etre interessant de le garder dans une variable pour, par exemple, supprimer la fenetre de la QMdiArea en faisant
+removeSubWindow(QMdiSubWindow*);
+
+Enfin, on peut avoir la liste des fenetres ouvertes dans QMdiArea, en faisant
+subWindowList() qui renvoit une liste
+
+===
+
+Dans l'objet QMainWindow, on peut acceder a la barre de menu avec monObjet.menuBar()
+qui retourne un pointeur vers le widget menuBar QMenu
+On peut ajouter un menu avec la methode addMenu(QMenu * | QString titre) de QMenu et retourne un pointeur vers le QMenu ajouté/créé
+Il faudra ensuite afficher la menuBar en faisant this->menuBar()->show();
+(remarque, si on ne fait pas le show, la menuBar n'apparait pas dans la fenetre mais elle peut apparaitre quand-même, dans tous les cas, comme c'est le cas dans ubuntu unity, en haut avec les differents choix de menu)
+
+
+Ensuite, ya 2 solutions, soit on a des actions, genre quitter, on appuie sur le choix quitter du menu et ca fait un truc, 
+==> c'est ce qu'on appelle une QAction, on fait donc monMenu.addAction(QAction*)
+soit on lui met un sous-menu, c'est à dire un autre QMenu avec la methode monMenu.addMenu(QMenu*)
+
+Remarque, on peut utiliser les QMenu pour faire des menus contextuels, c'est a dire un menu qui apparait quand on clickDroit sur un widget ==> cf doc QWidget
+
+Une QAction a un ensemble de signaux
+==> triggered() = l'action a ete choisie par le user
+==> hovered() = la souris a survolé la partie du menu correspondant a la QAction
+
+On peut definir un raccourci clavier pour une QAction (qu'on pourra mentionner dans le titre de la QAction);
+pour ca on fait monAction.setShortcut(QKeySequence seq)
+==> en l'occurence, QKeySequence c'est un objet qui prend en parametre une string correspondant a un format de sequence de touches
+    = ++ pratique
+
+==> on peut y ajouter une icone, genre (pour un menu ou une action)
+actionQuitter->setIcon(QIcon("quitter.png"));
+
+==> on peut egalement rendre l'action checkable, genre "afficher la barre d'outils"
+actionGras->setCheckable(true);
+on verifie si l'action est checked avec la methode actionGras->isChecked();
+
+===
+
+On a egalement une barre d'outils
+generalement constituée d'icones et située sous la menuBar
+Pour en ajouter une dans une QMainWindow, on fait 
+QToolBar *toolBarFichier = addToolBar("nom de la toolbar");
+on peut lui rajouter des actions en faisant pareil qu'avec les QMenu, cad avec la methode addAction
+==> Ca fonctionne avec des actions, du coup on peut ajouter les memes actions et reutiliser du code, nice !
+on peut egalement ajouter des widgets dans la toolbar avec sa methode addWidget(QWidget*) qui renvoit un QAction* créé en consequence
+
+Enfin, on peut separer les differentes actions avec des separateurs en faisant
+toolBar->addSeparator();
+==> en gros, ca ajoute un separateur, donc on doit mettre cette instruction suite a l'objet qu'on veut separer.
+
+
+
+=============[Traduire son programme avec Qt Linguist]==============
+
+En gros ca fonctionne comme ca:
+on a les fichiers .cpp
+qui sont liés à un fichier .ts (yen a un par langue) qui correspond a l'ensemble des chaines a traduire
+et la compilation donne un fichier .qm qui est un fichier traduit binaire, du coup ca va plus vite lors de l'execution du programme
+
+En general, le fichier .ts a un nom genre nomDuProgramme_langue.ts (genre SuperExe_fr.ts)
+
+Ensuite, le traducteur traduit les chaines de caractere en utilisant le programme QtLinguist qui va modifier le fichier .ts
+Ensuite on le compile et voila 
+
+Remarque, Qt sait gerer tous les caracteres compliqués, genre les ideogrammes chinois ou autres, donc il vaut mieux utiliser des QString que des string
+
+Dans le code, TOUT TEXTE QUI A BESOIN D'ETRE TRADUIT, on doit le passer a la fonction tr(QString str);
+genre 
+QPushButton but = new QPushButton("pouet");
+on fait
+QPushButton but = new QPushButton(tr("pouet"));
+
+Remarque, normalement, tr() est une méthode de QObject, dont tout objet dérivant de Qt a la méthode tr() qui est une methode statique
+Si on est pas dans un objet derivé de QObject, il suffit de faire
+QObject::tr("machin")
+
+Remarque, parfois le texte peut-être ambigu et il peut etre interessant de donner des indications au traducteur
+du coup, pour ca tr() a un 2e argument facultatif, qui est egalement une Qstring, genre 
+QObject::tr("&Quitter", "Quitter le programme de maniere definitive")
+
+Par exemple, si on a 
+actionQuitter->setShortcut(QKeySequence(tr("Ctrl+Q", "Raccourci clavier pour quitter")));
+Si, dans une langue, quitter se dire genre SALIA, alors il serait plus logique que le raccourci clavier soit Ctrl+S
+Et bien ce sera pris en compte dans la traduction
+==> en fait, c'est pas juste l'affichage des QString, c'est carrement leur implementation dans le programme
+
+
+Pour la gestion du pluriel
+En anglais on a par exemple
+0	
+Il y a 0 fichier.
+There are 0 files. ==> ya un S pour 0
+1
+Il y a 1 fichier.
+There is 1 file.   ==> yen a pas pour 1
+2
+Il y a 2 fichiers.
+There are 2 files.
+
+(en russe egalement, le pluriel est different s'il y a 2 ou 3 elements)
+==> pour ca, QObject::tr() a un 3e parametre facultatif qui prend le cardinal de la phrase (le nombre de élements quoi)
+tr("Il y a %n fichier(s)", "", nombreFichiers);
+(du coup on est obligé de mettre le 2e parametre d'explicitation, quitte a mettre une chaine vide)
+
+
+Ensuite, il faut generer les fichiers .ts
+pour ca, on va dans le fichier .pro et on rajoute une ligne
+TRANSLATIONS = zeroclassgenerator_en.ts zeroclassgenerator_es.ts //on liste tous les fichiers à generer
+
+Ensuite, on ouvre un terminal et on fait
+lupdate nomFichier.pro
+==> ca va generer les fichiers .ts
+
+
+Ensuite, le traducteur ouvre les fichiers .ts et traduits les phrases
+(Il faudra qu'il valide chaque traduction en cochant ou en faisant ctrl+enter)
+? gris = non traduit
+? jaune = traduit non validé
+check vert = validé
+
+Ensuite, on compile les .ts en .qm
+pour ca, dans la console, on utilise le programme lrelease 
+lrelease fichier.ts
+Ou alors pour le faire sur tous les fichiers ts du projet
+lrelease fichier.pro
+(lrelease ne compile QUE LES PHRASES VALIDEES)
+==> Dans ce cas c'est la chaine par defaut, celle dans le code source, qui est prise en compte
+
+Les fichiers .qm doivent etre dans le meme dossier que l'executable
+
+Enfin, pour generer un executable qui utilise une langue donnée, il faut rajouter 3 lignes dans le main
+QTranslator translator;
+translator.load("zeroclassgenerator_en");
+app.installTranslator(&translator);
+
+Si on veut que la traduction soit chargée en fonction de la langue du systeme, on fait
+QString locale = QLocale::system().name().section('_', 0, 0);
+QTranslator translator;
+translator.load(QString("zeroclassgenerator_") + locale);
+app.installTranslator(&translator);
+
+
+===============[Modeliser ses fenetres avec QtDesigner]==============
+
+ca permet de 
+- designer ses fenetres
+- modifier la propriete de widgets 
+- connecter des signaux et slots
+
+Pour ouvrir qtdesigner dans un projet qtcreator, on fait 
+fichier -> nouveau -> Qt -> classe d'interface graphique
+
+On peut choisir entre differents patterns genre dialog, mainWindow, etc
+
+==> ca cree 3 fichiers
+- fichier.ui  = fichier qui contient le code de la gui en XML
+- fichier.hpp = permet de charger le fichier .ui dans le projet
+- fichier.cpp
+
+au niveau de la barre d'outils sup de QtDesigner, on a 4 boutons correspondant a 4 modes d'edition 
+- edition des widgets = permet d'inserer des widgets dans la fenetre et de modifier ses propriétés
+- edition de signaux et slots
+- edition de copains = permet d'associer des QLabels a leurs champs respectifs quand on a des formulaires (quand on utilise des QFormLayout, l'association se fait automatiquement)
+- edition de l'ordre des onglets = permet de modifier l'ordre de tabulation des onglets, pour ceux qui naviguent avec tab
+
+
+en double-cliquant sur un widget, on peut modifier son nom
+
+widget property editor, permet de modifier les propriétés du widget selectionné, si aucune widget n'est selectionné ca modifie ceux de la fenetre
+
+object inspector affiche la liste des widgets de la fenetre
+
+L'editeur d'action permet de creer des QActions, genre lors de la creation de toolbars
+
+On peut placer des widgets de maniere absolue
+ou alors mettre un layout, en le selectionnant dans la barre d'outil du haut, ou alors en attribuant un layout a notre widget
+
+On peut dimensionner la taille de la fenetre a sa taille minimale necessaire avec le bouton "adjust size" tout a droite de la barre d'outils
+
+Pour changer l'agencement des widgets dans la fenetre afin de les espacer, on peut mettre un spacer qui est un widget invisible
+
+Pour connecter un signal d'un widget avec un slot, on passe en mode edition de signal and slots et on clique gauche maintenu sur un widget signal, puis on deplace la souris sur le widget slot
+
+
+Ensuite, pour utiliser une fenetre dans notre application, ou alors le widget créé
+On va dans le code .cpp et on peut, apres la ligne de setup qui configure et build notre widget, 
+faire des trucs genre
+ui->boutonEgal->setText("Egal");
+
+Remarque, il est possible de personnaliser le code généré et de connecter automatiquement des signaux et des slots avec autoconnect
+==> en gros si on a un widget monWidget qui a un signal monSignal()
+on peut créér un slot qui s'appellera on_monWidget_monSignal(), 
+==> ce slot sera automatiquement connecté à mon signal ci-dessus
+
+
+
+=======[MVC]=====
+= Model View Controler
+
+c'est une facon de programmer (design pattern) qui offre de la flexibilité, notamment pour faire des listes a 1 ou plusieurs niveaux
+
+En gros on organise le programme en 3 parties 
+- modele = la ou ya les donnees
+- vue = la ou ya l'affichage
+- controler = la ou ya la gestion de la liste, genre ajouet / supprimer / trier / etc
+
+La classe gerant le modele est 
+- soit une classe qui herite de QAbstractItemModel. = complexe et galere
+- soit une classe generique de qt genre 
+	- QStringListModel = liste de QString
+	- QStandardItemModel = c'est des elements et ils sont en arbre
+	- QDirModel = pour afficher le contenu d'un repertoire
+	- QSqlQueryModel, QSqlTableModel et QSqlRelationalTableModel = pour les donnees issues de bdd
+
+Pour les classes qui gerent la vue on a 
+- QListView = affiche une liste
+- QTreeView = affiche un arbre
+- QTableView = affiche un tableau 
+
+Toute vue peut afficher n'importe quel modele, mais il y a des view qui sont plus adaptées que d'autres
+Genre si on a une liste arborescente qu'on essaye d'afficher avec une listView et non une treeView, ca n'affichera que le niveau 0 de la liste
+
+
+Pour afficher un modele avec la forme d'une vue, on fait un truc genre vue->setModel(monModele)
+On peut donc changer ce qu'affiche une vue
+
+On peut egalement afficher un meme modele avec 2 vues differentes pour avoir 2 points de vue par exemple
+
+Enfin, on peut utiliser des modeles personnalisés/personnalisables
+genre
+- QStringListModel = liste d'elements de type texte a un seul niveau
+- QStandardItemModel  = liste plus complexe a plusieurs niveaux et colonnes, qui peut convenir a la plupart des cas
+
+
+Pour QStringListModel,
+on cree une liste de QStrings qui est un objet QStringList, genre
+QStringList listePays;
+listePays.append("Belgique"); // ou alors
+listePays << "France" << "Espagne" << "Italie" << "Portugal" << "Suisse"; //QStringList surcharge l'operateur <<
+
+On cree un QStringListModel qui va organiser la QStringList, 
+QStringListModel *modele = new QStringListModel(listePays);
+
+Puis on met le model dans une view pour le voir
+QListView *vue = new QListView;
+vue->setModel(modele);
+
+Pour pouvoir selectionner plusieurs items, on fait 
+vue->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+
+Concernant QStandardItemModel
+Il est beaucoup plus complexe mais permet de gerer tous les types de modeles dont on pourrait avoir besoin
+genre on peut avoir un arbre qui genere des tableaux par exemple
+QStandardItemModel
+|->list model
+|->table model
+|->tree model
+
+
+On peut creer un modele de taille indéfinie
+QStandardItemModel *modele = new QStandardItemModel();
+Puis ajouter des lignes/colonnes en faisant
+modele->addRow(QStandardItem*);
+ou
+modele->addColumn(QStandardItem*);
+
+On peut creer un modele de taille definie, genre 5 lignes et 3 colonnes en faisant
+QStandardItemModel *modele = new QStandardItemModel(5, 3);
+
+Enfin, on peut ajouter un item à un endroit defini en faisant
+modele->setItem(3, 1, new QStandardItem("Zéro !"));
+
+Pour ajouter un element child, on fait
+monItem->addRow(QStandardItem*);
+
+
+
+Enfin, pour savoir présentement quel élément est selectionné, on fait 
+QItemSelectionModel	*selection = this->m_view->selectionModel();
+QModelIndex		selectedIndex = selection->currentIndex();
+QVariant		selectedElement =this->m_model->data(selectedIndex, Qt::DisplayRole);
+
+QMessageBox::information(this, "Liste des éléments sélectionnés", "Voici les éléments sélectionnés:\n" +  selectedElement.toString());
+
+ou plus directement
+QVariant	selectedElement = this->m_model->data(this->m_view->selectionModel()->currentIndex(), Qt::DisplayRole);
+QMessageBox::information(this, "Liste des éléments sélectionnés", "Voici les éléments sélectionnés:\n" +  selectedElement.toString());
+
+Si on a la possibilité d'avoir plusieurs selections, on fait 
+QItemSelectionModel		*selection = this->m_view->selectionModel();
+QModelIndexList				list = selection->selectedIndexes();
+QString									strList;
+QVariant								temp;
+
+for (int i = 0, lim = list.size(); i < lim; i++)
+{
+		temp = this->m_model->data(list[i], Qt::DisplayRole);
+		strList +=\ temp.toString() + "\n";
+}
+
+QMessageBox::information(this, "Liste des éléments sélectionnés", "Voici les éléments sélectionnés:\n" +  strList);
+
+Ou, pluds directement
+
+ModelIndexList		list = this->m_view->selectionModel()->selectedIndexes();
+QString			strList;
+
+for (int i = 0, lim = list.size(); i < lim; i++)
+	strList += (this->m_model->data(list[i], Qt::DisplayRole)).toString() + "\n";
+
+QMessageBox::information(this, "Liste des éléments sélectionnés", "Voici les éléments sélectionnés:\n" +  strList);
+
+
+============[c++ et la programmation reseau ]=================
+
+Pour avoir 2 programmes qui communiquent entre eux il leur faut
+    Connaître l'adresse IP identifiant l'autre ordinateur.
+    Utiliser un port libre et ouvert.
+    Utiliser le même protocole de transmission des données.
+
+sauf qu'en general, sur un reseau, une machine a en moyenne 3 ips
+1)  Une IP interne : c'est le localhost, aussi appelé loopback. C'est une IP qui sert pour communiquer à soi-même. Pas très utile vu qu'on n'emprunte pas le réseau du coup, mais ça nous sera très pratique pour les tests vous verrez.
+Exemple : 127.0.0.1
+
+2) Une IP du réseau local : si vous avez plusieurs ordinateurs en réseau chez vous, ils peuvent communiquer entre eux sans passer par internet grâce à ces IP. Elles sont propres au réseau de votre maison.
+Exemple : 192.168.0.3
+
+3) Une IP internet : c'est l'IP utilisée pour communiquer avec tous les autres ordinateurs de la planète qui sont connectés à internet. :-°
+Exemple : 86.79.12.105
+
+
+Concernant les ports, un port est un nombre, compris entre 0 et 65535=2^16-1
+port 21 = utilisé pour ftp
+port 80 = utilisé pour le navigateur web
+port 110 = utilisé pour les clients mails
+
+La plupart des ports dont les numéros sont inférieurs à 1 024 sont déjà réservés par votre machine. Nous ferons donc en sorte de préférence dans notre programme d'utiliser un numéro de port compris entre 1 024 et 65 535.
+
+Attention, en principe la plupart des port sont fermés (par le firewall) afin d'éviter les problemes de securité
+==> il faudra donc dire au firewall d'autoriser l'ouverture et le trafic sur le port en question par le programme qu'on a fait
+
+Concernant le protocole, c'est un ensemble de regles qui permettent a 2 entités, genre 2 ordis par exemple, de commmuniquer
+
+on distingue les protocoles de haut niveau de ceux de bas niveau
+- protocole de haut niveau = ftp sur le port 21, ou HTTP port 80 ou POP3 port 110, il est bien defini et documenté mais on ne peut pas lui rajouter de fonctionnalités 
+- protocole de bas niveau = tcp ou udp, utilisé pour les programmes dont aucun protocole de haut niveau ne convient, on doit donc manipuler les données octet par octet, c'est plus difficile mais on peut faire tout ce qu'on veut comme on le veut
+
+au niveau des protocoles bas niveau, on a 
+- tcp = necessite une connexion entre 2 programmes, ya un systeme de check qui permet de demander automatiquement le renvoit d'un paquet si celui-ci est perdu. c'est plus safe mais plus lent
+- udp = ne necessite rien, plus rapide mais moins safe
+
+On a 2 possibilités d'architecture reseau (en gros, en fait yen a une infinité)
+- client - server = des clients qui se connectent à un server = centralisé 
+- p2p = des clients connectés entre eux = decentralisé
+
+
+Les donnees qui circulent sur un reseau sont organisées en paquets
+ya 2 parties dans un paquet
+une partie taille = taille du paquet  
+une partie donnee
+
+==> en vrai on peut l'organiser comme on veut
+
+Pour la taille du paquet, c'est utile d'utiliser un type clairement defini et non variant en fonction des machines (ce qui n'est pas le cas de int ou unsigned int)
+==> Qt a des types genre quint16 = unisgned int codé sur 16bits quelque soit l'architecture de la machine
+
+L'interet de mettre la taille de notre paquet au debut est que le protocole va decouper notre paquet en sous-paquet, sans qu'on en ai le controle, c'est lui qui gere
+le protocole s'arrange pour que les paquets arrivent dans l'ordre d'envoi (en tout cas le tcp, le udp lui il s'en tape)
+
+<cf la suite du chapitre si tu veux creuser>
+
+

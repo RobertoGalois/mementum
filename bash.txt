@@ -1,0 +1,443 @@
+le premier truc a faire dans un script shell, c'est dde preciser le shell a utiliser pour le faire tourner: 
+
+#!/chemin du shell/ 
+
+pour utiliser bash on fait 
+#!/bin/bash
+
+remarque: 
+le #! c'est ce qu'on appelle un sha-bang ou shebang
+
+si on ne précise pas, ce sera le shell de l'utilisateur qui sera lancé et s'il y a un soucis de compatibilité, ća va foirer
+
+tous les commentaires sont des lignes qui commencent par # 
+genre 
+# coucou
+
+concernant le cas du shebang, c'est un commentaire particulier
+
+
+
+
+ensuite, il faudra chmod le fichier .sh pour le rendre EXECUTABLE
+sinon ća ne fonctionne pas 
+
+
+chsh chemin/monshell
+
+quand on lance un script shell, on a en retour QUE la sortie standard des commandes (genre on ne voit pas les commandes tapées) 
+
+
+pour debogguer un script, et donc voir les commandes précedees d'un +, on fait 
+bash -x monScript.sh 
+
+on peut creer ses propres commandes (cad faire que quand on tape notre executable, en binaire ou en shell, au lieu de faire a chaque fois chemin/executable on fait direct executable), en modifiant la variable d'environnement PATH pour y ajouter notre repertoire OU simplement mettre notre executable dans un des repertoires rentrés dans PATH
+
+pour faire quitter le script a un moment dans le code, on fait 
+exit 0
+
+========================[GESTION DES VARIABLES]=====================
+on declare une variable comme ça
+mavariable="coucou"
+ATTENTION C'EST SANS ESPACE !!!!
+
+ensuite on fait referece a notre variable comme ça 
+$mavariable
+
+il faut savoir que EN SHELL, TOUTE VARIABLE NE CONTIENT QUE DU TEXTE, 
+EN GROS LE SEUL TYPE C'EST STRING QUOI.
+
+si on délimite la valeur avec ''genre 
+variable='coucou $var0'
+on dit que ça contient le texte coucou $var0 (si on veut mettre un 'dedans il faut faire \' comme d'hab) 
+
+Si on délimite la valeur avec "" genre 
+variable="coucou $var0"
+ça affichera coucou (+ le contenu de var0), c'est a dire que ça fait pareil que ' ' mais que ça traduit les $machin en le contenu de la variable. 
+Bien sur, si la variable n'existe pas, alors ça equivaut a une chaine de caractere vide
+
+Si on delimite la valeur avec `` genre 
+variable=`ls`
+ça correspond à dire "execute la commande que je te donne et stocke le retour dans la variable"
+Une autre facon de faire, c'est 
+$(commande)
+ća ca equivaut a 
+`commande`
+
+ 
+pour afficher notre variable on fait 
+echo "$mavariable"
+ou plus simplement 
+echo $mavariable
+
+
+on peut bien sur utiliser \n dans écho pour faire un saut de ligne
+Mais pour utiliser \n et les autres caracteres de ce type (\t, \r, etc) il faut le preciser parmis les parametres de echo en faisant
+echo -e monMessage
+
+
+pour read une variable (en gros c'est comme si on fesait un scanf("%String", &variableString);
+on fait tout simplement 
+read mavariable
+==> si on veut mettre un texte introductif avant l'entrée on fait 
+read -p "Rentre ton truc: " mavariable 
+(en gros, -p spécifie qu'il faut mettre un message d'intro et on spécifie le message d'intro en question, c'est une commande quoi...)
+READ RÉCUPERE DES MOTS, CAD DES CHAR QUI SE SUIVENT ET NE SONT PAS DES " "
+
+il est possible avec read, de récupérer plusieurs mots, comme ça
+read mot1, mot2
+si j'ai 2 mots, chaque mot sera stocké de gauche a droite, dans les variable, genre 
+le premier mot est stocké dans mot1
+le 2e mot est stocké dans mot2
+Si d'aventure il y a avait plus de mots entrés, genre le user fait
+moi toi lui
+et bien comme le parsing de read part du principe qu'il doit y avoir 2 mots, des qu'il va rencontrer un " ", il va considerer que tout le reste est un mot, et va pas checker si ya des espaces, 
+on aura alors mot1="moi" et mot2="toi lui"
+
+
+pour limiter le nombre de char a acquerir avec read, on fait
+read -n nombre variable
+genre
+read -p "Entre ton prenom: " -n 10 monPrenom
+
+mais attention, si je fais 
+read -p "Entre ton prenom puis ton nom: " -n 10 prenom nom
+et que je fais
+victor vague
+ça ne me laissera pas finir, on aura
+prenom="victor"
+nom="vag"
+puisque LES 10 CARACTERES COMPRENNENT LE " " QUI SÉPARE LES MOTS !
+
+
+
+on peut également utiliser un timeout, pour limiter le temps d'acquisition, en faisant: 
+read -t tempsSecondes variable
+genre
+read -t 10 -p "t'as 10 secondes pour renter ton nom: " nom
+
+enfin, pour entrer un truc sans avoir de retour, genre comme quand on rentre un pw, on utilise -s
+genre 
+read -p "enter password: " -s password
+
+
+
+
+
+Bon c'est cool on a vu comment affecter des string a une variable, mais pour lui affecter des nombre, c'est un poil different, vu que le shell traite avant tout des chaines, 
+pour ça on fait 
+let "variable = nombre" 
+AVEC DES ESPACES AUTOUR DU EGAL CETTE FOIS !!!
+
+On peut egalement stocker le resultat d'opoerations, genre 
+let "a = 5"
+let "b = 8"
+let "c = a + b"
+ON N'APPELLE PAS LES VARIABLES AVEC DES $ CETTE FOIS !!!
+
+
+Comme opérateurs de base on a 
++
+-
+*
+/ (qui retourne la partie entiere de la division cad le quotient)
+% (qui retourne le reste de la division)
+** (puissance)
+
+on peut egalement contracter les commandes comme en C, genre 
+let "a *= b"
+qui equivaut a 
+let "a = a * b"
+
+
+voila...
+si on voulait faire des operations plus compliquées ou utiliser des float, 
+il faudrait utiliser la commande bc
+
+
+pour definir les tableaux, on fait 
+tableau=('valeur1' 'valeur2' 'valeur3')
+(pas d'espace en general, seulement pour séparer les differents elements du tableau)
+
+pour appeller un element du tableau, on fait 
+${tableau[2]}
+
+on peut a tout moment definir le contenu d'une case, comme ça 
+tableau[2]='valeur2'
+
+en fait, pen shell, les tableaux c'est comme des collections de string, 
+la taille est dynamique, on peut rajouter des trucs a la cool, on peut faire des sauts, genre definir tableau juska [3] puis definir tableau[20] avec tous les autres entre les 2 qui sont "vides" (indéfini donc chaine vide)
+
+pour afficher tout le contenu du tableau, on fait 
+echo ${tableau[*]}
+
+
+
+======================[les variables d'environnement]==============================
+toute variable cree dans un script n'existera que lors de l'execution de ce script, c'est logique
+pour qu'une variable perdure, genre pour etre reprise par un autre script par la suite par exemple, 
+il faut que ce soit une variable d'environnement 
+
+il existe deja pleins de variables d'environnement dans le systeme, qu'on peut voir avec la commande
+env
+
+par convention, les variables d'environnement (VE) sont ecrites en MAJUSCULES
+
+on peut retenir normalement: 
+SHELL : indique quel type de shell est en cours d'utilisation (sh, bash, ksh) ;
+PATH : une liste des répertoires qui contiennent des exécutables que vous souhaitez pouvoir lancer sans indiquer leur répertoire. Nous en avons parlé un peu plus tt. Si un programme se trouve dans un de ces dossiers, vous pourrez l'invoquer quel que soit le dossier dans lequel vous vous trouvez ;
+EDITOR : l'éditeur de texte par défaut qui s'ouvre lorsque cela est nécessaire ;
+HOME : la position de votre dossier home ;
+PWD : le dossier dans lequel vous vous trouvez ;
+OLDPWD : le dossier dans lequel vous vous trouviez auparavant.
+
+pour creer une variable d'environnement qui ne perdurera que le temps de la session, on fait
+export NOMVARIABLE= valeur
+genre 
+export MACHAINE= "coucou"
+
+pour supprimer une variable d'environnement on fait 
+unset $VARIABLE
+
+si on voulait creer une VE sur le long terme, il faudrait export les variables 
+dans le fichier ~/.bashrc
+comme ça ça execute la commande à chaque demarage de bash et donc ça initialise notre VE 
+comme on le veut 
+
+=====================[passer des parametres a notre script shell]============================
+c'est en gros faire un truc du genre 
+./monScript param1 param2
+
+dans notre script, 
+$# = nombre de parametre
+   ==> ATTENTION C'EST PAS COMME EN C ! ici ./monScript.sh ne compte pas, donc si ya pas de parametre, $#=0
+
+$0 = nom du script executé
+$1 = 1er parametre
+$2 = 2e parametre
+etc
+$9 = 9e parametre
+==> ya pas plus.
+
+==> si on a besoin d'avoir plus de 9 parametres, 
+on peut utiliser la commande 
+shift 
+qui va décaler la "tete de lecture" des variables (1-9) vers la droite
+du coup, $0 vaut $1, $1 vaut $2 etc et $9 vaut $9+1
+
+pour decaler la tete de lecture vers la droite, on fait 
+unshift (EN FAIT NON, JE NE SAIS PAS COMMENT FAIRE)
+
+par exemple, si je fais
+./monScript.sh -p coucou
+je peux checker si ya un param en faisant
+$#!=0
+et verifier le type de param en faisant
+$0 == "-p"
+et verifier sa valeur en faisant 
+$1 == "coucou"
+
+
+===========[STRUCTURES CONDITIONNELES]====================
+
+on fait genre 
+if [ test ]        #LES ESPACES SONT IMPORTANTS !!!
+then
+	#instructions
+elif [ test ]
+then 
+	#instructions
+
+elif [ test ]
+then
+	#instructions
+else
+	#instructions
+fi
+
+ou alors, autre syntaxe: 
+
+
+if [ test ]; then        #LES ESPACES SONT IMPORTANTS !!!
+	#instructions
+elif [ test ]; then
+	#instructions
+
+elif [ test ]; then
+	#instructions
+else
+	#instrutions
+fi
+
+
+on peut bien sur coupler les tests avec des ET et OU, genre
+&& = ET 
+|| = OU 
+genre 
+[ test1 ] && [ test2  ]
+ou 
+[ test1 ] || [ test2  ]
+
+
+enfin,
+concernant les tests, on a
+= = test d'égalité de chaine
+== = pareil,
+!= = chaines differentes
+-z chaine = chaine vide
+-n chaine = chaine non vide
+[ ! test ] = verifie que la condition test n'est pas remplie 
+
+tous ces opérateurs sont des operateurs de comparaison de chaine String
+pour comparer genre des nombres,on fait 
+$num1 -eq $num2 = egalité numerique (equal)
+$num1 -ne $num2 = inegalite numerique (nonEqual)
+$num1 -lt $num2 = strictement inferieur a (lowerThan)
+$num1 -le $num2 = inferieur ou egal a (lowerorEqual)
+$num1 -gt $num2 = strictement superieur a (greaterThan)
+$num1 -ge $num2 = superieur ou egal a (greaterorEqual)
+
+
+on a aussi des operateurs pour tester des FICHIERS, genre 
+-e $nomFichier = fichier existe (exists)
+-d $nomfichier = si c'est un directory
+-f $nomFichier = si c'est un fichier 
+-L $nomFichier = si c'est un lien symbolique
+-r $nomfichier = si c'est readable par le user qui lance le script
+-w $nomfichier = si c'est writable par le user qui lance le script
+-x $nomfichier = si c'est executable par le user qui lance le script
+
+$fichier1 -nt $fichier2 = si le fichier1 est plus recent (newerThan) que fichier2
+$fichier1 -ot $fichier2 = si le fichier1 est moins recent (newerThan) que fichier2
+
+
+
+pour les if elif nombreux testant une seule variable, on a bien sur la formulation case
+genre 
+case $variable in 
+	"valeur1") 
+		#instructions
+	;;
+
+	"valeur2")
+		#instructions
+	;;
+
+	"valeu3")
+		#instructions
+	;;
+
+	*)  #ca veut dire que ca peut etre n'importe quoi, meme les valeurs données au dessus 
+		#instructions par default, genre else
+	;;
+esac
+
+
+ATTENTION, DANS LE CASE ON PEUT TESTER PLUSIEURS VALEURS D'UN COUP MAIS
+il faut le faire avec des opérateurs differents de ceux qu'on connait 
+genre pour le OU c'est pas || mais | genre 
+
+case $variable in 
+	"valeur1" | "valeur2")
+		#instructions
+	;;
+esac
+
+
+
+==============================[LES BOUCLES]================
+
+
+while est comme ceci: 
+while [ test ]
+do
+	#instructions
+done
+
+ou alors, 
+while [ test ]; do
+	#instructions 
+done
+
+
+on a aussi until, qui est l'inverse de while, cad qu'au lieu de faire 
+while [ test ]; do
+	#instruction
+done 
+
+on fait 
+until [ ! test ]; do 
+	#instructions
+done
+
+
+Enfin, on a le for, mais qui est totalement différent du for de d'habitude
+c'est plutot un foreach en fait
+on fait genre 
+for variable in 'valeur1' 'valeur2' 'valeur3'
+do 
+	#instructions
+done
+
+de meme que pour tout a l'heure, on peut faire 
+for variable in 'valeur1' 'valeur2' 'valeur3'; do
+	#instructions 
+done
+
+
+apres le 'in' on a une suite de valeurs, cette suite peut être le retour d'une commande, genre 
+
+for fichier in `ls`
+do
+	echo $fichier
+done
+
+
+en fait, dans le in, ya de valeurs séparées par un séparateur, c'est pk ça prend une valeur differente a chaque valeur de retour du ls. 
+
+pour utiliser un for plus classique, on utilise la commande seq, 
+comme ca 
+seq 1 10 qui genere tous les entiers de 1 a 10 
+
+du coup on fait
+for variable in `seq 1 10`
+do
+	echo $variable
+done
+
+remarque concernant la commande seq
+elle equivaut a 
+seq 1 1 10
+cad generer les entiers de 1 a 10 en comptant de 1 en 1
+si on voulait aller de 2 en 2, genre 
+2 4 6 8 10 
+on aurait fait 
+seq 1 2 10
+
+
+================[les fonctions en bash]==================
+on les declare comme ća: 
+maFonction()
+{
+	#instructions
+}
+==> pas besoin de préciser les parametres que ća prend, 
+    ća se fait de facon dynamique
+
+on l'appelle comme ća 
+maFonction param1 param2
+ća executera tout
+$# correspondra au nombre de parametres
+$0 sera le nom de la fonction, 
+$1 sera la valeur du premier parametre
+$2 sera la valeur du second parametre,
+etc
+
+en fait, une fonction c'est comme un sous-script shell
+
+
+
+
+
+
+

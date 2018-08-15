@@ -1,0 +1,2215 @@
+Les accents ne sont pas geres dans la console de windows, mais oui dans la console de linux
+
+on a 4 types de memoire dans l'ordi, de la plus rapide a la plus lente
+les registres : une mémoire ultra-rapide située directement dans le processeur ;
+la mémoire cache : elle fait le lien entre les registres et la mémoire vive ;
+la mémoire vive : c'est la mémoire avec laquelle nous allons travailler le plus souvent ;
+le disque dur : que vous connaissez sûrement, c'est là qu'on enregistre les fichiers.
+
+en C on va surtout taffer avec la memoire vive, un peu avec le disque dur sur la fin, 
+le registre et la memoire cache c'est l'ordi qui s'en charge tout seul
+
+la ram ca fonctionne comme ca 
+ya une adresse qui contient une valeur. 
+l'adresse est un int, la valeur est codée sur un ensemble de bits
+
+au niveau des types de variables, on a; 
+
+char
+-127 à 127 = 2^8
+OU, selon l'implementation
+0 à 255 = 2^8
+codé sur 8bit = 1octet
+
+signed char
+-127 à 127 = 2^8
+codé sur 8bits = 1octet
+
+unsigned char (C89)
+0 à 255 = 2^8
+codé sur 8bits = 1octet
+
+short = signed short
+-32 767 à +32 767 = 2^16
+codé sur 16bits = 2octets
+
+unsigned short
+0 à 65 535 = 2^16
+codé sur 16bits = 2octets
+
+int = signed int 
+-32 767 à +32 767 = 2^16
+codé sur 16bits = 2octets 
+OU, selon l'implementation,
+-2 147 483 647 à +2 147 483 647 = 2^32
+codé sur 32bits = 4octets
+
+unsigned int
+0 à +65 535 = 2^16
+codé sur 16bits = 2octets 
+OU, selon l'implementation,
+0 à +4 296 967 295 = 2^32
+codé sur 32bits = 4octets
+
+long = signed long
+-2 147 483 647 à +2 147 483 647 = 2^32
+codé sur 32bits = 4octets
+
+unsigned long
+0 à 4 294 967 295 = 2^32
+codé sur 32bits = octets
+
+long long (C99) = signed long long (C99)
+-9 223 372 036 854 775 807 à +9 223 372 036 854 775 807 = 2^64
+codé 64bits = 8octet
+
+unsigned long long (C99)
+0 à 18 446 744 073 709 551 615 = 2^64
+codé sur 64bits = 8octets
+
+
+pour declarer des constantes, on fait comme pour les variables MAIS on rajoute const devant, genre 
+const int CONSTANTE;
+CONSTANTE = 3;
+
+
+
+
+pour les caracteres d'echappement, on a: 
+\a = signal sonore
+\b = retour en arriere
+\n = retour a la ligne
+\f = saut de page
+\r = fin de ligne
+\t = tabulation horizontale
+\v = tabulation vericale
+\' = '
+\" = "
+\? = ?
+\\ = \
+\o = le caractere qui correspond au code octal <o>
+\oo = le caractere qui correspond au code octal <oo>
+\ooo = le caractere qui correspond au code octal <ooo>
+\xh = le caractere qui correspond au code hexadecimal <h>
+
+avec printf, pour afficher des variables, on fait 
+%hd = short
+%d = int 
+%x = int hexadecimal
+%ld = long
+%f = float
+%lf = float
+%f = double
+%c = char
+%s = *char
+%p = *ptr
+
+pour scanf c'est pareil SAUF QUE pour recuperer un float c'est %f, pour récuperer un double c'est %lf
+
+APRES UN SCANF IL FAUT TOUJOURS VIDER LE BUFFER EN FAISANT
+while (getchar() != '\n') ;
+
+Concernant la bibliotheque 
+include <math.h> 
+
+on a
+fabs qui retourne la valeur absolue d'un nombre
+
+ceil qui arrondi a l'entier superieur
+floor qui arrondi a l'entier inferieur
+
+pow qui retourne l'nombre eleve a une puissance donnee
+
+sqrt qui retourne la racine carree d'un nombre
+
+sin cos tan 
+asin acos atan (arc machin)
+exp 
+log (ln en fait) 
+log10
+
+au niveau des bool, une fois pour toute
+1 = VRAI (ou n'importe quoi d'autre en fait)
+0 = FAUX 
+
+pour switch, la syntaxe est comme ca: 
+switch (age)
+
+{
+
+case 2:
+
+  printf("Salut bebe !");
+
+  break;
+
+case 6:
+
+  printf("Salut gamin !");
+
+  break;
+
+case 12:
+
+  printf("Salut jeune !");
+
+  break;
+
+case 16:
+
+  printf("Salut ado !");
+
+  break;
+
+case 18:
+
+  printf("Salut adulte !");
+
+  break;
+
+case 68:
+
+  printf("Salut papy !");
+
+  break;
+
+default:
+
+  printf("Je n'ai aucune phrase de prete pour ton age  ");
+
+  break;
+
+}
+
+
+
+
+Ca peut tres vite etre chiant d'avoir un seul fichier C
+on peut vouloir en faire plusieurs et respecter ainsi la norme de 5fonctions par fichiers et 25 lignes par fonctions 
+
+de plus ya le probleme de l'ordre des fonctions qui doivent apparaitre dans le fichier dans l'ordre d'appel...
+
+pour regler ce soucis, il suffit d'appeller les prototypes de fonctions en haut du fichier.
+en revenche la fonction main ne necessite pas de prototype
+par exemple, pour une fonction 
+int nombre(int n1, int n2)
+son prototype c'est
+int nombre(int n1, int n2);
+ou plus simplement 
+int nombre(int, int);
+
+c'est cool parce qu'en plus l'ordre de declaration des prototypes n'entre pas en ligne de compte ! 
+super ! 
+
+Les fichiers headers (.h) servent:
+- des déclarations des fonctions d'interface (celles qui sont utilisées dans d'autres fichiers sources)
+- d'éventuelles définitions de constantes symboliques et de macros
+- d'éventuelles directives au préprocesseur (inclusion d'autres fichiers, compilation conditionnelle).
+
+là ou les fichiers .c servent:
+- de variables permanentes, qui ne sont utilisées que dans le fichier nom.c
+- des fonctions d'interface dont la déclaration se trouve dans nom.h
+- d'éventuelles fonctions locales à nom.c
+
+Enfin, pour plus de lisibilite, on recommande d'appeller chaque fonction d'un fichier nom.c, de la facon suivante: 
+nom_nomdelafonction()
+
+
+
+pour include un fichier header, on fait 
+#include "fichier.h"
+ou 
+#include <fichier.h>
+==> l'utilisation des <> fait que lors de la compilation ca va d'abord checker dans le repertoire include de l'ide et s'il ne trouve pas le fichier va checker dans le repertoire du programme
+==> l'utilisation des <> fait l'inverse, c'est a dire qu'il check d'abord dans le repertoire du programme pour ensuite aller regarder, s'il ne trouve pas le fichier, dans le repertoire include de l'ide
+
+du coup si j'ai un fichier header que j'ai nommé genre stdio, bah du coup a l'include, 
+si je fais 
+#include "stdio.h" ==> ca include mon propre fichier 
+si je fais 
+#include <stdio.h> ==> ca include celui de include...
+
+
+donc la bonne manière c'est: 
+d'avoir un fichier main avec le main() et d'autres fonctions 
+d'avoir un fichier header.c qui contient les prototypes de toutes les fonctions de main.c
+et en haut du fichier main.c faire
+#include "header.h"
+et bien sur, dans le header ya les prototypes encapsules dans le #ifndef
+
+
+Enfin, il faut comprendre la COMPILATION SEPAREE
+en fait ya 3 phases 
+- le pre-processeur, en gros ca inclus tous les .h dans les .c
+- le compilateur, ca transforme les .c en .o qui sont des binaires
+- le linker qui link tous les .o entre eux pour faire un executable (= editeur de liens)
+
+remarque, il peut etre utile de conserver les .o afin d'eviter de tout recompiler a chaque fois qu'on change un seul fichier
+de plus, pour les librairies, les .h genre stdio.h ne contient QUE les prototypes, le code est déjà compilé et se trouve dans des fichiers .a ou .lib
+
+Les variables globales sont celles déclarées au tout début du code en dehors de toute fonction 
+Elles sont accessibles depuis TOUS LES FICHIERS C du projet.
+
+Pour definir une variable globale accessible a tous les fichiers, on fait
+extern int variable; dans main.c
+
+Si on veut que notre variable globale ne soit accessible que depuis notre fichier, il faut qu'elle soit static, on fait comme ca: 
+static int ma_variable;
+
+
+Au sein d'une fonction, si on veut qu'une variable conserve sa valeur d'un appel de fonction a l'autre, on la definit static au sein de la fonction, genre 
+void	my_function(void)
+{
+	static int my_var;
+}
+
+Enfin, concernant les fonctions, c'est pareil, chaque fonction peut être appellée depuis N'IMPORTE QUEL FICHIER.
+pour limiter son acces à un seul fichier, on la déclare static, genre 
+static int my_function(void)
+{
+	//du code;
+}
+
+
+DONC, LA PROGRAMMATION MODULAIRE EN PRATIQUE: 
+la premiere facon de faire, c'est d'avoir un fichier 
+main.c, avec la fonction main
+et un fichier
+functions.h qui contient
+==> toutes les fonctions dont a besoin main.c
+==> ainsi que tous ses headers;
+
+le soucis c'est que quand on a un gros programme, ca fonctionne bof.
+
+la seconde facon de faire, beaucoup plus elegantes et utile, est la suivante: 
+
+on a notre fichier 
+main.c
+qui contient la fonction main
+et qui INCLUDE TOUS LES HEADERS DES FICHIERS QU'ON A BESOIN D'INCLURE DEDANS
+
+on a 
+fichier1.c qui contient des fonctions et 
+fichier1.h qui contient ses headers
+
+fichier2.c qui contient des fonctions et 
+fichier2.h qui contient ses headers
+etc
+
+Ensuite, on peut compiler sans linker (avec l'option -c de gcc) chaque fichier c qui contient des fonctions, comme ca
+gcc -c fichier.c
+==> ce qui va nous generer un fichier fichier.o
+
+enfin, on compile le fichier avec gcc -c main.c
+
+Puis pour finir, on compile le tout en faisant
+gcc -o mon_programme main.o fichier1.o fichier2.o etc
+
+et voila
+
+SINON on peut directement faire
+gcc -o programme main.c fichier1.c fichier2.c etc
+
+Du coup, si on a besoin de ne modifier qu'un seul fichier c, 
+on modifie notre fichier
+puis on le compile pour avoir notre objet .o
+puis on recompile le tout avec notre gcc mon_programme main.o fichier1.o etc
+ca nous fait gagner du temps car on ne recompile pas tous les fichiers .c mais juste le nouveau 
+
+POUR EVITER LA DOUBLE INCLUSION DE HEADER, il faut
+dans notre fichier mon_fichier.h, encapsuler nos prototypes dans le code suivant: 
+#ifndef MON_FICHIER_H
+ #define MON_FICHIER_H
+  void	my_function1(void);
+  void	my_function2(void);
+#endif
+
+Remarque, tout fichier qui utilise une fonction donnée qui se trouve dans un autre fichier DOIT ETRE INCLUDE DANS LE FICHIER. 
+
+Si on fait genre 
+main.c
+#include <stdio.h>
+#include "file.h"
+int main(void)
+{
+  printf("je suis dans le main\n");
+  my_function();
+  return (0);
+}
+
+
+puis qu'on fait
+file.c
+void my_function(void)
+{
+  printf("Je suis dans my_function\n");
+}
+
+
+CA NE MARCHERA PAS BIEN QUE J'AI INCLUDE STDIO.H DANS LE FICHIER QUI APPELLE my_function !
+
+===================[makefile]========================
+
+Enfin, concernant make:
+make est un outil qui effectue uniquement les etapes de compilation pour constituer un executable
+genre si on a modifié qu'un seul fichier, il suffit de ne recompiler que le fichier modifié et d'effectuer un linker
+pas besoin de recompiler les autres.
+
+la commande make recherche par defaut dans le repertoire courant un fichier du nom de makefile ou Makefile 
+==> ce fichier specifie les dependances entre les differents fichiers source, objets et executables.
+bien sur, on peut donner un autre nom au makefile, pour cela, on fait 
+make -f nom_fichier
+
+un fichier makefile est constitué d'une liste de regles de dependance de la forme: 
+cible: liste de dependances = fichier cible suivi de la liste des fichiers dont il depend
+<TAB>	commande unix = commandes unix a executer dans le cas ou l'un des fichiers de dependance est plus recent que le fichier cible
+
+si on veut mettre des commentaires on les precede de #
+
+
+par exemple, pour le cas d'un programme constitué de 
+main.c
+produit.c
+produit.h
+
+on a
+prod: produit.c main.c produit.h
+	gcc -o prod -O3 produit.c main.c
+
+prod.db: produit.c main.c produit.h
+	gcc -o prod.db -g -O3 produit.c main.c
+
+
+et apres, pour obtenir l'executable prod, on fait 
+make prod
+(si on fait juste make, ca considere que le fichier cible est la premiere cible du fichier makefile, et du coup ici ca reviendrait au meme)
+
+
+Du coup, mettons qu'on fasse pour la premiere fois
+make (ou make prod)
+
+==> comme il n'y a pas de fichier prod dans le repertoire, ca compile tout et nous genere notre fichier prod
+
+maintenant, si on le refait une seconde fois SANS AVOIR MODIFIÉ LES FICHIERS SOURCES, la compilation n'est pas effectuée car
+LE FICHIER PROD EST PLUS RECENT QUE LES FICHIERS SOURCES ! 
+
+Enfin, si on avait modifié un seul fichier source, ca aurait compilé tous les fichiers quand meme, 
+pour que ca ne recompile que le fichier qu'on a modifié en .o puis linker le tout, on doit faire comme suit: 
+
+prod: produit.o main.o
+        gcc -o prod produit.o main.o   = gcc -o nomProgramme liste des .o
+main.o: main.c produit.h
+        gcc -c -O3 main.c	       = gcc -c nomfichier.c
+produit.o: produit.c produit.h
+        gcc -c -O3 produit.c
+
+en gros, ca fait un truc recursif, qui equivaut a ca
+prod: produit.o main.o
+	make produit.o
+	make main.o
+        gcc -o prod produit.o main.o
+main.o: main.c produit.h
+        gcc -c -O3 main.c
+produit.o: produit.c produit.h
+        gcc -c -O3 produit.c
+
+
+et pour le debogage on aurait
+prod.db: produit.do main.do
+        gcc -o prod.db produit.do main.do
+main.do: main.c produit.h
+        gcc -o main.do -c -g -O3 main.c
+produit.do: produit.c produit.h
+        gcc -o produit.do -c -g -O3 produit.c
+
+
+Enfin, on rajoute toujours une cible clean a la fin pour supprimer tous les fichiers objets et exe deja compilés pour tout recompiler si besoin
+clean: 
+	rm -f prod prod.db *.o *.do
+ou alors tout simplement
+clean:
+	rm -f monProgramme *.o
+
+remarque: pour clean, SI YA DANS LE REPERTOIRE UN FICHIER NOMME clean, la commande ne sera jamais effectuée
+du coup on peut specifier que là c'est different avec le kw .PHONY
+genre tout au debut du fichier
+.PHONY: clean, clean2, etc
+
+ya des regles implicites dans make, qui fait que mettons qu'on n'ai pas specifié la generation de main.o, make saura tout de meme comment le generer a partir de main.c
+
+pour desactiver les regles implicites, on fait tout au debut du fichier
+.SUFFIXES:
+
+on peut utiliser des constantes, un peu comme celles du preprocesseur #define en C 
+on les def comme ca
+VAR = machin 
+
+on les appelle comme ca 
+$(var)
+par convention, on essaye d'appeller ses variables en majuscule, genre
+VAR = "coucou tout le monde"
+echo $(VAR)
+
+Par convention, on appelle la regle par defaut "all"
+genre 
+all: 
+
+Enfin, il y a des variables generiques, genre
+all: library.cpp main.cpp
+In this case:
+    $@ evaluates to all
+    $< evaluates to library.cpp
+    $^ evaluates to library.cpp main.cpp
+
+
+
+pour 42, un makefile est foutu comme ca:
+
+.PHONY: clean, all, re, fclean				#all commands that are not files and don't need depandancy thing
+NAME = nomDeVotreLibrairie.a				#name of the binary or the lib
+CFLAGS = -Wall -Wextra -Werror				#flags of compilation
+SOURCES = main.c \					#list of files.c
+	  ft_putchar.c \
+          ft_putstr \
+	  ft_strlen \
+          ft_strstr.c \
+	  ft_strdup.c
+
+OBJS = $(SOURCES:.c=.o)					#list of files.o
+
+all: $(NAME) 						#all, target done by default, generally it does $(NAME)
+
+$(NAME):						#like do the binary
+	gcc $(CFLAGS) -c $(SOURCES) -I. 
+
+clean:							#clean all *.o files generated
+	/bin/rm -f $(OBJS)
+
+fclean: clean						#clean all *.o files generareds and the binary generated 
+    rm -f $(NAME)
+
+re: fclean all						#clean all and recompile project
+
+=========
+BIEN UTILISER GCC: 
+
+Pour connaitre les dependances d'un fichier c, on fait 
+gcc -MM mon_fichier.c
+ou on peut en mettre plusieurs, genre 
+gcc -MM file1.c file2.c
+
+en gros la syntaxe de gcc c'est 
+gcc [arguments] [fichiers a compiler] -o [fichier de sortie]
+
+les arguments
+-c = ne pas linker = juste generer les .o
+-v = verbose = donner les details
+-I = specifie le ou les repertoires de headers, genre si on a nos .c dans ./source et nos headers dans ./headers, on fait
+gcc ./sources/*.c -I ./headers -o programme
+
+-pipe = ne genere pas de fichiers temporaires, juste le fichier cible
+-Ox = optimisation [x=1-6], le compilateur ameliore notre code, mais plus l'optimisation est forte, genre 6, plus la compilation prend du temps
+-Os = optimisation en time pour que le programme soit le plus court possible 
+-w = supprime tous les avertissements
+-W = au contraire, gcc est plus exigeant sur les warnings 
+-Wall = idem mais encore pire, si on a un programme qui compile mais qui ne fait pas skil devrait, faut essayer avec ca 
+-Werror = tous les warnings deviennent des erreurs, seul le code parfait compilera
+-g = mode debug = ajoute des infos de deboggage a l'executable
+-o = specifier un nom pour le fichier final (par defaut, a.out si c'est un executable, cad un fichier.c avec main(), nomFichier.o sinon)
+
+on peut aussi compiler des bibliotheques avec gcc, 
+ya 2 types de bibliotheques: 
+- les bibliotheques statiques = *.a = integrees a l'executable lors de la compilation ==> l'executable produit est autonome, ya besoin de rien d'autre
+- les bibliotheques dynamiques = *.so = Sharing Object = non integrees a l'executable lors de l'edition de liens
+  ==> les avantages sont que 
+	- si la lib est utilisée par plusieurs programmes, elle n'est chargée qu'une seule fois
+	- l'executable est plus leger
+	- on peut la mettre a jour sans recompiler le programme (a condition de ne pas modifier les headers)
+
+
+pour integrer une bibli statique a notre programme lors de la compilation, on la met dans le tas comme on l'aurait fait avec n'importe quel fichier objet
+genre
+gcc main.o file.o lib.a -o programme
+
+pour creer une lib statique, on fait 
+ar -q libNOMLIB.a file1.o file2.o etc
+genre
+ar -q libsuper.a file1.o file2.o etc
+ou alors 
+ar rc libNOMLIB.a file1.o file2.o etc
+genre
+ar rc libsuper.a file1.o file2.o etc
+ensuite, on peut mettre un index pour que par la suite la compilation se fasse plus rapidement
+ranlib malib.a
+puis pour compiler on fait
+gcc fichier.c -L[chemin de la lib] -lNOMLIB
+genre
+gcc fichier.c -L. -lsuper
+
+pour connaitre les .o contenus dans une lib.a, on fait 
+ar t libft.a
+
+pour creer une lib dynamique, on fait
+gcc -c -fPIC truc -o truc.o
+gcc -shared -fPIC truc.o -o libtruc.so
+==> et apres ya des manip mais c'est chiant, on n'en a pas l'utilite pour l'instant donc osef
+
+pour compiler un programme en integrant des lib tierces,
+dans un premier temps faut savoir qu'on peut recuperer les infos sur les headers de nos libs, comme ca 
+pkg-config --cflags [bibliothèque]
+de meme qu'on peut avoir les liste des .c d'un lib en faisant
+pkg-config --libs [bibliothèque]
+
+et comme le format de renvoi de ces commandes est tel que c'est directement comprehensible par gcc, on n'a plus qu'a juste faire
+gcc -c main.c $(pkg-config --cflags gtk+-2.0) -o main.o
+gcc main.o $(pkg-config --libs gtk+-2.0) -o Programme
+
+
+TRUC PRATIQUE
+en shell, avoir la valeur du retour du dernier executable, on fait 
+echo $?	
+
+===========
+
+pour les pointeurs, en gros c'est une variable qui contient une valeur de type "adresse mémoire", c'est a dire un gros int
+
+on le déclare comme ca 
+type	*ma_variable;
+
+remarque, il est tres important en regle generale d'initialiser ses ptrs a NULL
+
+en fait le type d'un int c'est int
+le type d'un pointeur sur int c'est int	*
+une variable type point contient donc 2 infos
+- l'adresse memoire de la variable pointée 
+- le type de la variable pointée (et donc potentiellement sa taille)
+
+remarque, on peut aussi faire cette syntaxe
+int*	ptr;
+plutot que
+int	*ptr;
+
+
+du coup si on a une variable ma_variable
+&ma_variable renvoit l'adresse de notre variable, 
+on pourrait donc faire
+int	*ptr;
+ptr = &ma_variable;
+
+et on peut egalement afficher le contenu de notre variable, 
+soit en faisant
+ma_variable;
+soit en faisant
+*ptr;
+
+de meme, on pourrait avoir l'adresse de ptr en faisant
+&ptr
+et pointer sur la valeur d'une variable dont l'adresse est egale a la valeur de ma_variable en faisant
+*ma_variable (pas garanti...)
+
+pour résumer: 
+& est un opérateur qui retourne l'adresse de la variable
+* est un opérateur qui retourne la valeur de la variable dont l'adresse est la valeur de l'opérande.
+
+===========[array]=====
+
+un array c'est un ensemble de variables de memes types dont les adresses se suivent en memoire dans la stack
+Si on a un tableau tab de trucs qui font 1octet
+on aura 
+&tab[0] = 1600
+&tab[1] = 1601
+&tab[2] = 1602
+etc 
+
+par contre si on a un tableau tab de trucs qui font 2octets, 
+ALORS on aura
+&tab[0] = 1600
+&tab[1] = 1602
+&tab[2] = 1604
+etc 
+
+
+On le defini comme ca: 
+int my_array[10];
+
+dans la norme C99 on peut faire des trucs comme ća 
+int my_array[size];
+cad avoir une taille definie par une variable int 
+MAIS CA DIMINUE LA PORTABILITE DU CODE, donc on oublie et on utilisera une autre facon de faire decrite plus bas
+
+puis on peut definir leurs valeurs comme ca
+my_array[0] = 10;
+my_array[1] = 52;
+my_array[2] = 63;
+my_array[3] = 0;
+
+On peut egalement initialiser directement comme ca:
+int my_array = {10, 52, 63, 0};
+
+Enfin, notons la syntaxe particuliere
+int my_array = {k};
+qui fait que 
+my_array[0] = k;
+my_array[n*] = 0;
+
+pour passer un array a une fonction (qui consiste en fait a passer un pointeur) on fait simplement 
+ma_fonction(int array[])
+
+remarque importante, quand on passe un array a une fonction, on peut modifier cet array (a la difference des autres variables qui sont des copies lorsqu'on les modifie dans la fonction) 
+car en realité, on passe un pointeur ! et oui ! 
+
+
+si on tape juste 
+my_array
+ća designe un pointeur sur my_array[0]
+
+==> c'est la qu'intervient l'arithmetique des pointeurs
+en gros, on peut additionner des ints a un pointeur (cad a son adresse) SAUF QUE: 
+
+mettons que j'ai le tableau suivant: 
+int my_array[4]
+(et mettons que la taille d'un int sur notre achitecture c'est 2octets)
+
+&my_array[0] = 1600
+&my_array[1] = 1602
+&my_array[2] = 1604
+&my_array[3] = 1606
+
+si on fait
+my_array + 1 
+on aura NON PAS 1601 MAIS 1602, en fait 
+my_array + k 
+c'est 
+my_array + (k * sizeof(type des variables de l'array)
+
+
+=====[les String]========
+
+en gros, le type char (1 octet) contient un entier allant de -128 a 127
+mais le langage C fait une correspondance entre le nombre et un caractere suivant la norme ASCII
+
+pour stocker un char, on fait 
+char c; 
+c = 'a';
+
+une string c'est juste un tableau de char
+= char[] = *char
+
+en gros c'est foutu comme ća 
+char chaine[7] = "coucou";
+on a 
+chaine[0] = 'c'
+chaine[1] = 'o'
+chaine[2] = 'u'
+chaine[3] = 'c'
+chaine[4] = 'o'
+chaine[5] = 'u'
+chaine[6] = '\0'
+
+le caractere \0 permet de faire comprendre a l'ordi que la chaine se termine là
+
+DONC une string de n caracteres est un char[n+1]
+==> c'est super pratique parce qu'on pourra passer le char[] a des fonctions sans avoir a lui preciser la taille (le dernier element c'est celui qui contient '\0')
+
+
+pour initialiser une string, ya differentes facon
+la facon chiante: 
+
+char string[6];
+
+string[0] = 's';
+string[0] = 'a';
+string[0] = 'l';
+string[0] = 'u';
+string[0] = 't';
+string[0] = '\0';
+
+une facon plus cool 
+char string[] = "salut";
+==> pas besoin de preciser la taille, le compilateur la calcule lui-meme
+==> le compilateur faire tout seul skon a fait plus haut
+
+CA NE FONCTIONNE QU'A L'INITIALISATION 
+on ne pourra pas faire plus tard dans le code
+string = "wesh!";
+
+un truc important a avoir compris, 
+un string, c'est donc un tableau de char, 
+cad un pointeur sur char suivi d'autres char dont un \0
+DU COUP
+on peut avoir comme string n'importe quelle substring, 
+genre je peux faire 
+char	*chaine = "coucou tout le monde !"
+si je fais printf("%s", chaine);
+ća affiche 
+coucou tout le monde !
+Mais si je fais 
+printf("%s", &chaine[7]);
+ća affiche
+tout le monde !
+ET ouAiS ! 
+
+ya pas mal de fonctions dans string.h qui permettent de manipuler les chaines de caracteres: 
+
+strlen(string) = retourne la taille d'une chaine = nb de caracteres = taille du tableau
+
+REMARQUE
+strlen renvoit une variable de type size_t
+c'est un type special, non primitif, inventé, qui signifie qu'il renvoit une taille.
+
+on peut stocker cette variable dans un int, dans un long, etc pas de soucis
+meme si en toute rigeur il faudrait stocker la valeur dans une variable de type size_t
+
+
+
+pour copier une chaine dans une autre, on a 
+char* strcpy(char* copie, const char* chaineACopier)
+==> la fonction renvoit un pointeur sur la chaine copie
+
+du coup, concretement, si on a une
+char	string[500] = "coucou tout le monde";
+
+et plus tard on veut qu'elle contienne "ca va ?"
+on n'a pas le droit de faire
+string = "ca va ?";
+
+mais on pourra quand meme le faire de cette facon: 
+strcpy(string, "ca va ?");
+
+REMARQUE IMPORTANTE: 
+au depart string contient
+"coucou tout le monde\0"
+apres la copie elle contient
+"ca va ?\0out le monde\0"
+a la lecture il n'y aura pas de probleme parce que l'ordi arrete de lire des qu'il rencontre le \0
+sauf que dans notre variable il restera quand meme le reste de la chaine stockee dedans
+
+
+pour concatener 2 chaines, on fait 
+strcat(char* chaine1, const char* chaine2)
+pareil que pour strcpy, la fonction retourne un pointeur sur la nouvelle chaine.
+
+Pour comparer 2 string, on a
+int strcmp(const char* chaine1, const char* chaine2);
+
+qui renvoit 0 si id, autre chose sinon
+En realité, cette fonction compare la valeur numerique de chaque caractere de la string
+si les caracteres de chaine1 sont superieurs a ceux de chaine 2, 
+la fonction renvoit un nombre >0
+dans le cas contraire elle renvoit un nombre <0
+
+Pour rechercher un caractere dans une chaine, on fait
+char* strchr(const char* chaine, int caractereARechercher);
+
+elle renvoit l'adresse du char trouvé ou NULL si yen a pas
+
+dans le genre recherche de caracteres on a aussi une petite forme amelioree qui est
+char* strpbrk(const char* chaine, const char* lettresARechercher);
+
+ca fait pareil mais au lieu de passer 1 char a rechecher, 
+on passe une string qui correspond a un ensemble de char a trouver
+et en gros, le premier des char de la chaine qui est trouvé, on renvoit un pointeur sur lui, 
+sinon ća renvoit NULL;
+
+pour rechercher une substring = chaine dans la chaine, on a
+char* strstr(const char* chaine, const char* chaineARechercher);
+ca renvoit donc un pointeur vers le premier char de la substring 
+ou NULL si non trouvé 
+
+
+dans stdio.h, ya sprintf, qui ecrit dans une chaine
+sprintf(char *string_dans_laquelle_on_ecrit, "chaine qu'on y ecrit youpi %d %f", variables);
+
+
+=======[le preprocesseur]=======
+
+dans le #define, on peut utiliser des operations +-*/%, enre 
+#define HAUTEUR 10
+#define LARGEUR 20
+#define SURFACE (HAUTEUR * LARGEUR)
+
+Il existe aussi des constantes pre-definies genre 
+__LINE__ qui donne le numero de la ligne actuelle (int)
+__FILE__ qui donne le nom du fichier (string)
+__DATE__ qui donne la date de compilation (string) 
+__TIME__ qui donne l'heure de la compilation (string) 
+
+==> tres utile pour gerrer des erreurs
+
+le define est tres utiles pour les macros, cad un kw qui designe une chaine de caractere, genre 
+#define COUCOU() printf("Coucou");\
+		 printf("comment ca va ?");
+
+(pour que le define prenne plusieurs lignes il faut mettre un \ a la fin de la ligne precedente)
+
+
+on peut egalement faire des macros avec des parametres
+genre 
+#define MAJEUR(age) if (age >= 18) \
+                    printf("Vous etes majeur\n");
+
+int main(int argc, char *argv[])
+{
+    MAJEUR(22)
+
+    return 0;
+}
+
+On peut utiliser un # comme suit pour definir des string, genre
+#define		TOTO(x)		#x
+qui fait que 
+TOTO(wesh)
+equivaut a 
+"wesh"
+
+On peut aussi piper les #define, genre 
+#define TOTO(x)	#x
+#define CACA(x) TOTO(x)	
+
+
+===============[les structures]===================
+
+On les definie dans des .h avec les prototypes de fonctions et les #define
+
+on la definie comme suit: 
+
+struct s_mastructure
+{
+	int	variable;
+	char	c;
+	double	d;
+}; /* NE PAS OUBLIER LE ;*/
+
+
+ensuite pour creer une structure on fait 
+struct s_mastructure s_element;
+
+ca peut etre un peu chiant, du coup on peut utiliser typedef, comme ca 
+typedef type nouveau_nom
+genre 
+typedef int caca
+ou 
+typedef struct s_mastructure t_s_mastructure
+
+une fois notre variable crée, pour acceder a ses composantes, on le fait avec un .
+genre 
+struct s_mastructure s_yolo; 
+s_yolo.variable = 10;
+printf("%c", s_yolo.c);
+
+
+du coup notre structure est un type donné, on peut meme creer des tableau de structures si on veut 
+
+
+Pour initialiser une structure on fait comme ća 
+t_s_mastructure caca = {a, b, c};
+
+CELA NE MARCHE QUE POUR L'INITIALISATION, c'est comme pour les strings...
+
+pour modifier une structure, on peut utiliser une fonction qui prend en parametre un pointeur sur notre structure, et faire ce qu'on veut dedans 
+SAUF QUE 
+pour acceder a une variable de notre structure,
+si on fait 
+*s_structure.variable
+CA NE FONCTIONNE PAS
+parce que le point s'applique à s_structure et non *s_structure, 
+du coup cette expression correspond à "pointeur sur la variable s_structure.variable" = *(s_structure.variable)
+
+Pour faire skon veut faire, il faut donc faire 
+(*s_structure).variable
+
+Comme on utilise enormement les pointeurs sur structure, 
+ya une autre syntaxe 
+en fait 
+(*s_structure).variable
+equivaut a 
+s_structure->variable
+
+
+Concernant les structures et la facon de leur affecter des données, on peut faire de 2 facons, un peu comme les tableaux 
+pour rappel, avec les array on peut faire genre 
+int	arr[3];
+arr[0] = 1;
+arr[1] = 2;
+arr[2] = 3;
+
+ou directemet 
+int	arr[] = {1, 2, 3};
+
+Pour les structures c'est pareil. avec
+struct s_machin
+{
+	int	a,
+	char*	b;
+}
+
+on peut faire
+struct s_machin bidule;
+bidule.a = 42;
+strcpy(bidule, "coucou");
+
+ou faire
+struct s_machin = {42, "coucou"};
+
+========[les enum]============
+
+c'est une variable qui ne peut prendre qu'un ensemble de valeurs possibles 
+
+on la definie comme ca
+
+typedef enum Volume Volume;
+enum e_volume
+{
+    FAIBLE,
+    MOYEN,
+    FORT
+};
+
+par convention, ces valeurs sont en majuscule 
+le compilateur va ensuite attribuer des valeurs int a chaque valeur,
+genre faible = 0; moyen = 1; fort = 2;
+Mais nous de notre cote on s'en fout 
+
+si on voulait associer une valeur precise, on fait 
+typedef enum Volume Volume;
+enum e_volume
+{
+    FAIBLE = 10,
+    MOYEN = 50,
+    FORT = 100
+};
+
+apres, pour definir une variable enum, on a juste a faire 
+enum e_volume vol;
+
+et faire un truc genre 
+vol = FAIBLE;
+
+si on fait
+enum e_volume
+{
+    FAIBLE = 10,
+    MOYEN,
+    FORT
+};
+
+ca incremente, genre on aura
+    FAIBLE = 10,
+    MOYEN = 11,
+    FORT = 12
+
+remarque importante, 
+quand on ne defini pas de valeur par defaut, et bien par defaut, 
+la premiere valeur vaut 0.
+et du coup les autre seront incrementees de 1 a chaque "etage"
+
+autre remarque, concernant la syntaxe, on fait
+enum e_volume
+{
+    FAIBLE,
+    MOYEN,
+    FORT
+};
+mais yen a qui font
+enum e_volume
+{
+    e_volume_FAIBLE,
+    e_volume_MOYEN,
+    e_volume_FORT
+};
+
+
+========[les unions]============
+
+Les unions ressemblent beaucoup aux structures,
+mais les unions ca permet d'acceder a un espace memoire de differentes facons, 
+genre un int avec 4 chars.
+
+on les cree pareil que les struct, cad
+union	u_monunion
+{
+	/* du code */
+};
+
+maintenant imaginons la structure suivante
+struct	s_test
+{
+	int	i;	//4 octets
+	char	c;	//1 octet
+	float	f;	//4octets
+	char	tab[4];	//4 octets
+};	//total = 13 octets
+
+MAIS SI JE FAIS UN SIZEOF (S_TEST) CA ME RENVOIT 16 octets et non pas 13...
+cela est du au fait que lorsque je compile, le compilateur fait ce qu'on appelle du "PADDING" entre les variable de ma structure
+c'est a dire que le compilateur met les elements a des adresses qui sont un MULTIPLE DE 4 pour acceder aux valeurs plus rapidement.
+==> genre l'os va reach la next data a la next adresse qui est un multiple de 4 (dans une archi a 32bits, et donc 8 dans une archi a 64 bits)
+
+|i|*|*|*|c|.|.|.|f|*|*|*|t|*|*|*|
+ 0       4       8      12       16
+
+du coup si on avait cette structure la
+struct	s_test
+{
+	int	i;	//4 octets
+	char	c;	//1 octet
+	char	x[3];	//3 octets
+	float	f;	//4octets
+	char	tab[4];	//4 octets
+
+};	//total = 16 octets
+
+==> bah ca afficherait 16 octets aussi !!!
+|i|*|*|*|c|x|x|x|f|*|*|*|t|*|*|*|
+ 0       4       8      12       16
+
+Par contre si on avait fait dans cet ordre
+struct	s_test
+{
+	int	i;	//4 octets
+	char	c;	//1 octet
+	float	f;	//4octets
+	char	x[3];	//3 octets
+	char	tab[4];	//4 octets
+
+};	//total = 16 octets
+
+==> bah ca afficherait 20 octets
+|i|*|*|*|c|.|.|.|f|*|*|*|x|*|*|.|t|.|.|.|
+ 0       4       8      12      16       20
+
+Maintenant, avec un union
+union	u_test
+{
+	int	i;	//4 octets
+	char	c;	//1 octet
+	float	f;	//4octets
+	char	tab[4];	//4 octets
+};	//total = 13 octets
+
+si on fait un sizeof (u_test) ca nous retourne 4, 
+c'est a dire LA TAILLE DE LA PLUS GRANDE DONNEE DE L'UNION
+
+bien sur, LE PADDING S'APPLIQUE TOUJOURS (si la plus grande donnee est de taille 2, ca retournera aussi 4)
+et du coup, avec
+union	u_test
+{
+	int	i;	//4 octets
+	char	c;	//1 octet
+	float	f;	//4octets
+	char	tab[10];//10 octets
+};	//total = 19 octets
+
+==> le sizeof sera de 12 (10 + le complement pour avoir un multiple de 4)
+
+En fait, si j'avais fait
+union	u_test
+{
+	int	i;	//4 octets
+	char	tab[4];	//4 octets
+};	//total = 8 octets
+
+puis
+union u_test a;
+a.i = 424242;
+
+si on affiche a.tab[i], 
+ON VA AFFICHER LES 4 OCTETS QUI COMPOSENT i !!!, octet par octet; (on vient de comprendre une utilité de unsigned char)
+c'est a dire
+50
+121
+6
+0
+
+===============[lire et ecrire dans un fichier - les fichiers en C]====================
+
+a chaque fois c'est pareil: 
+
+1) on ouvre le fichier avec fopen qui renvoit un pointeur sur le fichier
+2) on check si l'ouverture a reussi en checkant la valeur du ptr
+3) on ecrire et/ou lit dans le fichier
+4) on referme le fichier avec fclose, ća permet de liberer de la memoire (et donc ne pas avoir de problemes de fuites de memoire)
+
+
+pour fopen c'est
+FILE* fopen(const char* cheminRelatif/nomDuFichier, const char* modeOuverture);
+
+La structure FILE est définie dans stdio.h
+On doit donc l'inclure au début du fichier
+
+le premier parametre c'est le nom du fichier
+le second, c'est skon veut faire dessus, on a: 
+"r" = lecture seule
+"w" = ecriture seule, ca supprime tout son contenu, c'est comme faire un >,  si le fichier n'existe pas, il sera créé
+"a" = mode d'ajout, idem mais c'est comme >>, cad qu'on ajoute la fin
+"r+" = lecture et ecriture, LE FICHIER DOIT EXISTER AU PREALABLE.
+"w+" = lecture et ecriture avec suppression du contenu au prealable, idem si le fichier n'existe pas, il sera cree
+"a+" = on lit et ecrit du texte a partir de la fin du fichier. si le fichier n'existe pas il est cree
+
+DE PLUS, Si rajoute un 'b' apres la premiere lettre, genre rb, ab+, etc 
+ća fait pareil mais en mode binaire (cf plus bas)
+En gros on stocke pas du texte mais des bits.
+
+
+FILE c'est une structure et dans stdio.h ya un typedef du genre 
+typedef FILE struct FILE
+
+REMARQUE IMPORTANTE: 
+dans ce cas, et dans le cas plus general des lib et meme des structures, 
+il est deconseillé de modifier ou d'appeler des variables qui sont a l'interieur car ce ne sont pas toujours les memes d'un OS a l'autre et ca diminue notre portabilité
+
+Du coup, le mieux c'est de faire des getters et des setters
+
+le pattern en gros c'est ca
+int main(int argc, char *argv[])
+{
+    FILE* fichier = NULL;
+
+    fichier = fopen("test.txt", "r+");
+
+    if (fichier != NULL)
+    {
+        // On lit et on écrit dans le fichier
+        
+        // ...
+        
+        fclose(fichier); // On ferme le fichier qui a été ouvert
+    }
+
+    return 0;
+}
+
+
+pour ecrire dans un fichier, on a differentes fonctions
+fputc = ecrit un char dans le fichier
+fputs = ecrit une string dans le fichier
+fprintf = ecrit une chaine formatée dans le fichier
+
+int fputc(int caractere, FILE* pointeurSurFichier);
+==> retourne un code d'erreur: EOF si ca a deconne, une autre valeur sinon
+
+char* fputs(const char* chaine, FILE* pointeurSurFichier);
+==> idem 
+
+int fprintf(FILE *stream, const char *format, ...).
+==> idem
+
+IMPORTANT, A CHAQUE FOIS QU'ON FAIT UN FGET OU UN FPUT, ON DECALE LA TETE DE LECTURE D'UN CHAR.
+
+pour lire dans un fichier, c'est pareil ya en gros 3 fonctions 
+fgetc = lit un char
+fgets = lit un string
+fscanf = lit une chaine formatée
+
+int fgetc(FILE* pointeurDeFichier);
+==> idem, EOF si illisible, la valeur int du char lu
+
+a chaque fois qu'on fait un fgetc, ća avance la tete de lecture d'un caractere.
+du coup la fois suivante ou on utilise fgetc, on en est au caractere suivant
+
+quand le curseur est sur une place ou ya pas de caractere, la fonction renvoit EOF
+
+on peut donc coder une fonction qui lit tous les caracteres d'un fichier texte et le renvoit a l'ecran
+
+do
+{
+	caractereActuel = fgetc(fichier); // On lit le caractère
+	printf("%c", caractereActuel); // On l'affiche
+
+} while (caractereActuel != EOF);
+
+Si on a envie de lire le fchiers en imprimant 3 caracteres par 3 caracteres (et non pas 1 par 1 comme au dessus) 
+on fait 
+#define	BUF_SIZE 3
+int	ret;
+char	buf[BUF_SIZE + 1]
+
+while ((ret = read(fd, buf, BUF_SIZE)) != 0)
+	printf("%s", buf);
+
+
+char* fgets(char* chaine, int nbreDeCaracteresALire, FILE* pointeurSurFichier);
+==> idem, la string s'arrete au premier \n rencontré
+
+int fscanf (FILE * fic, const char * format [adresse,...]); 
+==> genre dans un fichier ou ya 3 nombres 10 20 30
+==> on peut les recuperer comme ca 
+        fscanf(fichier, "%d %d %d", &score[0], &score[1], &score[2]);
+
+
+
+
+
+POUR SAVOIR OU ON EST DANS LE FICHIER: 
+on a 
+ftell
+fseek
+rewind
+
+
+long ftell(FILE* pointeurSurFichier);
+==> renvoit la position actuelle du curseur sous forme de long, premiere position 0! 
+
+int fseek(FILE* pointeurSurFichier, long deplacement, int origine);
+==> se positionne sur une position particuliere dans le fichier
+==> deplacement est >0 pour aller en avant <=0 pour aller en arriere
+==> origine c'est l'une des 3 constantes suivantes: 
+	- SEEK_SET = indique le debut du fichier
+	- SEEK_CUR = indique la position actuelle du curseur
+	- SEEK_END = indique la fin du fichier
+
+
+du coup, 
+fseek(file, 2, SEEK_SET); = place le curseur 2 caracteres apres le debut
+fseek(fichier, -4, SEEK_CUR); = decale de 4 caracteres avant le curseur courrant 
+fseek(fichier, 0, SEEK_END); = met le curseur a la fin, du coup si on ecrit, ca rajoute a ce qui existe deja
+
+remarque sur le deplacement dans le fichier
+en fait, un '\n' est un caractere
+donc si j'ai 
+coucou
+comment ca va ? 
+
+le dernier u de coucou est en position 5
+la position 6 c'est le \n, cad le retour a la ligne 
+la position 7 c'est le c de comment ca va.
+voila ! 
+
+
+
+
+enfin, de facon annecdotique, on peut utiliser des fonctions pour renommer ou supprimer des fichiers 
+int rename(const char* ancienNom, const char* nouveauNom);
+==> retourn 0 si ok, autre chose sinon
+et 
+
+int remove(const char* fichierASupprimer);
+==> idem
+
+=======[Les fichiers en C sous unix / linux]=============
+
+Pour le faire, ici on doit include les headers suivants
+#include	<sys/types.h>
+#include	<sys/stat.h>
+#include	<sys/fcntl.h>
+
+Quand notre programme demande a ouvrir un fichier, l'os lui renvoit un file_descriptor, qui est un int
+du coup quand notre programme tourne, l'os a une sorte de table quelque part qui fait correspondre chaque FD ouvert par le processus avec le fichier ouvert
+Des qu'on a obtenu le FD, on l'utilise pour manipuler le fichier
+
+Remarque, dans la fonction write de unistd.h, 
+quand dans notre ft_putchar() on fait 
+write(1, &c, 1);
+le premier parametre est un FD ! 
+Il y a 3 FD standards
+0 = stdin
+1 = stdout
+2 = stderr
+du coup, pour ouvrir un fichier, on fait 
+
+int	open(char *path, int flags[, mode_t perm);
+path c'est le chemin relatif ou absolu
+flags c'est genre r, w, a, etc, pour cette fonction on utilise des constantes qui sont: 
+	- O_RDONLY
+	- O_WRONLY
+	- O_RDWR
+	- /
+	- O_CREAT = si le fichier n'existe pas, le creer
+	- O_TRUNC = si le fichier existe, ecrire depuis le premier octet
+	- O_APPEND = si le fichier existe, ecrire depuis le dernier octet
+
+==> on peut combiner les flags avec des OU binaires = |
+genre si on veut un fichier en mode ecriture qui soit cree s'il n'existe pas, je fais
+open("./fichier.txt", O_WRONLY | O_CREAT);
+
+
+perm = permissions en cas de creation de fichier
+	- S_IRUSR = 
+	- S_IWUSR = 
+	- S_IXUSR = 
+	- S_IRWXU = 
+	- S_IRGRP = 
+	- S_IWGRP = 
+	- S_IXGRP = 
+	- S_IRWXG =
+	- S_IWOTH = 
+	- S_IXOTH = 
+	- S_IRWXO =  
+
+
+ca renvoit le FD du fichier ouvert ou simplement -1 en cas d'erreur
+
+Pour fermer le fichier, on fait 
+int	close(int fd)
+close renvoit -1 si ya eu un soucis
+Pour utiliser close, il faut 
+#include	<unistd.h>
+
+Pour ecrire, on fait
+int	write(int fd, char *buf, int count);
+fd = file descriptor renvoyé par open
+buf = la chaine a ecrire
+count = le nombre d'octets a ecrire.
+
+write revoit le nombre d'octets ecrits OU -1 en cas d'erreur
+
+pour lire, on fait
+int	read(int fd, char* buf, int count);
+fd = file descriptor
+buf = le tampon ou on met les trucs lus
+count = le nombre d'octets, qui correspond a la taille du tampon
+
+read retourne le nombre d'octets lus ou -1 si soucis et 0 s'il a atteint la fin du fichier
+
+Bien entendu, comme pour fgets ou autre, 
+read a une sorte de tete de lecture (localisée sur un offset donc), qui, a chaque lecture, se decale du nombre d'octets lus, tant que le stream est ouvert
+
+Pour placer la tete de lecture a un offset donné on a 
+int	lseek(int fd, int offset, int mode)
+fd = file descriptot
+offset = offset (octet numero tant ou bit numero tant)
+mode = mode de calcul du nouvel offset
+	- SEEK_SET = position de reference = 0 ==> offset absolu = 0 + offset
+	- SEEK_CUR = position de reference = offset actuel ==> offset absolu = offset_actuel + offset
+	- SEEK_END = position de reference = fin du fichier ==> offset absolu = offset_dernier + offset
+
+Bien sur, la valeur de l'offset peut etre négative !
+Remarque, pour aller a la fin du fichier, on peut faire
+fd = open("./fichier.txt", O_RDONLY)
+puis
+lseek(fd, 0, SEEK_END);
+
+Ou plus simplement
+fd = open("./fichier.txt", O_RDONLY | O_APPEND);
+
+================[allocation dynamique]==================
+
+ća permet d'allouer une quantité de memoire apres la compilation
+un peu comme faire 
+"entrez un nombre entier positif"
+->n
+int tableau[n];
+
+
+en general on fait 
+int n;
+
+et alors il se passe cela: 
+- le programme demande a l'os d'utiliser de la memoire (ici 2 ou 4 octets selon l'architecture)
+- l'OS lui donne alors l'adresse de l'espace reservé
+- quand la fonction est terminée, le programme informe l'os et la variable est supprimée de la memoire
+
+
+pour avoir la taille d'un type, on fait 
+sizeof(type)
+genre 
+sizeof(int)
+
+ća marche egalement pour les structures ! 
+
+
+on peut utiliser malloc qui est compris dans stdlib.h
+ainsi que free();
+
+en gros c'est toujours pareil 
+1 = on reserve la memoire avec malloc()
+2 = on verifie la valeur retournée par malloc pour check si l'OS a bien alloué la memoire (si malloc foire, cá renvoit NULL, sinon ca renvoit l'adresse reservee)
+3 = quand on a fini, on free l'espace, sinon fuite de memoire 
+
+void* malloc(size_t nombreOctetsNecessaires); CA RETOURNE UN POINTEUR VOID ! PAS VOID (cad un pointeur sur n'importe quoi, mais sur lequel l'arithmetique des pointeurs ne s'applique pas..
+
+void free(void* pointeur);
+
+
+exemple
+int main(int argc, char *argv[])
+{
+    int* memoireAllouee = NULL;
+
+    memoireAllouee = malloc(sizeof(int)); // Allocation de la mémoire
+    if (memoireAllouee == NULL)
+    {
+        exit(0);
+    }
+
+    // Utilisation de la mémoire
+    printf("Quel age avez-vous ? ");
+    scanf("%d", memoireAllouee);
+    printf("Vous avez %d ans\n", *memoireAllouee);
+
+    free(memoireAllouee); // Libération de mémoire
+
+    return 0;
+}
+
+autre exemple: 
+#include    <stdio.h>
+#include    <stdlib.h>
+
+int     main(void)
+{
+        int*    number;
+
+        number = malloc(sizeof(int));
+        if (number == NULL)
+        {
+            printf("memoire insuffisante\n");
+            exit(0);
+        }   
+
+        *number = 3;
+        printf("%d\n", *number);
+        free(number);
+        return (0);
+}
+
+
+concernant les tableaux, comme il est interdit d'utiliser une variable pour definir sa taille lors de sa declaration, on ruse avec les pointeurs: 
+on fait tout simplement
+type*	tableau = (taille * sizeof(type))
+et apres on y accede avec l'arithmetique des pointeurs, genre
+#include    <stdio.h>
+#include    <stdlib.h>
+
+int     main(void)
+{
+        int     ar_number1[10];
+        int*    ar_number2;
+
+        /* gestion de ar_number1 */
+        for (int i=0; i<10; i++)
+            ar_number1[i] = i;
+
+        for (int i=0; i<10; i++)
+            printf("%d\n", ar_number1[i]);
+
+        printf("\n---------\n\n");
+
+        /* gestion de ar_number2 */
+        ar_number2 = malloc(10 * sizeof(int));
+        if (ar_number2 == NULL)
+        {   
+            printf("Memoire disponible insuffisante\n");
+            exit(0);
+        }   
+
+        for (int i=0; i<10; i++)
+            *(ar_number2+i) = i;
+
+        for (int i=0; i<10; i++)
+            printf("%d\n", *(ar_number2+i));
+
+        return (0);
+}
+
+
+===============[saisie sécurisée de string]===================
+
+scanf considere qu'une chaine se termine par un espace, du coup si on fait 
+scanf("%s", &string)
+et qu'on tape
+Jean Dupont
+ća n'enregistrera que jean
+et en plus ca laissera Dupont dans le buffer
+
+Le soucis de scanf, c'est qu'elle se fout un peu des depassements de memoire
+genre si j'ai 
+char	string[5]
+
+et que je scanf("%s", string);
+et que dedans je mets genre saloute (genre ca depasse)
+bah scanf va foutre les caracteres qui depassent dans les memoires d'adresses qui suivent mon tableau
+et du coup, buffer overflow, 
+seg fault
+
+plutot que scanf, on prefere utiliser 
+gets = lit un string mais ne controle pas le buffer overflow ==> A BANNIR
+ou 
+fgets = idem mais controle le nombre de char lus en memoir, en gros ća stocke AU PLUS, le nombre de char indiqués
+
+char *fgets( char *str, int num_char(\0 compris), FILE *stream);
+==> on peut donc lire depuis un fichier, ou alors directement, comme scanf, depuis l'entree standard en specifiant
+stdin
+==> ca retourne un pointeur vers la string, ou NULL si ya eu un soucis
+
+Remarque: quand on tape notre chaine, on valide avec entrée 
+sauf que entrée ća fait un \n
+du coup ce \n est stocké dans notre chaine
+
+on peut le virer en remplacant le \n par un \0 en utilisant strchr() par exemple
+
+LE SOUCIS, c'est que si le user entre une string de longueur > a la limite, 
+fgets ne stockera que les char dans la limite 
+MAIS DANS LE BUFFER IL RESTE LE RESTE
+
+et du coup, il faut vider le buffer, sinon au prochain fgets, il restera des trucs
+
+on peut convertir une string en long (cad convertir une suite de caracteres qui sont des chiffres, en un long int)
+cette fonction c'est 
+strtol
+long strtol( const char *start, char **end, int base );
+char*	start = chaine à convertir, ou alors pointeur vers le char le chaine qui est un chiffre.
+char**	end = pointeur vers le premier caractere de la chaine qui n'est pas un chiffre, on peut mettre NULL si on s'en fout
+int	base = base du systeme numerique, genre 2 ou 10 ou ske tu veux
+==> ca renvoit le long en question 
+genre 
+long number = strtol("123456", NULL, 10);
+
+
+on a la chaine analogue qui converti un string en double
+strtod
+double strtod( const char *start, char **end );
+==> pareil mais ća prends en compte le point
+
+	
+
+======================[GUI et SDL]=====================
+pour compiler, on fait comme ća 
+gcc japprends.c -o japprends `sdl-config --cflags --libs`
+
+en gros ya 2 fonctions de bases
+SDL_Init() = charge sdl en memoire avec des mallocs = retourne 0 si tout s'est bien passé, -1 sinon
+SDL_Quit() = free
+
+du coup, la premiere fonction du programme c'est SDL_Init()
+et la derniere c'est SDL_Quit()
+
+en argument de SDL_Init, on a une constante a preciser qui precise ce qu'on va gere avec notre objet SDL: 
+SDL_INIT_VIDEO = pour l'affichage video
+SDL_INIT_AUDIO = pour le son, genre jouer de la musique 
+SDL_INIT_CDROM = pour manipuler le lecteur CD
+SDL_INIT_JOYSTICK = pour gerer un systeme de joystick
+SDL_INIT_EVERYTHING = pour tout gerer a la fois
+
+ces constantes sont des flags, donc on peut les combiner comme suit 
+// Chargement de la vidéo, de l'audio et du timer
+SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
+
+le pattern de base est donc le suivant
+#include <stdlib.h>
+#include <stdio.h>
+#include <SDL/SDL.h>
+ 
+int main(int argc, char *argv[])
+{
+    if (SDL_Init(SDL_INIT_VIDEO) == -1) // Démarrage de la SDL. Si erreur :
+    {
+        fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError()); // Écriture de l'erreur
+        exit(EXIT_FAILURE); // On quitte le programme
+    }
+ 
+ 
+    SDL_Quit();
+ 
+    return EXIT_SUCCESS;
+}
+
+ensuite on va configurer les parametres de notre fenetre, genre
+SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE); 
+(width, height, nb_color, options
+==> 
+DL_HWSURFACE: les données seront chargées dans la mémoire vidéo, c'est-à-dire dans la mémoire de votre carte 3D. Avantage : cette mémoire est plus rapide. Défaut : il y a en général moins d'espace dans cette mémoire que dans l'autre (SDL_SWSURFACE).
+(pour mettre en plein ecran on fait SDL_FULLSCREEN)
+
+SDL_SWSURFACE: les données seront chargées dans la mémoire système (c'est-à-dire la RAM, a priori). Avantage : il y a beaucoup d'espace dans cette mémoire. Défaut : c'est moins rapide et moins optimisé.
+
+SDL_RESIZABLE: la fenêtre sera redimensionnable. Par défaut elle ne l'est pas.
+
+SDL_NOFRAME: la fenêtre n'aura pas de barre de titre ni de bordure.
+
+SDL_FULLSCREEN: mode plein écran. Dans ce mode, aucune fenêtre n'est ouverte. Votre programme prendra toute la place à l'écran, en changeant automatiquement la résolution de celui-ci au besoin.
+
+SDL_DOUBLEBUF: mode double buffering. C'est une technique très utilisée dans les jeux 2D, et qui permet de faire en sorte que les déplacements des objets à l'écran soient fluides, sinon ça scintille et c'est assez laid. Je vous expliquerai les détails de cette technique très intéressante plus loin.
+
+
+Pour mettre un titre, on fait
+SDL_WM_SetCaption("Ma super fenêtre SDL !", NULL);
+
+pour creer une surface, genre une fenetre en fait, on fait
+SDL_Surface *ecran = NULL;
+ecran = SDL_SetVideoMode(640, 480, 32, HWSURFACE_SDL);
+
+
+on peut l'exploiter comme ca 
+void pause()
+{
+    int continuer = 1;
+    SDL_Event event;
+ 
+    while (continuer)
+    {
+        SDL_WaitEvent(&event);
+        switch(event.type)
+        {
+            case SDL_QUIT:
+                continuer = 0;
+        }
+    }
+}
+int main(int argc, char *argv[])
+{
+    SDL_Surface *ecran = NULL; // Le pointeur qui va stocker la surface de l'écran
+
+    SDL_Init(SDL_INIT_VIDEO);
+
+    ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE); // On tente d'ouvrir une fenêtre
+    if (ecran == NULL) // Si l'ouverture a échoué, on le note et on arrête
+    {
+        fprintf(stderr, "Impossible de charger le mode vidéo : %s\n", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+    
+    SDL_WM_SetCaption("Ma super fenêtre SDL !", NULL);
+
+    pause();
+
+    SDL_Quit();
+
+    return EXIT_SUCCESS;
+}
+
+
+
+on peut fill une surface avec une couleur unie ou une image 
+dans les bili tiers, pour que ce soit multi plateforme, on utilise des types genre
+    Uint32: un entier de longueur 32 bits, soit 4 octets (je rappelle que 1 octet = 8 bits) ;
+    Uint16: un entier codé sur 16 bits (2 octets) ;
+    Uint8: un entier codé sur 8 bits (1 octet).
+
+
+pour colorer le panel on fait 
+SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
+SDL_MapRGB() prend en premier arg le format de la couleur, on recupere cette valeur dans la structure SDL_SURFACE.ecran
+
+quand on fait une modif sur une surface, (genre colorer le fond), pour que ca apparaisse il faut mettre a jour l'affichage, 
+pour ca on fait 
+SDL_Flip(surface);
+
+
+
+du coup pour gerer les events c'est comme ca 
+SDL_WaitEvent(&event);
+        switch(event.type)
+        {
+            case SDL_QUIT:
+                continuer = 0;
+        }
+
+
+Ensuite, pour creer des trucs a mettre dans la fenetre, on cree d'autres surfaces, genre
+SDL_Surface ma_surface = SDL_CreateRGBSurface(flag, width, height, nb_color(32), r, g, b);
+flag c'est pour dire si on charge notre affichage dans la ram ou dans la memoire video, ća peut etre
+
+SDL_HWSURFACE: la surface sera chargée en mémoire vidéo. Il y a moins d'espace dans cette mémoire que dans la mémoire système (quoique, avec les cartes 3D qu'on sort de nos jours, il y a de quoi se poser des questions…), mais cette mémoire est plus optimisée et accélérée ;
+
+SDL_SWSURFACE: la surface sera chargée en mémoire système où il y a beaucoup de place, mais cela obligera votre processeur à faire plus de calculs. Si vous aviez chargé la surface en mémoire vidéo, c'est la carte 3D qui aurait fait la plupart des calculs.
+
+CHAQUE SURFACE CREE AVEC SDL_INIT DOIT ETRE LIBEREE AVEC SDL_QUIT
+CHAQUE SURFACE CREE AVEC SDL_CREATERGBSURFACE DOIT ETRE LIBEREE AVEC SDL_FREESURFACE(surface);
+
+Pour coller une surface sur une autre surface, on fait 
+SDL_BlitSurface(rectangle, NULL, ecran, &position);
+rectangle = la surface a coller
+NULL = la partie de la surface a coller
+ecran = sur quoi on colle
+&position = x,y = pointeur sur une structure SDL_Rect, ca va checker dans ses variables x et y;
+
+pour charger des images, a la base, SDL ne gere que les images bitmap, mais ya moyen de truander grace a une extension de sdl 
+l'avantage avec les bmp c'est que bien que plus lourds, ils se chargent tres vite
+
+tout ce qu'on a a faire, c'est creer une surface et mettre l'image dedans avec une fonction, comme ća
+maSurface = SDL_LoadBMP("image.bmp");
+==> cette fonction remplace SDL_CreateRGBSurface et SDL_FillRect
+
+Remarque: quand on append des surfaces, elles sont affichées/empilées dans le sens de leur appel.
+
+
+Pour mettre une icone a son application: 
+normalement une icone est 32x32, pour que ca tourne sous windows qui les affiches en 32x32 ou sous linux et autre 
+qui les affiche en 16x16
+on fait 
+SDL_WM_SetIcon(SDL_LoadBMP(mon_image), NULL);
+On l'appelle AVANT que la fenetre ne s'ouvre, cad avant SDL_SetVideoMode()
+
+
+pour mettre une partie d'une image en transparence (genre le fond vert pour n'avoir que le sprite), 
+il faut d'abord avoir une couleur de fond UNIE et UNIQUE
+Pour indique a SDL quelle couleur doit erte rendue transparente, on fait SDL_SetColorKey(), genre 
+SDL_SetColorKey(zozor, SDL_SRCCOLORKEY, SDL_MapRGB(zozor->format, 0, 0, 255));
+-> premier param = surface sur laquelle appliquer la transparence 
+-> 2e paramt = une liste de flags, 0 pour desactiver la transparence, SDL_SRCCOLORKEY pour l'activer)
+-> 3e param = la couleur qui doit etre rendue transparente.
+
+bien sur, on fait ća AVANT d'append notre surface.
+
+On a aussi la transparence alpha, c'est genre un critere d'opacité quoi 
+on fait comme ca
+zozor = SDL_LoadBMP("zozor.bmp");
+SDL_SetColorKey(zozor, SDL_SRCCOLORKEY, SDL_MapRGB(zozor->format, 0, 0, 255));
+/* Transparence Alpha moyenne (128) : */
+SDL_SetAlpha(zozor, SDL_SRCALPHA, 128);
+SDL_BlitSurface(zozor, NULL, ecran, &positionZozor);
+
+La transparence Alpha 128 (transparence moyenne) est une valeur spéciale qui est optimisée par la SDL. Ce type de transparence est plus rapide à calculer pour votre ordinateur que les autres. C'est peut être bon à savoir si vous utilisez beaucoup de transparence Alpha dans votre programme.
+
+
+pour la gestion des event sous sdl, on a 2 fonctions dans ev_loop()
+
+SDL_WaitEvent: elle attend qu'un événement se produise. Cette fonction est dite bloquante car elle suspend l'exécution du programme tant qu'aucun événement ne s'est produit ;
+===> utilise moins de cpu
+
+SDL_PollEvent: cette fonction fait la même chose mais n'est pas bloquante. Elle vous dit si un événement s'est produit ou non. Même si aucun événement ne s'est produit, elle rend la main à votre programme de suite.
+==> utilise du coup plus de cpu
+
+
+du coup la boucle d'event c'est 
+void    ev_loop(void)
+{
+        signed short    bool_continue = 1;
+        SDL_Event ev; 
+ 
+        while (bool_continue)
+        {
+            SDL_WaitEvent(&ev);
+            switch(ev.type)
+            {
+                case SDL_QUIT:
+                bool_continue = 0;
+            }
+        }
+}
+
+
+ev.type peut prendre plein de valeurs 
+SDL_QUIT = quand on appuie sur la croix 
+SDL_KEYDOWN = quand une touche du clavier est enfoncée
+SDL_KEYUP = quand une touche du clavier est relachée
+
+dans le cas des touches du clavier, on recupere la touche en question avec 
+event.key.keysym.sym
+==> ya une const sdl pour chaque touche du clavier 
+
+pour les touches qui se repetent lorsqu'on les laisse enfoncées, c'est
+SDL_EnableKeyRepeat(10, 10);
+p1 = la durée (en millisecondes) pendant laquelle une touche doit rester enfoncée avant d'activer la répétition des touches ;
+p2 = le délai (en millisecondes) entre chaque génération d'un événementSDL_KEYDOWNune fois que la répétition a été activée.
+
+
+==> LE DOUBLE BUFFERING
+= le probleme quand on dessine des trucs dans une fenetre, c'est qu'on le voit au moment ou ca dessine et ca peut faire des clignotements
+du coup, une astuce, c'est d'utiliser un double buffering, c'est a dire qu'on va avoir 2 ecrans, un que le user voit, et un autre qu'il ne voit pas et qui dessine au moment ou le user voit l'autre ecran, et ca alterne comme ca.
+pour ća on fait 
+ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+
+le double buffering est tres connu et gere directement par la carte graphique donc ca va tres vite
+
+
+pour les events souris, 
+SDL_MOUSEBUTTONDOWN
+SDL_MOUSEBUTTONUP
+SDL_MOUSEMOTION = quand on deplace la souris
+
+pour SDL_MOUSEBUTTONDOWN et SDL_MOUSEBUTTONUP
+on recupere 2 infos
+- le bouton de la souris appuyé
+- les coord de la souris 
+
+pour ca c'est comme avec les touches du clavier, on check les valeurs de 
+event.button.button qui peut prendre 
+    SDL_BUTTON_LEFT: clic avec le bouton gauche de la souris ;
+
+    SDL_BUTTON_MIDDLE: clic avec le bouton du milieu de la souris (tout le monde n'en a pas forcément un, c'est en général un clic avec la molette) ;
+
+    SDL_BUTTON_RIGHT: clic avec le bouton droit de la souris ;
+
+    SDL_BUTTON_WHEELUP: molette de la souris vers le haut ;
+
+    SDL_BUTTON_WHEELDOWN: molette de la souris vers le bas.
+
+
+on peut masquer la souris sur le programme, pour ca on fait 
+SDL_ShowCursor(FLAG);
+ya 2 flags possibles 
+SDL_DISABLE
+SDL_ENABLE
+
+
+pour placer la souris a un endroit on fait 
+SDL_WarpMouse(int x, int y);
+
+
+
+concernant les events de la fenetre, 
+deja, petite remarque, pour rendre la fenetre resizable on fait 
+ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+
+du coup si on resize la fenetre, ca genere un event
+SDL_VIDEORESIZE
+la nouvelle largeur est
+event.resize.w
+la nouvelle hauteur est 
+event.resize.h
+
+il y a un event sur la visibilite de la fenetre (si elle est reduite, perd le focus ou que la souris sort du champs)
+SDL_ACTIVEEVENT
+on check les valeurs des variables suivantes
+- event.active.gain: indique si l'événement est un gain (1) ou une perte (0). 
+Par exemple, si la fenêtre est passée en arrière-plan c'est une perte (0), si elle est remise au premier plan c'est un gain (1).
+
+- event.active.state: c'est une combinaison de flags indiquant le type d'événement qui s'est produit. Voici la liste des flags possibles :
+
+        SDL_APPMOUSEFOCUS: le curseur de la souris vient de rentrer ou de sortir de la fenêtre.
+	(on tranche sur l'une des 2 possibilites grace a la valeur de event.active.gain)
+
+	SDL_APPINPUTFOCUS: l'application vient de recevoir le focus du clavier ou de le perdre. Cela signifie en fait que votre fenêtre vient d'être mise au premier plan ou en arrière-plan.
+	pareil faut trancher avec event.active.gain
+
+	SDL_APPACTIVE: l'applicaton a été icônifiée, c'est-à-dire réduite dans la barre des tâches (gain = 0), ou remise dans son état normal (gain = 1).
+
+
+
+MAIS if (event.active.state est une combinaison de flags et non un flag, 
+on peut pas faire genre
+if (event.active.state == SDL_APPACTIVE)
+faut utiliser des operations bit a bit, genre (pour tester si ya un changement de focus de la souris)
+if ((event.active.state & SDL_APPMOUSEFOCUS) == SDL_APPMOUSEFOCUS)
+
+ou alors genre 
+if ((event.active.state & SDL_APPACTIVE) == SDL_APPACTIVE)
+
+
+pour controler le temps avec sdl, on fait
+SDL_Delay(x) qui met en pause le programme x ms
+SDL_GetTicks() retourne le nombre de ms ecoulées depuis le lancement du programme
+
+on peut egalement utiliser des timer, 
+d'abord on initialise un timer
+SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+
+Puis on peut en ajouter 
+SDL_TimerID SDL_AddTimer(Uint32 interval, SDL_NewTimerCallback callback, void *param);
+ya 3 parametres
+'intervalle de temps (en ms) entre chaque appel de la fonction ;
+le nom de la fonction à appeler. On appelle cela un callback : le programme se charge de rappeler cette fonction de callback régulièrement  (c'est un pointeur sur fonction en fait, cad un ptr void*)
+les paramètres à envoyer à votre fonction de callback.
+
+la fonction callback doit avoir ce prototype 
+Uint32 nomDeLaFonction(Uint32 intervalle, void *parametre);
+
+enfin, pour supprimer un timer, on fait 
+SDL_RemoveTimer(timer); /* Arrêt du timer */
+
+================[Listes chainees]=====================
+
+Ca permet d'utiliser objets plus flexibles que les tableaux pour stocker des donnees 
+(genre mettre des trucs au milieu, au debut, a la fin, etc)
+
+En gros, une liste chainee c'est une structure constituée de
+- une donnée 
+- un pointeur vers la donnée suivante (si yen a pas, le ptr est NULL)
+
+remarque, a la difference des tableaux, elements d'une liste ne se trouvent pas cotes a cotes dans la memoire
+
+genre
+struct Element	
+{
+    int nombre;
+    Element *suivant;
+};
+
+
+remarque, si on veut faire genre une collection, c'est a dire une liste chainée avec des trucs de type different, le mieux est d'utiliser une structure generique avec des ptr void*
+
+souvent, on a tendance a considere que toute structure element de la liste est elle-meme une liste, cad de faire un truc comme ca 
+typedef	struct	s_list
+{
+	char	*str;
+	s_list	*next;
+
+}		t_list;
+
+
+==================[piles et files]==============
+
+c'est 2 variantes un peu particulieres des listes 
+++ utiles pour controler la facon dont sont ajoutés de nouveaux elements au debut ou a la fin de la liste
+++ utile pour les programmes qui traitent des donnees qui arrivent au fur et a mesure
+
+c'est les algorithmes LIFO = last in, first out, 
+on empile et on depile quoi...
+
+c'est avec ce genre d'algo que l'OS gere les piles de fonction par exemple (genre quand on fait du recursif, ou qu'on appelle une fonction dans une fonction, etc)
+
+pour ća, on defini une structure element
+typedef struct Element Element;
+struct Element
+{
+    int nombre;
+    Element *suivant;
+};
+
+on definit une structure pile, qui n'est autre qu'une structure dotée d'un element qu'on considerera le premier element de la pile
+typedef struct Pile Pile;
+struct Pile
+{
+    Element *premier;
+};
+
+et enfin ou aura une fonction empilage
+void empiler(Pile *pile, int nvNombre)
+{
+    Element *nouveau = malloc(sizeof(*nouveau));
+    if (pile == NULL || nouveau == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    nouveau->nombre = nvNombre;
+    nouveau->suivant = pile->premier;
+    pile->premier = nouveau;
+}
+
+ansi qu'une fonction depilage
+void depiler(Pile *pile, Element* del_elem)
+{
+    if (pile != NULL)
+    {
+        pile->premier = del_elem->suivant;
+        free(del_elem);
+    }
+}
+
+
+Les files, c'est comme les piles, mais dans le sens inverse 
+c'est un algo FILO = premier entre dernier sorti, comme une file d'attente
+
+++utile pour mettre en attente des informations dans l'ordre d'arrivée (genre un logiciel de chat)
+
+comme pour les piles, on creee une structure element et une structure file qui pointe vers le premier element
+typedef struct Element Element;
+struct Element
+{
+    int nombre;
+    Element *suivant;
+};
+
+typedef struct File File;
+struct File
+{
+    Element *premier;
+};
+
+
+enfin, on a une fonction enfiler
+void enfiler(File *file, int nvNombre)
+{
+    Element *nouveau = malloc(sizeof(*nouveau));
+    if (file == NULL || nouveau == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    nouveau->nombre = nvNombre;
+    nouveau->suivant = NULL;
+
+    if (file->premier != NULL) /* La file n'est pas vide */
+    {
+        /* On se positionne à la fin de la file */
+        Element *elementActuel = file->premier;
+        while (elementActuel->suivant != NULL)
+        {
+            elementActuel = elementActuel->suivant;
+        }
+        elementActuel->suivant = nouveau;
+    }
+    else /* La file est vide, notre élément est le premier */
+    {
+        file->premier = nouveau;
+    }
+}
+
+enfin on a une fonction defiler
+int defiler(File *file)
+{
+    if (file == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    int nombreDefile = 0;
+
+    /* On vérifie s'il y a quelque chose à défiler */
+    if (file->premier != NULL)
+    {
+        Element *elementDefile = file->premier;
+
+        nombreDefile = elementDefile->nombre;
+        file->premier = elementDefile->suivant;
+        free(elementDefile);
+    }
+
+    return nombreDefile;
+}
+
+
+
+======[les tables de hachage]=========
+
+Le probleme des listes chainees est qu'on ne peut pas acceder directement à un element de la liste (c'est pas comme un tableau, ya pas de numéro)
+A la limite, on peut avoir un pointeur sur un element precis, mais on ne peut pas avoir d'index vraiment
+(a la limite, on pourrait sur une liste de taille fixe en la faisant correspondre avec un tableau qui contient des ptr void* mais bon...)
+
+c'est relou car des que la liste chainee devient plutot grosse, ca devient lent
+
+la table de hashage permet de retrouver instantanement un element dans un tableau, que le tableau contiennt 10 100 1000 ou plus elements!
+dingue !
+
+
+par exemple, en C, on a des tableaux qui dont identifiés par numéro
+genre tab[50];
+
+Du coup, on ne peut pas dire un truc du genre tab["victor"], cad la case du tableau qui correspond a la donnée "victor"
+C'est là qu'entre en jeu les tables de hashage
+
+Les tables de hashage permettent de transformer une chaine de caractere en nombre (qui est l'indice où est la chaine de caractere)
+
+Il faut écrire une fonction qui prend en entrée une chaîne de caractères, fait des calculs avec, puis retourne en sortie un numéro correspondant à cette chaîne. Ce numéro sera l'indice de la case dans notre tableau (voire carrement un pointeur vers la donnée recherchée)
+
+
+cette fonction est basée sur un algorithme (genre MD5, ou SHA1, ou autre) basé sur des concept mathematiques compliqués
+et qui va "hacher" les donnees, c'est a dire les trasnsformer en nombre.
+
+un exemple de fonction de hashage rudimentaire pourrait etre (ici on prend la chaine, on additionne le code ascii de chaque caractere et on retour ce nombre %100 pour etre sûr de ne pas depasser 100)
+int hachage(char *chaine)
+{
+    int i = 0, nombreHache = 0;
+
+    for (i = 0 ; chaine[i] != '\0' ; i++)
+    {
+        nombreHache += chaine[i];
+    }
+    nombreHache %= 100;
+
+    return nombreHache;
+}
+
+le probleme se pose sur la collision, c'est a dire si jamais la fonction de hashage retourne le meme nombre pour 2 chaines differentes
+remarque, SHA1 produit moins de collision que MD5
+
+la proba de collision augmente au fur et a mesure que la taille de notre tableau est petite (logique).
+
+Si une collision survient, ya 2 solutions, 
+- l'adressage ouvert 
+- le chainage
+
+l'adressage ouvert = hashage lineaire, 
+en gros si la case generee est occupée, on va a la suivante, si la suivante est occupée, on va a la suivante, etc
+en gros l'idée c'est que quand on va aller chercher notre donnée, on va quand meme la checker, si c'est pas la bonne, on va checker la suivante, etc
+ca reste beaucoup plus rapide que de checker toute la liste du début a la fin
+
+
+Il existe des variantes (hachage double, hachage quadratique…) qui consistent à hacher à nouveau selon une autre fonction en cas de collision. Elles sont plus efficaces mais plus complexes à mettre en place.
+
+
+le chainage, en gros on cree une liste chainee a l'endroit de la collision
+genre si on a 2 valeurs pour un meme index, bah on crée une liste chainee, on stocke les 2 valeurs dedans et on met un ptr vers la liste chainee dans le tab[index] en question
+
+
+===============[Les pointeurs sur fonction]====================
+Imaginons qu'on ai une fonction comme celle la
+void	fonction(char c);
+
+on pourrait declarer un pointeur sur fonction de nom f_ptr comme ceci
+void (*f_ptr)(char);
+ou comme ca
+void (*f_ptr)(char c); // on n'est pas obligé de mettre le nom de la variable dans les parametres, un peu comme dans les prototypes
+
+C'est a dire
+typeRetour	(*nomPtr)(types des parametres1, types des parametres2, etc);
+
+Ensuite, on assigne une  adresse à notre pointeur sur fonction comme ceci
+f_ptr = &fonction;
+ou, de facon implicite,
+f_ptr = fonction (puisque le nom d'une fonction est un pointeur statique vers l'adresse de celle-ci, donc techniquement l'operateur unaire & est optionnel)
+
+Ensuite, pour apeller directement la fonction fonction, on ferait comme ceci
+fonction('a');
+ou, de facon explicite,
+(*fonction)('a');
+
+Si on veut plus de flexibilité, genre passer une fonction qui renvoit un int, mais qui peut prendre 2 ints, ou alors un int et un char*, etc, il suffit de ne pas mettre d'arguments et de laisser vide,
+genre
+int	(*f_ptr)();
+
+ce qui permet d'affecter des fonctions du genre de
+int	coucou(void *ptr);
+int	pouet(void);
+int	prout(int a, char b, t_machin pouetpouetcacahouette);
+
+Remarque: pour plus de facilité, on peur utiliser un typedef pour rendre le code plus lisible, genre faire
+typedef void (*f_ptr)(char);
+
+pour pouvoir ensuite faire
+f_ptr	ptr;
+plutot que
+void (*ptr)(char);
+
+Pour faire un tableau de pointeurs sur fonction, on fait
+type_de_retour (* nom_du_tableau_de_pointeurs_sur_fonctions [ taille_du_tableau ] ) ( liste_des_arguments );
+
+
+======[les arbres binaires]===========
+
+C'est le meme principe qu'une liste chainée 
+mais au lieu d'avoir un seul next, yen a 2 (1 right et 1 left)
+du coup, pour faire un graphe, il suffit d'utiliser une structure avec un pointeur sur une listede next, par exemple
+
+ca permet de rechercher plus rapidement les donnees
+exemple, 
+avec la liste
+0-1-1-2-3-4-NULL
+
+Si je cherche dans la liste l'element de valeur 4, 
+ca me fait regarder 5 donnees 
+si je cherche le 4 ca m'en fait regarder 6
+
+Tandis que si j'organise mes donnes avec un arbre binaire, 
+ou a chaque fois, je met dans la branche d'apres un nombre qui est forcement inferieur ou egal, avec le left <= right ca donne ca
+           2
+      1        3 
+   0     1         4
+
+remarque, si on avait un arbre qui contenant 1-2-4-5, bah on aurait un truc comme ca 
+1
+  2
+    3
+      4
+       5
+
+Du coup on perd tout l'interet de l'arbre
+Il peut etre possible d'équilibrer l'arbre en faisant en sorte qu'il soit plus compressé quoi
+
+
+du coup pour trouver le 3, je n'aurai que 2 donnees a regarder, et 3 pour le 4
+si on parcourt l'abre de haut en bas c'est ce qu'on appelle un parcours infixe
+
+parcourt en profondeur = on va partir de l'element de depart et descendre dans l'arbre
+	- parcours infixe = 
+	- parcours prefixe = 
+	- parcours suffixe = 
+
+parcours en largeur = on parcourt l'arbre en lisant tous les enfants a chaque fois
+
+
+Pour rajouter un element dans un arbre c'est un peu plus compliqué que pour une liste chainee
+du coup on fait skon appelle une dichotomie
+
+Si je voulais insérer -1 dans l'arbre de tout a l'heure
+
+
+il existe un graphe rouge et noir ou en gros 
+- la racine est noire
+- toutes les feuilles sont noires (elements qui pointent sur NULL en right et left)
+- un neud rouge n'a que des childs noirs
+- le nombre de noeuds noirs parcourus entre un root et une feuille est toujours la meme (en gros le graphe est equilibré)
+

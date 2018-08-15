@@ -1,0 +1,4 @@
+emacs
+
+Mais bon je ne sais pas si je l'étudierai car corentin a dit que vim c'était mille fois mieux...
+

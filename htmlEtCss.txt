@@ -1,0 +1,1338 @@
+0607760695
+
+
+il existe can i use = caniuse.com
+qui liste les fonctionnalités html et css et dit si c'est géré par tel ou tel navigateur
+
+On distingue 2 types de balises
+les balises en paires (<td></td>)
+les balises orphelines (<img />)
+
+tout balise à l'intérieur d'une autre doit être fermée a l'interieur de celle-ci
+les balises ne s'entremelent pas
+
+concernant le doctype, ça sert a spécifier qu'il s'agit d'une page html, on fait
+<!DOCTYPE html> en html5
+plutot que
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> avant
+
+dans le head, on peut spécifier l'encodage de la page, en faisant
+<meta charset="utf-8" />
+ça indique la facon dont le fichier est enregistré
+ça determine comment les caractères speciaux vont s'afficher
+il faut utiliser l'encodage utf-8 pour que le truc soit le plus portable possible
+il faudra aussi verifier que le fichier est bien enregistré en utf8
+
+pour mettre un commentaire on fait
+<!-- commentaire -->
+
+pour faire un paragraphe on fait
+<p></p>
+
+pour un saut a la ligne c'est <br />
+
+concernant les titres, on a 6 niveaux de titre,
+<h1></h1>
+<h2></h2>
+<h3></h3>
+<h4></h4>
+<h5></h5>
+<h6></h6>
+
+pour mettre en valeur des mots, on fait
+<em></em>
+le style appliqué dépend du navigateur,
+si on veut un style spécifique on le fait en css
+
+pour mettre encore plus en valeur on a
+<strong></strong>
+
+pour fait ressortir une partie du texte, on utilise
+<mark></mark>
+
+pour une citation on fait
+<cite author="auteur">citation</cite>
+
+pour les figures (ilustrations, genre tout ce qui est pas du texte en fait) on a
+<figure>
+<element>ma figure</element>
+<figcaption>titre de ma figure</figcaption>
+</figure>
+qu'on utilise comme ça
+
+pour faire des listes non ordonnées, on fait
+<ul>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+==> on peut bien sur imbriquer les listes
+
+pour faire des listes ordonnées on fait
+<ol>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ol>
+
+une liste particulière existe pour les definitions
+c'est
+<dl>
+<dt>terme</dt>
+<dd>definiton du terme</dd>
+<dt>terme</dt>
+<dd>definiton du terme</dd>
+<dt>terme</dt>
+<dd>definiton du terme</dd>
+<dt>terme</dt>
+<dd>definiton du terme</dd>
+<dt>terme</dt>
+<dd>definiton du terme</dd>
+</dl>
+
+concernant les liens, c'est
+<a></a>
+SI dans notre lien ya des caracteres speciaux genre &
+il faut les mettre en html genre &amp;
+
+on peut faire des liens vers des ancres genre on a
+<h1 id="mon_ancre">texte</h1>
+on peut faire
+<a href="#mon_ancre">lien</a>
+
+on peut bien sur avoir acces a une ancre en lien absolu en faisant genre
+http://www.google.fr/page.php#mon_ancre
+
+on peut mettre une infobulle sur un lien, avec l'attribut title genre
+<a href="./page2.htm" title="Page 2">lien</a>
+
+on peut également ouvrir la fenêtre dans une nouvelle fenetre, pour ça on utilise l'attribut target, genre
+<a href="./page2.htm" target="_blank">lien</a>
+==> vaut mieux éviter, l'utilisateur peut ouvrir un lien dans une nouvelle fenetre avec shift+click ou l'ouvrir dans un nouvel onglet avec ctrl+click
+
+au niveau des images, ya differents formats
+jpeg = compresse la photo en diminuant le nombre couleurs, ça déteriore la qualité de l'image mais generalement de facon imperceptible
+= tres efficace pour les photos mais pas pour les images. ça risque de baver
+
+png = le plus recent de tous = utile a tout ce qui n'est pas une photos
+= il compresse sans alterer la qualité de l'image
+= bof sur les photos
+= la transparence est gérée
+= fait pour concurrencer le gif qui était propriétaire et payant
+= existe en 8 bit (256 couleur) ou 24 bits (16 millions de couleurs)
+
+gif = daté
+= n'utilise que 256 couleurs
+= mais peut etre animé
+
+pour inserer des images on utilise
+<img src="./image.png" alt="texte a afficher si l'image ne s'applique pas" />
+en principe, l'attribut alt est OBLIGATOIRE
+
+On peut mettre une infoBulle avec l'attribut facultatif title genre
+<img src="./image.png" alt="texte a afficher si l'image ne s'applique pas" title="super belle image" />
+
+pour le css, on a 3 facons de l'utiliser
+1 - la meilleure, dans un fichier externe css (<link rel="stylesheet" href="style.css />)
+2 - dans la balise head de la page html (<style type="text/css"></style> ou simplement <style></style> avec html 5, c'est comme pour javascript ou avant on fesait <script type="text/javascript></script>, maintenant on fait <script></script>")
+3 - dans une balise quelconque avec l'attribut style, c'est de la merde
+
+on peut mettre des commentaires en css avec /* */
+
+si on a besoin d'entourer un éléments html alors qu'on veut pas mettre de balise spéciale, on a la
+BALISE UNIVERSELLE qui est <span>
+ou alors l'autre balise universelle qui est <div>
+
+on peut donc faire genre
+<span class="voila">voila</span> et mettre un style spéciale sur span.voila
+
+par defaut
+strong
+em
+span
+= balises inline
+
+div
+p
+h1
+= balises block
+
+===============[CSS]=====================
+
+on a des selecteurs pour css
+.class
+#id
+balise.class
+balise#id
+
+il existe un selecteur universel (qui désigne tout) c'est
+*
+genre
+*
+{
+style
+}
+
+pour désigner une balise contenue dans une autre (genre balise2 dans balise1) on fait
+balise1 balise2
+{
+
+}
+
+pour désigner un balise qui en suit une autre dans le même niveau (degré) genre balise2 qui suit balise1, on fait
+balise1 + balise2
+{}
+
+pour désigner une balise qui a tel attribut, on fait
+balise[attribut]
+genre
+div[class]
+
+pour désigner une balise dont tel attribut a telle valeur, on fait
+balise[attribut="valeur"]
+genre
+div[id="monId"]
+{}
+
+pour désigner une balise dont tel attribut a dans sa valeur tel mot, on fait
+balise[attribut*="mot"]
+genre
+div[id*="Id"]
+{}
+
+on peut trouver la liste complete des selecteurs css (++ usefull) ici
+https://www.w3.org/…/cs…/WD-css3-selectors-20010126.fr.html…
+
+Concernant la taille de police,
+on peut utiliser la taille en px = taille absolue
+en pourcentage (110%, etc, ça pue)
+ou la taille en kw (x-small, x-small, small, medium, large, x-large, xx-large)
+mais le mieux c'est d'utiliser l'unité em, en fait 1em c'est la taille d'une lettre m, c'est donc une taille relative, elle s'adapte aux dispositifs d'écran et aux tailles par défaut des users,
+donc préférer em (genre 1.3em ou 0.8em ou 1em)
+
+pour définir une police, on utilise la propriete font-family, comme ça
+font-family: police1, police2, etc
+ça tente police1, si elle existe pas sur l'ordi c'est police2, etc
+faut mettre en dernier serif (ou sans-serif) qui sont partout en principe
+Les polices "standards" qu'on est quasi sur de pouvoir trouver sur l'ordi, c'est
+arial
+arial black
+comics sans ms
+courrier new
+georgia
+impact
+times new roman
+trebuchet ms
+verdana
+
+pour utiliser des polices speciales et que tout le monde peut voir
+on a les web font kit
+c'est un fichier zipé
+on le dézippe
+on le met dans le dossier web
+et ensuite on défini dans le fichier css une police, comme ça
+@font-face {
+font-family: 'nom de la police';
+src: url('fichier source dézippé de la police'),
+url('fichier source dézippé de la police'),
+url('fichier source dézippé de la police'),
+url('fichier source dézippé de la police'),
+font-weight: normal;
+font-style: normal;
+}
+==> en principe ya un fichier css tout fait dans le zip
+==> ça c'est possible de le faire depuis css3
+==> on utilise plusieurs sources en fonction du format que tolère le navigateur,
+en general on table large et on met les polices au format ttf, eot, otf, svg, woff
+
+genre
+@font-face {
+font-family: 'MaSuperPolice';
+src: url('MaSuperPolice.eot') format('eot'),
+url('MaSuperPolice.woff') format('woff'),
+url('MaSuperPolice.ttf') format('truetype'),
+url('MaSuperPolice.svg') format('svg');
+}
+
+on peut generer un ensemble de formats ici
+https://www.fontsquirrel.com/tools/webfont-generator
+et voila c'est réglé on a notre police dont on est sûr que tout le monde l'utilisera
+
+les défauts de cette technique sont que
+- le navigateur doit telecharger le fichier de police, qui peut être lourd et prendre du temps
+- il faut utiliser des polices qui sont libres de droits
+
+pour mettre en italique, on utilise
+font-style: italic; /* met en italique */
+font-style: oblique; /* met en italique mais moins */
+font-style: normal;
+
+pour mettre en gras, c'est
+font-weight: bold; /* met en gras */
+font-weight: normal;
+
+pour souligner c'est
+text-decoration: underline; /* souligne */
+text-decoration: overline; /* sur-ligné (ligne au dessus du texte) */
+text-decoration: line-through; /* barré */
+text-decoration: blink; /* clignote, ne fonctionne pas sur tous les navigateurs */
+text-decoration: none;
+
+pour justifier un titre, on fait
+text-align: justify; /* justifie le texte */
+text-align: left; /* aligne le texte a gauche */
+text-align: right; /* aligne le texte a droite */
+text-align: center; /* centre le texte */
+==> ATTENTION, IMPORTANT !!! le text-align ne fonctionne QUE POUR UNE BALISE DE TYPE BLOCK !
+
+pour qu'un block soit entouré par du texte, on fait
+.balise
+{
+float: left;
+}
+ou float: right si on veut aligner l'image
+ça permet de faire "flotter" un element autour du texte
+==> float est appliquable sur les balises inline comme sur les block
+
+si on voulait annuler la disposition d'un texte <p id="speParaf"> par rapport à une image float: left
+on fait
+#speParaf
+{
+clear: left;
+}
+==> ULTRA IMPORTANT !
+(si l'image était a gauche ou a droite, pour pas s'emmerder on peut faire clear: both)
+
+pour les couleurs, on a differentes façon
+- brut, genre "grey"
+- en rgb (genre rgb(10,20,30))
+- en hexa genre #2DACD6
+
+pour trouver les differentes équivalences on trouve des trucs qui le font sur google
+Color Picke
+
+concernant le css et l'heritage,
+toute balise a laquelle on applique un style, toutes les balises enfants auront les memes proprietés
+
+pour mettre une image de fond on fait
+background-image: url('localisation de l'image');
+une fois qu'on a une image de fond, soit elle reste fixe, soit elle est scroll egalement
+pour la scroll on fait
+background-attachment: scroll;
+pour que le texte scroll down mais pas le bg, on fait
+background-attachment: fixed;
+
+concernant la repetition du motif de bg, pour pas la répeter, on fait
+background-repeat: no-repeat; /* pas de repetition */
+background-repeat: repeat; /* repetition a l'infini */
+background-repeat: repeat-x; /* repetition a l'infini sur la premiere ligne */
+background-repeat: repeat-y; /* repetition a l'infini sur la premiere colonne */
+
+pour la position du bg
+background-position: Xpx Ypx; /* positionne l'image bg en XY */
+background-position: top;
+background-position: bottom;
+background-position: left;
+background-position: right;
+background-position: center;
+==> ON PEUT COMBINER LES DIFFERENTS KW GENRE
+background-position: top center;
+
+pour les background, on peut combiner les propriétés comme suit:
+background: url("soleil.png") fixed no-repeat top right;
+(l'ordre des valeurs n'a pas d'importance !)
+
+on peut egalement mettre plusieurs images de fond, genre
+background: url("soleil.png") fixed no-repeat top right, url("neige.png") fixed;
+(MARCHE QUE POUR IE>=9)
+
+on peut gerer la transparence on a la propriété opacity
+on fait
+opacity: 1 /* 100% , ou alors 0 = 0%, ou alors 0.6 = 60% */
+
+on a aussi la propriété rgba pour rendre le BACKGROUND transparent!
+on fait comme ça
+background-color: rgba(255, 0, 0, 0.5); /* Fond rouge à moitié transparent */
+ça fonctionne pas pour IE < 9
+mais du coup pour majorer la compatibilité on fait simplement comme ça
+p
+{
+background-color: rgb(255,0,0); /* Pour les navigateurs anciens */
+background-color: rgba(255,0,0,0.5); /* Pour les navigateurs plus récents */
+}
+
+concernant les border, on fait soit:
+border: taille couleur type
+genre
+border: 3px blue dashed;
+
+pour spécifier un bord particulier on fait
+border-top
+border-bottom
+border-left
+border-right
+
+ya des sous-termes pour specifier chaque parametre genre
+border-top-color
+border-left-width
+border-style
+etc
+
+au niveau du border-style on a
+solid /* trait plein */
+dotted /* pointillé */
+dashed /* traits */
+double /* double bordure d'1 px */
+groove /* cadre eclairé pas en bas a droite */
+ridge /* cadre eclairé par en haut a gauche */
+inset /* foncé ht-G et clair B-D */
+outset /* inverse */
+
+enfin, depuis css3 on peut enfin faire des bordures arrondies
+pour ça on fait
+border-radius: 10px;
+on peut specifier l'arrondie pour chaque angle avec l'ordre HG HD BD BG
+border-radius: 10px 5px 10px 5px;
+
+Enfin, on peut faire des coubres elliptiques comme ça
+border-radius: 20px / 10px;
+
+de même, avec css3 on peut faire des ombres (plus obligé d'utiliser des images galères)
+
+pour faire des ombres de block, on fait
+box-shadow: 6px 6px 0px black;
+- le premier terme c'est le decalage horizontal de l'ombre
+- le 2e c'est le decal vertic de l'ombre
+- le 3e c'est d'adoucissement du degradé
+- le 4e c'est la couleur de l'ombre
+
+si on veut que l'ombre soit a l'intérieur, on rajoute inset a la fin genre
+box-shadow: 6px 6px 0px black inset;
+
+pour mettre une ombre a du texte, on fait
+text-shadow: 2px 2px 4px black;
+= avec les memes regles que pour box-shadow
+
+Pour modifier dynamiquement des styles, on utilise les PSEUDO-FORMATS
+ça permet de modifier le style:
+- au survol ;
+- lors du clic ;
+- lors du focus (élément sélectionné) ;
+- lorsqu'un lien a été consulté.
+
+pour appliquer un style au survol c'est
+balise:hover
+
+pour un style lors du click, c'est
+balise:active
+
+lorsqu'on met le focus sur l'élement c'est
+balise:focus
+
+pour appliquer un style à un lien visité, c'est
+a:visited
+
+====================[NOUVELLES BALISES HTML5]===================
+
+ça permet de spécifier la structure de notre page, genre
+le header
+le menu de navigation
+les section
+le footer
+etc
+
+d'ailleurs en general tout le site du body est entre 2 balises div, qu'on appel un main_wrapper
+==> tres utile pour fixer facilement les dimensions du site et et centrer le site a l'ecran
+
+pour le header on fait
+<header></header>
+
+pour le footer c'est
+<footer></footer>
+
+pour les liens de navigation c'est
+<nav></nav>
+genre
+<nav>
+<ul>
+<li><a href="index.html">Accueil</a></li>
+<li><a href="forum.html">Forum</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+</nav>
+
+pour une section de page (genre des div où ya des trucs), c'est
+<section></section>
+genre
+<section>
+<h1>Ma section de page</h1>
+<p>Bla bla bla bla</p>
+</section>
+
+pour les informations complementaires au document qu'on visualise (genre comme dans wikipedia où ya une section a droite avec une photo, etc), c'est
+<aside></aside>
+
+la balise <article></article> sert a englober une portion generalement autonome sur la page,
+genre une partie de la page qui pourrait etre reprise pour un autre site
+
+==> aujourd'hui il y a peu d'utilité de ces balises, mais qui sait un jour, peut-être qu'il y en aura
+
+il y a 2 grands types de balises
+block
+inline
+(on peut rajouter
+table-cell pour les td
+list-item pour les puces
+
+enfin, ya un type particulier qui est le type
+inline-block
+il se display inline mais il se redimensionne comme un block
+
+=================[les balises block]===================
+
+on peut définir une largeur et une hauteur avec
+width
+height
+
+REMARQUE IMPORTANTE, quand on fait width ou height x%, en fait ca fait reference a la taille du parent, or, html et body n'ont pas de taille déterminée, 
+donc pour faire un div qui fait toute la page, on fait
+html
+{
+	width: 100%;
+	height: 100%;
+}
+
+body
+{
+	min-width: 100%;
+	min-height: 100%;
+}
+
+
+on peut egalement definir une largeur et une hauteur max avec
+min-width
+min-height
+
+de meme que
+max-width
+max-height
+
+si on definit un pourcentage, ca va etre le pourcentage sans prendre en compte le margin et le padding de l'élément, alors que si on fait
+auto
+ca prendra toute la place en prenant en compte le margin et le padding de l'élément.
+Sinon on peut faire 100% - taillePaddingpx - tailleMarginpx
+
+Il y a d'autres façons de spécifier les marges avec les propriétésmarginetpadding. Par exemple :
+margin: 2px 0 3px 1px;signifie « 2 px de marge en haut, 0 px à droite (le px est facultatif dans ce cas), 3 px en bas, 1 px à gauche ».
+Autre notation raccourcie :margin: 2px 1px;signifie « 2 px de marge en haut et en bas, 1 px de marge à gauche et à droite ».
+
+pour centrer horizontalement une balise block, il faut
+lui donner un width
+utiliser la propriété margin:auto;
+
+(ça marche pas en vertical)
+
+si on a un block de taille donnée et que le texte deborde:
+overflow:visible; /* le texte debordant sera visible, truc par defaut */
+overflow: hidden; /* le texte debordant sera invisible */
+overflow:scroll; /* yaura un scrolling tout le temps */
+overflow:auto; /* yaura un scrolling si besoin */
+
+si on a un mot qui est trop long, on peut utiliser word-wrap
+genre
+word-wrap: normal; /* ça casse les mots là où c'est autorisé, genre sur les tirets */
+word-wrap: break-word; /* casse le mot et fait donc un retour a la ligne dès que ça depasse */
+
+==> A UTILISER DES QUE NECESSAIRE
+
+====================[les balises inline-block]======================
+avec ces balises, elles se display inline mais sont sizable comme des block
+
+elles beneficient de la propriété
+vertical-align (comme les tableaux)
+vertical-align: baseline; /* aligne la base de l'élement avec celle de l'element parent) */
+vertical-align: top; /* aligne le haut de l'élement avec celle de l'element parent) */
+vertical-align: middle; /* centre verticalement */
+vertical-align: bottom; /* aligne en bas */
+vertical-align: Xpx ou X%; /* aligne à X px de la baseline de l'élement parent */
+
+====================[la mise en page avec les box]======================
+au debut, on mettait tout en page avec des tableaux, c'était la merde
+puis on a commencé a utiliser css, mais c'était limité
+ensuite on utilisait des div, avec des display block et display inline
+maintenant, on a les FLEBOX ! cad qu'on utilise display:flex;
+
+Em gros on fait comme ça
+<div id="conteneur">
+<div class="element">Elément 1</div>
+<div class="element">Elément 2</div>
+<div class="element">Elément 3</div>
+</div>
+
+puis
+#conteneur
+{
+display: flex;
+}
+
+ça fait que les 3 elements, au lieu de les afficher les uns sous les autres,
+seront les uns a coté des autres.
+
+on peut bien sûr définir la direction (gauche a droite, haut en bas, etc) en faisant
+#conteneur
+{
+display: flex;
+flex-direction: column; /* pour de haut en bas */
+flex-direction: column-reverse; /* de bas en haut */
+flex-direction: row; /* de gauche a droite, par defaut */
+flex-direction: row-reverse; /* de droite a gauche */
+}
+
+en fait flex direction definit l'axe principal,
+l'axe perpendiculaire a cet axe est l'axe secondaire = cross axis
+
+bien sûr, ça peut deborder du conteneur, on peut donc demander un retour a la ligne dans ce cas, genre
+#conteneur
+{
+display: flex;
+flex-wrap: wrap; /* retour a la ligne si ca deborde */
+flex-wrap: nowrap; /* pas de retour a la ligne si ca deborde, les elements se serreront tant qu'ils peuvent */
+flex-wrap: wrap-reverse; /* retour a la ligne si ca deborde, mais dans le sens inverse */
+}
+
+pour modifier la disposition selon l'axe principal on a justify-content, genre
+justify-content: flex-start; /* par defaut, on aligne tout au debut et l'espace restant est vide */
+justify-content: flex-end; /* on aligne tout a la fin et l'espace restant est vide */
+justify-content: center; /* on aligne tout au centre, et l'espace restant est vide */
+justify-content: space-between; /* le premier element est aligné au debut, le dernier aligné a la fin, les autres sont séparés les uns des autres par un espace constant */
+justify-content: space-around; /* idem mais il y a un espace entre le debut et le premier element, de meme que pour le dernier */
+
+concernant l'alignement selon l'axe secondaire, on fait align-item, genre:
+align-item: stretch; /* par defaut, etirement des elements sur tout l'axe */
+align-item: flex-start; /* alignes au debut */
+align-item: flex-end; /* alignes a la fin */
+align-item: center; /* alignes au centre */
+align-item: baseline; /* alignes sur la ligne de base, semblable a flex-start */
+
+du coup pour faire un alignement de nos div en vertical et horizontal (halleluya) on fait
+#conteneur
+{
+display: flex; /* on display flex */
+justify-content: center; /* alignement horizontal */
+align-items: center; /* alignemenet vertical */
+}
+
+on peut egalement faire comme ceci
+#conteneur
+{
+display: flex;
+}
+.element
+{
+margin: auto;
+}
+
+si ya plusieurs lignes, et notamment avec des retours a la ligne, on peut preciser comment se comporte l'affichage en utilisant la propriété align-content:
+flex-start : les éléments sont placés au début
+flex-end : les éléments sont placés à la fin
+center : les éléments sont placés au centre
+space-between : les éléments sont séparés avec de l'espace entre eux
+space-around : idem, mais il y a aussi de l'espace au début et à la fin
+stretch (par défaut) : les éléments s'étirent pour occuper tout l'espace
+
+enfin, pour donner un positionnement particulier sur l'axe IIaire d'un element, on utilise align-self, genre
+#conteneur
+{
+display: flex; /* on display flex */
+flex-direction: row; /* on aligne horizontalement
+justify-content: center; /* on centre horizontalement nos contenus */
+align-items: center; /* on centre verticalement nos contenus */
+}
+.element:nth-child(2) /* On prend le deuxième bloc élément */
+{
+background-color: blue;
+align-self: flex-end; /* Seul ce bloc sera aligné à la fin de la colonne */
+}
+
+pour acceder aux elements enfants (genre le nieme element) on fait
+balises(genre .maClasse):nth-child(n)
+
+du coup, on peut definir une position d'ordre des elements comme ça
+.element:nth-child(1)
+{
+order: 3;
+}
+.element:nth-child(2)
+{
+order: 1;
+}
+.element:nth-child(3)
+{
+order: 2;
+}
+
+on peut utiliser flex: X pour grossir un element, genre
+.element:nth-child(1)
+{
+flex: 2;
+}
+.element:nth-child(2)
+{
+flex: 1;
+}
+
+==================[positionnement]====================
+on a la propriété position
+position: absolute: /* dispose la balise a top;letf du coin sup gauche de l'ELEMENT PARENT
+position:relative; /* dispose la balise à top;left du coin sup gauche de sa position par défaut, qu'il aurait si on le mettait comme ça
+position: fixed; /* positionne par rapport au coin sup-gauche du document de façon inchangée, meme quand on scroll down */
+
+pour le placement, on peut utiliser
+top:
+ou
+bottom:
+
+et
+
+left
+ou
+right
+
+les elements placés en absolu sont en avant-plan
+si yen a plusieurs, pour spécifier la priorité (qui par defaut est par ordre d'appel) on fait
+z-index: 1 (ou 2 ou 3 ou ske tu veux)
+
+
+
+=======[le validateur]==========
+
+le w3c propose un validateur pour ses documents html/css
+on peut lui founir le lien de notre page
+ou 
+notre page en pj
+ou 
+note code en copier coller
+
+en regle generale
+- essayer de toujours mettre en texte entre <p></p> et jamais directement entre des balises genre div, pareil pour les <br />
+- toute image doit comporter un attribut alt au cas où elles ne s'afficheraient pas
+- on ferme les balises dans l'ordre
+- tout lien en dur dans une balise doit avoir ses & ecrits &amp;
+- pas de balises obsoletes comme <frame> et <marquee>
+
+
+=========[les tableaux]=======
+on fait
+<table>
+ <caption>Titre du tableau</caption>
+ <tr>
+  <th>titre colonne</th>
+  <th>titre colonne</th>
+ </tr>
+ <tr>
+  <td>line1col1</td>
+  <td>line1col2</td>
+ </tr>
+ <tr>
+  <td>line1col1</td>
+  <td>line1col2</td>
+ </tr>
+</table>
+
+mais de base, on ne verra pas de bordure dans la page html 
+la solution d'avant, c'était de mettre un attribut dans la balise table, mais ca c'est l'ancienne facon qui confondait le fond et la forme du document html 
+maintenant on utilise css en faisant 
+td
+{
+	border: black 1px solid;
+}
+
+table
+{
+	border-collapse: collapse;
+}
+
+la proriété border-collapse peut prendre 2 valeurs, elle sert a faire en sorte que 2 bordures soient fusionnées en 1 seule
+- collapse
+- separate = valeur par defaut
+
+
+Pour les gros tableaux complexes, il est possibles de diviser le tableau en 3 parties 
+- header = là ou ya les th
+- body = là où ya les datas
+- footer = genre rappel du th
+
+genre on ferait plutot (d'abord thead, ensuite tfoot, enfin tbody)
+<table>
+ <caption>Titre du tableasu</caption>
+ <thead>
+  <tr>
+   <th>titre colonne</th>
+   <th>titre colonne</th>
+  </tr>
+ </thead>
+ <tfoot>
+  <tr>
+   <th>titre colonne</th>
+   <th>titre colonne</th>
+  </tr>
+ </tfoot>
+ <tbody>
+  <tr>
+   <td>line1col1</td>
+   <td>line1col2</td>
+  </tr>
+  <tr>
+   <td>line1col1</td>
+   <td>line1col2</td>
+  </tr>
+ </body>
+</table>
+
+remarque importante, si on veut fusionner des cellules, genre faire qu'une case prenne 2 colonnes, ou alors 2 lignes, on fait
+<td colspan="2">
+
+======[Les formulaires]========
+pour faire un formulaire on fait
+<form></form>
+
+en gros ya 2 facons d'envoyer des données rentrées dans un formulaire 
+- methode GET = limitée a 255 chars, elles sont envoyées via l'adresse url
+- methode POST = une autre methode dont la limite est beaucoup plus haute et plus securisée
+
+du coup on fait genre 
+<form methode="get" action="page qui traite les infos.php">
+<label>nom du champs, genre nom:</label><balise de champs de formulaire />
+</form>
+
+pour faire une zone de texte monoligne on fait
+<input type="text" name="nom du champs pour le recuperer apres" value="truc entré par defaut" />
+genre
+<input type="text" name="pseudo" />
+
+un truc utile, c'est de lier un label à un champs de formulaire, par exemple dans certains navigateurs, le fait de cliquer sur un label donne le focus au champs de formulaire correspondant
+pour ca, il faut utiliser l'attribut for de <label> et lui donner la valeur de l'id du champs de formulaire correspondant
+genre 
+<label for="name">nom:</label><input type="text" id="name" name="name" />
+
+pour qu'un champs soit rempli obligatoirement, on a l'attibut muet requiered, genre 
+<input type="text" name="prenom" id="prenom" required />
+==> le navigateur indique au moment de l'envoi que tel champs doit etre rempli
+
+pour qu'un champs ai le focus d'emblée, on a l'attribut muet autofocus, genre
+<input type="text" name="prenom" id="prenom" autofocus />
+
+REMARQUE, en css il existe des pseudo-formats pour changer le style des elements requis avec 
+:required
+et :focus pour changer le style d'un truc qui a le input
+
+
+=====[<input> de <form>]==
+
+on a les attributs
+- size = donne la taille du champs en nombre de caracteres, mais c'est mieux de le gérer avec du css
+- maxlength = nombre max de chars (mais c'est pas suffisant pour faire un truc secure)
+- value = valeur par defaut dans le champs
+- placeholder = donne une indication sur le contenu du champs
+- type
+  - text = texte de base
+  - password = texte de base caché
+  - checkbox
+  - radio
+  - submit = envoie les datas avec les bonnes methodes vers la page action
+  - reset = reinitialise tous les champs du formulaire
+  - image = comme submit mais cette fois-ci c'est pas un bouton mais une image à preciser dans un attribut src=""
+  - button = bouton générique, en general on le gere en JS
+  - email = depuis HTML5, pour certains navigateurs, check si l'adresse est dans la norme (mais pas si elle existe, normal...), pour les phones, afficher un clavier adapté, etc
+  - url = depuis HTML5, pour certains navigateurs, check si l'url est de la bonne norme
+  - tel = depuis HTML5, pour les numéros de téléphone, permet par exemple sur iphone d'afficher un clavier uniquement de digits
+  - number = depuis HTML5, pour les nombres, permet par exemple de mettre une sorte comboBox avec des fleches pour augmenter ou diminuer la valeur, et checker si la valeur entrée est bien numérique, mais attention ca marche que pour les entiers et pas les flottants, on a des attributs pour cet item particuliers qui sont
+        - min = valeur minimale
+        - max = valeur maximale
+        - step = pas lors de l'utilisation d'une fleche
+        ==> ATTENTION, l'attribut value ne semble pas fonctionner dans ce cas..
+
+  - range = depuis HTML5, permet de generer un curseur pour selectionner un nombre entier, on a aussi les attributs min, max et step pour definir le range
+  - color = depuis HTML5, permet de generer une palette pour choisir une couleur, cad le string d'une code hexadecimal de couleur,
+  - search = depuis HTML5, permet de faire un champs recherche que certains navigateurs sauvegardent les requetes precedentes, etc
+
+  - date = depuis HTML5, genre 03/05
+  - time = depuis HTML5, genre 13:37
+  - week = depuis HTML5, 
+  - month = depuis HTML5,
+  - datetime = depuis HTML5, pour la date et l'heure avec gestion du decalage horaire
+  - datetime-local = pour la date et l'heure sans gestion du decalage horaire
+
+=====[<textarea>]==============
+c'est une zone de texte simple multilignes
+
+on a l'attribut row et cols qui permet de dimensionner le textarea mais c'est l'ancienne methode, maintenant on le fait avec du css avec width et height
+pour mettre du texte dans le textarea, on n'a pas l'attribut value, mais on fait
+<textarea>valeur par default</textarea>
+
+========[les zones de saisie enrichies]===============
+HTML5 apporte de nouvelles fonctionalités utiles, genre
+
+input type="email"
+input type="url"
+input type="tel"
+input type="number"
+input type="range"
+input type="color"
+etc
+
+remarque, tous les navigateurs ne connaissent pas les zones de saisie enrichie, s'il ne la connaissent pas, il mettront un simple type="text" par defaut
+
+
+======[checkbox]======
+<input type="checkbox" name="choix" />
+
+genre
+
+<form method="post" action="traitement.php">
+   <p>
+       Cochez les aliments que vous aimez manger :<br />
+       <input type="checkbox" name="frites" id="frites" /> <label for="frites">Frites</label><br />
+       <input type="checkbox" name="steak" id="steak" /> <label for="steak">Steak haché</label><br />
+       <input type="checkbox" name="epinards" id="epinards" /> <label for="epinards">Epinards</label><br />
+       <input type="checkbox" name="huitres" id="huitres" /> <label for="huitres">Huitres</label>
+   </p>
+</form>
+
+on a l'attribut muet checked pour le checker par defaut, genre 
+<input type="checkbox" name="choix" checked />
+
+====[radio]====
+
+<form method="post" action="traitement.php">
+   <p>
+       Veuillez indiquer la tranche d'âge dans laquelle vous vous situez :<br />
+       <input type="radio" name="age" value="moins15" id="moins15" /> <label for="moins15">Moins de 15 ans</label><br />
+       <input type="radio" name="age" value="medium15-25" id="medium15-25" /> <label for="medium15-25">15-25 ans</label><br />
+       <input type="radio" name="age" value="medium25-40" id="medium25-40" /> <label for="medium25-40">25-40 ans</label><br />
+       <input type="radio" name="age" value="plus40" id="plus40" /> <label for="plus40">Encore plus vieux que ça ?!</label>
+   </p>
+</form>
+
+le fait de leur donner le meme name permet de n'en selectionner qu'un seul
+
+on a egalement l'attribut muet checked pour checker par defaut tel bouton radio
+
+
+====[listes deroulantes]====
+
+<form method="post" action="traitement.php">
+   <p>
+       <label for="pays">Dans quel pays habitez-vous ?</label><br />
+       <select name="pays" id="pays">
+           <option value="france">France</option>
+           <option value="espagne">Espagne</option>
+           <option value="italie">Italie</option>
+           <option value="royaume-uni">Royaume-Uni</option>
+           <option value="canada">Canada</option>
+           <option value="etats-unis">États-Unis</option>
+           <option value="chine">Chine</option>
+           <option value="japon">Japon</option>
+       </select>
+   </p>
+</form>
+
+cette fois pour selectionner une option par defaut on fait l'attribut muet selected
+
+on peut egalement grouper nos choix dans des rubriques avec la balise <optgroup>, 
+genre
+<form method="post" action="traitement.php">
+   <p>
+       <label for="pays">Dans quel pays habitez-vous ?</label><br />
+       <select name="pays" id="pays">
+           <optgroup label="Europe">
+               <option value="france">France</option>
+               <option value="espagne">Espagne</option>
+               <option value="italie">Italie</option>
+               <option value="royaume-uni">Royaume-Uni</option>
+           </optgroup>
+           <optgroup label="Amérique">
+               <option value="canada">Canada</option>
+               <option value="etats-unis">Etats-Unis</option>
+           </optgroup>
+           <optgroup label="Asie">
+               <option value="chine">Chine</option>
+               <option value="japon">Japon</option>
+           </optgroup>
+       </select>
+   </p>
+</form>
+
+
+=======[fieldset]==========
+
+c'est genre un groupBox,
+ca permet de regrouper un ensemble de champs au sein d'un meme groupe
+chaque fieldset peut contenir une legende grace à la balise <legend>
+
+genre
+<form method="post" action="traitement.php">
+ 
+   <fieldset>
+       <legend>Vos coordonnées</legend> <!-- Titre du fieldset --> 
+
+       <label for="nom">Quel est votre nom ?</label>
+       <input type="text" name="nom" id="nom" />
+
+       <label for="prenom">Quel est votre prénom ?</label>
+       <input type="text" name="prenom" id="prenom" />
+ 
+       <label for="email">Quel est votre e-mail ?</label>
+       <input type="email" name="email" id="email" />
+
+   </fieldset>
+ 
+   <fieldset>
+       <legend>Votre souhait</legend> <!-- Titre du fieldset -->
+ 
+       <p>
+           Faites un souhait que vous voudriez voir exaucé :
+
+           <input type="radio" name="souhait" value="riche" id="riche" /> <label for="riche">Etre riche</label>
+           <input type="radio" name="souhait" value="celebre" id="celebre" /> <label for="celebre">Etre célèbre</label>
+           <input type="radio" name="souhait" value="intelligent" id="intelligent" /> <label for="intelligent">Etre <strong>encore</strong> plus intelligent</label>
+           <input type="radio" name="souhait" value="autre" id="autre" /> <label for="autre">Autre...</label>
+       </p>
+ 
+       <p>
+           <label for="precisions">Si "Autre", veuillez préciser :</label>
+           <textarea name="precisions" id="precisions" cols="40" rows="4"></textarea>
+       </p>
+   </fieldset>
+</form>
+
+=============[la video et l'audio]===========
+
+avant, pour mettre de la video dans une page html il fallait utiliser des plugins (genre flash, ou alors windows media, etc)
+mais avec HTML5 ils ont fait 2 nouvelles balises pour gerer ca 
+- <video>
+- <audio>
+
+pour le son, ya differents formats de compression
+
+pour la video c'est un peu plus compliqué, on a 3 elements 
+- un format conteneur = c'est un gros une boite qui contient les 2 elements suivants. On le reconnait souvent a l'extension du fichier (avi, mp4, mkv, etc)
+- un codec audio = c'est le format de compression du son (ogg, mp3, wav, flac, etc)
+- un codec video = c'est le format de compression des images, complexes et souvent payants 
+  - H.264 = l'un des plus puissants et utilisé ce jour, gratuit dans certains cas (diffusion de videos sur un site perso), ya un flou juridique qui fait que c'est chaud de l'utiliser à tout va
+  - Ogg Theora = gratuit et libre de droit, moins puissant que H264, pas de soucis pour linux, pour windows il faut installer des programmes pour le lire
+  - webM = un autre codec gratuit et libre de droit plus recent, proposé par google, concurrent le plus sérieux de H264 à ce jour
+
+==> le mieux etant de proposer chaque video dans plusieurs formats afin de la rendre visible sur un max de navigateurs
+    Pour convertir les videos dans differents formats, the best gratos c'est Miro Video Converter.
+
+=====[<audio>]======
+
+On l'utilise comme ca
+<audio src="musique.mp3"></audio>
+
+==> mais ca, ca va juste faire que le navigateur va telecharger les meta-données du fichier audio
+il faut ensuite utiliser differents attributs dans la balise
+
+- controls: pour ajouter les boutons « Lecture », « Pause » et la barre de défilement. Cela peut sembler indispensable, et vous vous demandez peut-être pourquoi cela n'y figure pas par défaut, mais certains sites web préfèrent créer eux-mêmes leurs propres boutons et commander la lecture avec du JavaScript.
+
+- width: pour modifier la largeur de l'outil de lecture audio.
+- loop: la musique sera jouée en boucle.
+
+- autoplay: la musique sera jouée dès le chargement de la page. Évitez d'en abuser, c'est en général irritant d'arriver sur un site qui joue de la musique tout seul !
+- preload: indique si la musique peut être préchargée dès le chargement de la page ou non. Cet attribut peut prendre les valeurs : 
+  - auto(par défaut) : le navigateur décide s'il doit précharger toute la musique, uniquement les métadonnées ou rien du tout.
+  - metadata: charge uniquement les métadonnées (durée, etc.).
+  - none: pas de préchargement. Utile si vous ne voulez pas gaspiller de bande passante sur votre site.
+  ==> (remarque, on ne peut pas le forcer, c'est tjs le browser qui decide, genre sur les telephone ca preload jamais)
+
+
+si on veut pouvoir proposer plusieurs formats au navigateur au cas où il n'en gèrerait pas, on peut faire comme ca 
+<audio controls>
+    <source src="hype_home.mp3">
+    <source src="hype_home.ogg">
+</audio>
+
+
+=====[<video>]======
+
+on fait en gros comme ca 
+<video src="sintel.webm"></video>
+
+==> mais ca, ca va juste faire que le navigateur va telecharger les meta-donnees du fichier video. 
+il faut ensuite utiliser differents attributs dans la balise
+
+- poster: image à afficher à la place de la vidéo tant que celle-ci n'est pas lancée. Par défaut, le navigateur prend la première image de la vidéo
+- controls: pour ajouter les boutons « Lecture », « Pause » et la barre de défilement
+- width: pour modifier la largeur de la vidéo, bof
+- height: pour modifier la hauteur de la vidéo, bof
+- loop: la vidéo sera jouée en boucle.
+- autoplay: la vidéo sera jouée dès le chargement de la page. Là encore, évitez d'en abuser, c'est en général irritant d'arriver sur un site qui lance quelque chose tout seul !
+- preload: indique si la vidéo peut être préchargée dès le chargement de la page ou non. Cet attribut peut prendre les valeurs :
+  - auto(par défaut) : le navigateur décide s'il doit précharger toute la vidéo, uniquement les métadonnées ou rien du tout.
+  - metadata: charge uniquement les métadonnées (durée, dimensions, etc.).
+  - none: pas de préchargement. Utile si vous souhaitez éviter le gaspillage de bande passante sur votre site.
+
+pareil que pour <audio>, on peut utiliser la forme suivante pour pouvoir avoir les videos dans differents formats: 
+<video controls poster="sintel.jpg" width="600">
+    <source src="sintel.mp4">
+    <source src="sintel.webm">
+    <source src="sintel.ogv">
+</video>
+
+ATTENTION, tous les appareils de type Iphone ne reconnaissent que le format mp4, et que si celui-ci est donné en premier dans la liste
+
+=============[responsive design et media queries]=================
+
+le responsive design c'est faire en sorte que le site s'adapte aux differents formats d'ecrans en gros (et aux smartphone)
+==> on utilise un type de CSS qui s'appelle les media queries, nouveauté de css3
+
+ca permet aux composants du site de se reorganiser quand on redimensionne la fenetre
+
+on peut s'adapter en fonction de l'ecran (smartphone, tv, projecteur, ...)\, le nombre de couleurs, l'orientation de l'ecran (portrait ou paysage) et autre.
+
+
+
+on en a de bons exemples sur https://mediaqueri.es/
+
+le mediaqueries c'est des regles qu'on charge en fonction de conditions comme la taille de l'ecran
+ya 2 facons de proceder
+1) soit on fait un fichier css par taille d'ecran
+2) on utilise un seul fichier css où on a les regles conditionnelles ==> faudra le charger avec l'attribut media, genre comme ca 
+onpeut faire
+<link rel="stylesheet" href="./style.css" /> //charge ce fichier pour tout le monde
+puis
+<link rel="stylesheet" media="screen and (max-width:1280px)" href="petite_resolution.css" /> //charge le fichier que si l'ecran est de resolution <=1280px, c'est les regles pour les smartphone et tablettes
+
+pour ecrire les regles mediaqueries dans un fichier css on fait 
+@media screen and (max-width: 1280px)
+{
+	/* des regles */
+}
+
+
+au niveau des regles mediaqueries on a 
+- color: gestion de la couleur (en bits/pixel).
+- height: hauteur de la zone d'affichage (fenêtre).
+- width: largeur de la zone d'affichage (fenêtre).
+- device-height: hauteur du périphérique.
+- device-width: largeur du périphérique.
+- orientation: orientation du périphérique (portrait ou paysage).
+- media: type d'écran de sortie. Quelques-unes des valeurs possibles :
+	- screen: écran « classique » ;
+	- handheld: périphérique mobile ;
+	- print: impression ;
+	- tv: télévision ;
+	- projection: projecteur ;
+	- all: tous les types d'écran.
+ 
+
+on a egalement les kw 
+and 
+not
+only
+
+genre
+/* Sur les écrans, quand la largeur de la fenêtre fait au maximum 1280px */
+@media screen and (max-width: 1280px)
+
+/* Sur tous types d'écran, quand la largeur de la fenêtre est comprise entre 1024px et 1280px */
+@media all and (min-width: 1024px) and (max-width: 1280px)
+
+/* Sur les téléviseurs */
+@media tv
+
+/* Sur tous types d'écrans orientés verticalement */
+@media all and (orientation: portrait)
+
+
+
+
+concretement, en terme d'ergonomie, on ferait comme ceci
+Pour les grans ecrans
+- menu horizontal en haut de l'écran au dessus de la banniere
+- le corps du site avec du contenu et un aside sur sa droite
+- un footer avec des trucs genre des liens
+
+pour les ecrans de la largeur <1024px
+- le menu devrait plutot etre vertical, toujours au dessus de la banniere, et ecrit en plus petit
+- on peut supprimer la banniere
+- on place les aside sous le contenu plutot qu'à sa droite
+==> en gros, ne garder que les elements vraiment importants et privilégier le vertical à l'horizontal 
+
+
+=====[mediaqueries et navigateur mobile]=====
+
+la zone d'affichage d'un navigateur de smartphone s'appelle le viewport
+
+le truc, c'est qu'en css si on utilise la proppriété max-width, 
+ca utilise le max-width du navigateur et pas la taille de l'écran, 
+et ce max-width varie en fonction du navigateur (850px pour opera mobile, 980px pour safari mobile, 800px pour android, 1024px pour windowsphone, etc)
+en gros ca fait un espece de dezoom de la page en considérant que l'écran fait 980px ou 800px.
+
+du coup, en gros, un iphone fait comme si la fenetre faisait 980px de large tandis qu'android fait comme si elle faisait 800px de large
+du coup, pour les smartphone, il vaut mieux utiliser max-device-width plutot que max-width, car ca retourne la largeur du device qui est toujours la meme
+
+comme les peripheriques smartphone ne font en general jamais plus de 480px de large, on peut faire comme ca 
+@media all and (max-device-width: 480px)
+{
+    /* Vos règles CSS pour les mobiles ici */
+}
+
+on pourrait utiliser la propriété handheld
+mais AUCUN NAVIGATEUR MOBILE NE RECONNAIT CETTE PROPRIÉTÉ (a part opera...)
+
+remarque: 
+il est possible de modifier la valeur du viewport par notre page en faisant
+<meta name="viewport" content="width=320" />
+
+ou alors tout simplement
+<meta name="viewport" content="width=device-width" />
+
+
+=====[le reste]=========
+
+Le W3C ne travaille pas que sur les langages HTML et CSS. Ce sont certes les plus connus, mais le W3C cherche aussi à définir d'autres technologies qui viennent compléter HTML et CSS. Elles sont nombreuses et on les confond d'ailleurs souvent avec HTML5.
+
+la balise <canvas> permet de faire des trucs graphiques 2d dans une page web de facon tres simple 
+
+svg permet de faire des dessins vectoriels sur une page web
+en gros, au lieu d'afficher des dessins jpg, on affiche des images vectorielles (faites avec un logiciel genre inkscapce)
+
+drag n drop, pour faire du drag n drop 
+
+file API, permet d'acceder aux fichiers de la machine, utile pour le drag n drop 
+
+geolocalisation, avec l'accord du user et a une precision de quelques km
+
+web storage, c'est pour stocker des infos sur la machine du user, mais de facon plus importante qu'avec les cookies (infos hierarchisées comme dans une bdd)
+
+app cache, pour demander au browser de telecharger des elements de la page afin de les avoir en cache, tres pratique pour les applis web fonctionnant hors connexion
+
+web socket = permet des echanges plus rapides en temps reel entre le client et le serveur, c'est une sorte d'ajax amélioré, c'est un peu L'AVENIR DES APPLICATIONS WEB
+
+web GL = 3d dans les pages web en utilisant opengl, les scenes 3d sont gérées par la carte graphique
+
+==> la plupart de ces fonctionalités se gerent avec javascript 
+
+
+
+=====[mettre son site en ligne]=====
+
+un nom de domaine c'est pas cher du tout, entre 7 et 12 euros pas an
+le .info coute moins cher que le reste
+
+pour reserver un nom de domaine, on peut passer par un REGISTRAR (OVH, 1&1, gandi, etc)
+ou commander le nom de domaine en meme temps que l'hebergement
+
+
+un hebergeur c'est une entreprise qui a des baies avec des U empilés, stockés dans des datacenters, des entrepots a serveurs a l'acces tres protegé
+- l'hebergement mutualisé c'est 1 serveur qui a pleins de sites dessus, c'est l'offre la moins chere
+- hebergement dedié virtuel = le serveur ne gere que tres peu de sites genre une dizaine max, c'est mieux si on a pas mal de trafic et pas beaucoup d'argent
+- hebergement dedié = serveur dedié = 1 site sur un serveur, c'est cher et faut savoir l'administrer
+- hebergement cloud = en gros on a notre site sur des serveurs virtuels = c'est un peu comme l'hebergement dedié virtuel, mais avec des outils pour gerer le reseau, les bdd, etc.
+  c'est la tendance pour de plus en plus de moyens et gros sites (Amazon Web Services, Google Cloud, Microsoft Azure, etc.)
+
+pour transferer les fichiers sur le serveurs, on utilise la plupart du temps le protocole ftp
+il faut alors un client ftp sur sa machine pour communiquer, genre fileZilla 
+
+=====[résumé des balises HTML5]=====
+
+<abbr> Abréviation
+<blockquote> Citation (longue)
+<cite>Citation du titre d'une œuvre ou d'un évènement
+<q>Citation (courte)
+<sup>Exposant
+<sub>Indice
+<strong>Mise en valeur forte
+<em>Mise en valeur normale
+<mark>Mise en valeur visuelle
+<h1>Titre de niveau 1
+<h2>Titre de niveau 2
+<h3>Titre de niveau 3
+<h4>Titre de niveau 4
+<h5>Titre de niveau 5
+<h6>Titre de niveau 6
+<img />Image
+<figure>Figure (image, code, etc.)
+<figcaption>Description de la figure
+<audio>Son
+<video>Vidéo
+<source>Format source pour les balises<audio>et<video>
+<a>Lien hypertexte
+<br />Retour à la ligne
+<p>Paragraphe
+<hr />Ligne de séparation horizontale
+<address>Adresse de contact
+<del>Texte supprimé
+<ins>Texte inséré
+<dfn>Définition
+<kbd>Saisie clavier
+<pre>Affichage formaté (pour les codes sources)
+<progress>Barre de progression
+<time>Date ou heure
+
+<ul>Liste à puces, non numérotée
+<ol>Liste numérotée
+<li>Élément de la liste à puces
+<dl>Liste de définitions
+<dt>Terme à définir
+<dd>Définition du terme
+
+
+<table>Tableau
+<caption>Titre du tableau
+<tr>Ligne de tableau
+<th>Cellule d'en-tête
+<td>Cellule
+<thead>Section de l'en-tête du tableau
+<tbody>Section du corps du tableau
+<tfoot>Section du pied du tableau
+
+<form>Formulaire
+<fieldset>Groupe de champs
+<legend>Titre d'un groupe de champs
+<label>Libellé d'un champ
+<input />Champ de formulaire (texte, mot de passe, case à cocher, bouton, etc.)
+<textarea>Zone de saisie multiligne
+<select>Liste déroulante
+<option>Élément d'une liste déroulante
+<optgroup>Groupe d'éléments d'une liste déroulante
+
+<header>En-tête
+<nav>Liens principaux de navigation
+<footer>Pied de page
+<section>Section de page
+<article>Article (contenu autonome)
+<aside>Informations complémentaires
+
+<span>Balise générique de type inline
+<div>Balise générique de type block
+
+
+
+=====[résumé des propriétés css]=====
+
+cf 
+https://openclassrooms.com/fr/courses/1603881-apprenez-a-creer-votre-site-web-avec-html5-et-css3/1608902-memento-des-proprietes-css
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
