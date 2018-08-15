@@ -1,0 +1,989 @@
+@error : Si on quitte le programme ou si on appuie sur cancel sur un bouton
+@MyDocumentsDir : retourne le chemin complet du repertoire "Mes Documents" ;
+@ComputerName : retourne le nom de l'ordinateur ;
+@CRLF : équivaut à un retour chariot (appui sur la touche Entrée) ;
+@DesktopDir : retourne le chemin complet du Bureau ;
+@DesktopHeight : retourne la hauteur de votre résolution d'écran ;
+@DesktopWidth : retourne la largeur de votre résolution d'écran ;
+@HOUR : retourne l'heure ;
+@HotKeyPressed : retourne la dernière touche appuyée par l'utilisateur ;
+@ScriptDir : retourne le chemin complet du script ; +++++++++++++++++
+@ProgramFilesDir : retourne le chemin complet du répertoire "Program Files" ;
+@OSVersion : retourne la version de votre OS ;
+@SystemDir : retourne le chemin complet de votre répertoire système ;
+@TempDir : retourne le chemin complet de votre répertoire temporaire.
+
+POUR REVENIR A LA LIGNE C'EST @CRLF
+pour faire un retour a la ligne dans le code sans que ça équivaut a ;, c'est '& _' au lieu de mettre un & classique de concatenation
+
+la liste des macro est dispo là 
+https://www.autoitscript.fr/autoit3/docs/macros.htm
+
+Les UDF 
+-------
+
+C'est des fonctions tres élaborées qui existent dans des #includes
+
+
+Forcer la portée lors de la declaration des variables
+-------------------------------------------------------
+il faut taper au debut du script 
+
+AutoItSetOption("MustDeclareVars", 1)
+
+
+msgbox pour entrer une donnée
+-----------------------------
+c'est inputbox 
+on fait comme ca 
+
+$entree = inputbox("titre","message")
+
+$entree = la chaine entree apres qu'on ai cliqué sur entrée 
+et sinon la macro @error = 
+
+1 = Le bouton Annuler a été cliqué.
+2 = Le délai d'attente TimeOut a été atteint.
+3 = La boîte InputBox n'a pas réussi à s'ouvrir. Cela est généralement causé par de mauvais arguments.
+4 = La boîte InputBox ne peut pas être affichée sur n'importe quel moniteur.
+5 = Paramètres invalides Width sans Height ou Left sans Top.
+
+commentaires
+------------
+#cs
+
+#ce
+
+ou ;
+
+portée des variables
+--------------------
+global = existante dans tous les fichiers du programme, meme les includes
+dim = variable existente que dans le script dans lequel elle est declarée
+local = idem ou si elle est declarée dans une fonction, existente que dans la fonction 
+
+pour declarer une constante c'est 
+const variable = constante 
+
+
+definir un tableau
+-------------------
+$tableau[5] = [1, 2, 3, 4, 5]
+
+Comme en C, on peut laisser les [] vide pour que ca se definisse tout seul au moment de la definition, genre 
+$tableau[] = [1, 2, 3, 4, 5]
+
+le nombre d'éléments max est 64 dimensions soit 16 millions d'elements
+
+Afficher le contenu d'un tableau
+--------------------------------
+On utilise la fonction UDF _ArrayDisplay: 
+
+;include de l'UDF
+#include <Array.au3>
+
+;declaration du tableau
+$tableau [n] = [...]
+
+;Affichage du tableau dans une fenetre
+_ArrayDisplay($tableau, 'Default Search')
+
+
+
+
+If Then ElseIf Else EndIf: 
+-----------------------
+
+If(condition) Then
+  1
+  2
+  ...
+  n 
+
+ElseIf(condition) Then
+  1
+  2
+  ...
+  n 
+
+Else 
+  1
+  2
+  ...
+  n 
+
+EndIf
+
+ne pas oublier le THEN apres les if et elseif
+ne pas oublier le endif a la fin
+
+
+Select Case EndCase
+------------------- 
+
+Select 
+	case(condition1)
+          1
+          2
+          ...
+          n 
+
+	case(condition2)
+          1
+          2
+          ...
+          n 
+
+	.....
+
+	case(condition n)
+          1
+          2
+          ...
+          n 
+
+	Case Else
+          1
+          2
+          ...
+          n 
+
+
+EndSelect  
+
+
+Switch Case EndSwitch
+---------------------
+
+Switch(variable)
+
+	Case(a)
+          1
+          2
+          ...
+          n 
+
+	Case(b)
+          1
+          2
+          ...
+          n 
+
+          ...
+
+	Case(x)
+          1
+          2
+          ...
+          n
+
+	Case Else
+          1
+          2
+          ...
+          n 
+
+EndSwitch
+
+
+Comparaison
+-----------
+= egal
+== egal 
+<> different (ATTENTION C'EST PAS !=)
+< strictement inferieur
+<= inferieur ou egal 
+> strictement superieur 
+>= superieur ou egal 
+
+AND et 
+OR ou 
+
+
+For To Step Next 
+------------------
+
+For $i=nb_depart To nb_arrivee Step nb_incrementé
+   1
+   2
+   ...
+   n
+
+Next 
+
+
+
+While WEnd 
+----------
+
+While(condition)
+   1
+   2
+   ...
+   n
+
+WEnd
+
+
+Do Until 
+--------
+faire telles instructions jusqu'à ce que la proposition soit vraie
+
+Do 
+   1
+   2
+   ...
+   n
+
+Until (condition)
+
+
+
+Fonction timer
+--------------
+c'est un chronometre, ca sert a savoir le temps qui s'est ecoule entre un moment ou on initie le timer 
+et le moment où on le lit
+
+; on lance le chrono
+$timer = TimerInit()
+
+; on regarde le chrono avec une conversion de la valeur en ms
+MsgBox(0, "lecture du chrono", TimerDiff($timer))
+
+
+Fonction sleeep
+---------------
+met en pause le programme pour une durée de x ms
+
+Sleep(Tps_en_ms)
+
+
+Declaration de fonction 
+-----------------------
+
+Func MaFonction(parametre1, parametre2, parametre 3 = "")
+   1
+   2
+   ...
+   n
+
+Return variable_retour_fonction
+
+EndFunc
+
+
+IL EST CAPITAL QUE LES VARIABLES DECLAREE DANS UNE FONCTION SOIENT LOCALES !!!!!!!!!!!!!
+
+
+Les parametres obligatoires sont a mettre en premier, les parametres optionnels (cad defini avec 
+une valeur par défaut, par exemple = "") sont a mettre ensuite. 
+On peut ne mettre que des parametres optionnels, que des parametres obligatoires ou pas de parametres
+du tout. 
+
+Pour verifier si un parametre optionnel a été entré, on utilise la valeur Default
+genre on definie la fonction comme suit
+Func MaFonction(paramOblig, ParamDisp = Default)
+Puis
+If($param2 == Default) (car jamais on appelle une fonction avec comme parametre d'appel, la constante
+Default...
+
+Si on ne precise pas le return, la fonction retourne une valeur = "" (chaine vide)
+
+En general, on declare les fonctions en bas du programme
+
+
+Include
+--------
+
+#include "chemin\ficher.au3"
+
+Si ce sont des UDF, 
+#include <fichier.au3>
+
+Par convention, les fonctions qui font partie des UDF commencent par _
+genre _DisplayArray()
+
+
+
+Mot clé ByRef
+--------------
+
+Quand on utilise une fonction pour modifier une variable globale, 
+==> on peut faire une fonction Modif() {$globale += 1} par exemple, 
+    MAIS on ne pourra pas utiliser cette fonction pour modifier une autre variable globale
+
+==> on peut faire une fonction Modif($globale) {$globale += 1}
+    MAIS Le programme pense qu'il s'agit d'une variable locale, comme c'est le cas par défaut
+
+==> On peut faire une fonction Modif($globale) {$retour = $globale +1 Return $retour}
+    puis faire $globale = Modif($globale)
+    MAIS c'est chiant, 
+
+OU 
+
+On peut utiliser le kw ByRef, qui va enlever la contrainte du 2e exemple, 
+du coup on defini une fonction du type
+Modif(ByRef $mod) {$mod += 1} et VOILA ! 
+
+
+Fonction Beep pour faire de la musique 
+---------------------------------------
+
+Beep(frequence_Hz, durée_ms)
+
+
+Fonction Random
+---------------
+génère un nombre aléatoire compris entre une valeur minimale et une maximale
+
+Random(valeur_min, Valeur_Max, type de nombre genre 1 pour les entiers)
+
+
+Fonction Number($param)
+------------------
+transforme (retourne) le contenu de la variable $param en nombre 0 si c'est une chaine de caractere
+utile quand on fait des entrées et qu'on ne veut pas de string mais des nombres
+
+
+
+Creation d'une fenetre graphique
+--------------------------------
+avec la fonction 
+GUICreate("titre fenetre", hauteur_pixel, Largeur_pixel, distance_gauche_pixel, Distance_haut_pixel)
+Genre 
+$MaFenetreGUI = GUICreate("Mafenetre", 200, 250, 300, 300)
+
+Pour afficher la GUI, il faut utiliser la fonction 
+GUISetState(@SW_SHOW)
+c'est une fonction qui modifie l'état d'une fenetre GUI
+elle peut l'afficher, la cacher, la reduire, la maximiser, l'activer ou desactiver, etc a voir dans la documentation
+
+
+pour avoir les constantes GUI, il faut 
+#include <GetConstantsEx.au3>
+#include <ButtonConstants.au3>
+#include <WindowsConstants.au3>
+
+creation d'un bouton
+--------------------
+avec la fonction 
+GUICtrlCreateButton("Titre Bouton", Distance_gauche_pixel, Distance_haut_pixel, largeur_pixel, hauteur_pixel) 
+
+
+Handle et ControlID
+--------------------
+le ControlID c'est ce qui identifie un controle de l'interface (genre un bouton)
+==> C'est un entier 
+
+Le Handle c'est ce qui identifie la fenetre GUI (d'un programme autoit ou de tout programme n'utilisant pas des trucs chelous genre activeX)
+==> C'est un hexadecimal 
+
+
+Ces identifiants sont retournés par la fonction lors de la creation du truc 
+c'est pourquoi on l'enregistre toujours dans une variable lors la creation, genre 
+$GUI = GUICreate("titre fenetre", 200, 200, 200, 200)
+
+Gestion des controles 
+---------------------
+Il faudra TOUJOURS 
+#include <GetConstantsEx.au3>
+
+La fonction GUIGetMsg() permet capturer les evenements graphiques et renvoie l'evenement en question (fermer la fenetre, la reduire, click de souris, etc) ou le controllId du truc qui a été cliqué
+sur lequel a été fait l'evenement (genre le bouton ou le champs, etc)
+C'est pourquoi on le stocke toujours dans une variable, genre 
+$nMsg = GUIGetMsg()
+
+
+Si on clique sur la croix, Le GUIGetMsg() = GUIGetMsg(0) renvoie la constante GUI $GUI_EVENT_CLOSE
+donc pour savoir si on a cliqué sur le bouton croix, on fait
+If ($nMsg == $GUI_EVENT_CLOSE) Then Exit
+
+De même, si on clique sur le bouton, le GUIGetMsg() renvoie le ControlID du bouton
+donc pour savoir si on a cliqué sur le bouton, on fait 
+If ($nMsg == $bouton) Then faire un truc
+
+En mode avancé, avec $msg = GUIGetMsg(1) ne renvoie par simplement le eventId ou controllID, mais un tableau 5 dimension avec 
+$msg[0] = EventId ou controllid cliqué
+$msg[1] = handle de la fenetre de l'event
+$msg[2] = controllID du controle de l'evenement 
+$msg[3] = position X de la souris relative gui
+$msg[4] = position y de la souris relative gui
+
+
+
+Organisation d'un programme avec interface graphique
+----------------------------------------------------
+; 1 - include des fichiers
+#include <GetConstantsEx.au3>
+#include <ButtonConstants.au3>
+#include <WindowsConstants.au3>
+
+; 2 - Creation de la fenetre
+$GUI = GUICreate("titre fenetre", 200, 200, 200, 200)
+
+; 2' - Création des éléments contenus dans la fenetre
+$bouton = GUICtrlButton("ok", 60, 130, 75, 25)
+
+; 3 - Affichage de tout ça
+GUISetState(@SW_SHOW)
+
+; 4 - gestion des évenements avec une boucle infinie et un switch case
+while 1 
+  
+  $nMsg = GUIGetMsg()
+
+  Switch $nMsg
+  
+     Case $GUI_EVENT_CLOSE
+       Exit
+
+     Case Bouton1
+       ...
+
+     Case ...
+
+  EndSwitch
+
+WEnd
+
+
+Remarque: au lieu de faire un switchCase, on peut, lors de la création des objets GUI, 
+attribuer une fonction lors du click de ces trucs, genre
+; creation du bouton
+$bouton = GUICtrlCreateButton("bouton 1", 35, 35, 35, 35)
+; faire que quand on clique sur le bouton ça execute une fonction 
+GUICtrlSetOnEvent($bouton, "Fonction_Bouton1")
+
+Pour ça, en amont, avec les #include, il faut activer le mode evenementiel comme ça
+Opt("GUIOnEventMode", 1)
+
+ATTENTION: en mode evenementiel, on ne peut pas faire de switch case de $nMsg, notamment pour close le programme
+par clic sur la croix
+Il faut associer une fonction fermer à la croix de la fenetre comme ça
+; creation de la fenetre
+$GUI1 = GUICreate("GUI1", 500, 250, 30, 30)
+GUISetOnEvent($GUI_EVENT_CLOSE, "Fermer")
+Func Fermer()
+  Exit
+EndFunc
+
+
+GUIGetMsg() en mode avancé
+--------------------------
+ça permet de savoir, quand on reçoit un msg, de savoir de quelle fenetre (GUI) il provient
+
+GUIGetMsg(0) en mode classique = GUIGetMsg()
+GUIGetMsg(1) en mode avancé
+
+En mode classique, la fonction renvoie juste un ControlID ou un EventID, 
+en mode avancé, il renvoit un tableau[5]
+[0] = EventID ou ControlID
+[1] = Handle de la fenetre de l'event
+[2] = le handle du controle de l'event
+[3] = position X du curseur souris (relatif fenetre GUI)
+[4] = position Y du curseur souris (relatif fenetre GUI)
+
+
+Voici la liste des EventID (et leur équivalent numérique) qui sont à disposition dans AutoIt :
+
+0 = Pas d'événement.
+$GUI_EVENT_CLOSE (-3) = La boite de dialogue a été fermée (par le menu système ou un bouton défini).
+$GUI_EVENT_MINIMIZE (-4) = La boite de dialogue a été minimisée par le bouton de la barre de titre.
+$GUI_EVENT_RESTORE (-5) = La boite de dialogue a été restaurée en cliquant sur son icône dans la barre des tâches.
+$GUI_EVENT_MAXIMIZE (-6) = La boite de dialogue a été agrandie par le bouton de la barre de titre.
+$GUI_EVENT_MOUSEMOVE (-11) = Le curseur de la souris a été bougé.
+$GUI_EVENT_PRIMARYDOWN (-7) = Le bouton gauche de la souris a été enfoncé.
+$GUI_EVENT_PRIMARYUP (-8) = Le bouton gauche de la souris a été relâché.
+$GUI_EVENT_SECONDARYDOWN (-9) = Le bouton droit de la souris a été enfoncé.
+$GUI_EVENT_SECONDARYUP (-10) = Le bouton droit de la souris a été relâché.
+$GUI_EVENT_RESIZED (-12) = La boite de dialogue a été redimensionnée.
+$GUI_EVENT_DROPPED (-13) = Signale la fin d'une action de Drag&Drop @GUI_DRAGID, @GUI_DRAGFILE et @GUI_DROPID seront utilisés pour retrouver l'ID/fichiers correspondant au contrôle concerné.
+
+
+Mode evenementiel
+------------------
+au lieu de faire un GUIGetMsg() et un switch de celui-ci a chaque tour de boucle, on va definir une 
+fonction a executer en cas d'action sur celui-ci. 
+yen a 2 types: 
+GUISetOnEvent(), pour les fenetres GUI 
+GUICtrlSetOnEvent() pour les elements dans les fenetres GUI
+
+exemple de syntaxe: 
+Dim $FenetrePrincipale_Bouton1 = GUICtrlCreateButton("Texte du bouton", 10,100)
+GUICtrlSetOnEvent($FenetrePrincipale_Bouton1, "FenetrePrincipale_Bouton1")
+
+la fonction en question ne presente pas de parenthese.
+a chaque fois, on pourra utiliser dans la fonction 3 variables principales a chaque fois communiquées qui sont
+@GUI_CTRLID = Le ControlID du contrôle qui envoie le message, ou l'ID de l'événement système ;
+@GUI_WINHANDLE = Le handle de la GUI qui envoie le message ;
+@GUI_CTRLHANDLE = Le handle du contrôle qui envoie le message (si applicable).
+
+on a donc  l'équivalent respectivement, de $msg[0], $msg[1] et $msg[2], 
+du coup on a pas $msg[3] et $msg[4] qui correspondent respectivement à la position relative de la souris en x et y
+
+
+
+
+
+
+Programmation evenementielle 
+----------------------------
+= programmation fondée sur les evenements
+permet de rendre plus aisée la programmation et la gestion des evenements 
+
+dans ce mode, ya 2 types d'event
+- event de controle (control event) = cliquer sur un bouton, drag and drop
+- event systeme (system event), genre fermer la fenetre, la réduire, toussa
+
+pour une fenetre GUI, les system event sont: 
+$GUI_EVENT_CLOSE
+$GUI_EVENT_MINIMIZE
+$GUI_EVENT_RESTORE
+$GUI_EVENT_MAXIMIZE
+$GUI_EVENT_PRIMARYDOWN
+$GUI_EVENT_PRIMARYUP
+$GUI_EVENT_SECONDARYDOWN
+$GUI_EVENT_SECONDARYUP
+$GUI_EVENT_MOUSEMOVE
+$GUI_EVENT_RESIZED
+$GUI_EVENT_DROPPED
+
+
+Pour attribuer une fonction à un élément graphique, on utilise les fonctions 
+GUISetOnEvent() pour le fenetres GUI
+ou GUICtrlSetOnEvent() pour les controles placés dans la fenetre GUI
+
+Une fois les évenements capturés, le code est redirigé vers vers la fonction 
+on pourra y utiliser 3 variables principales qui donnent des infos complementaires: 
+@GUI_CTRLID = Le ControlID du contrôle qui envoie le message, ou l'ID de l'événement système ;
+@GUI_WINHANDLE = Le handle de la GUI qui envoie le message ;
+@GUI_CTRLHANDLE = Le handle du contrôle qui envoie le message (si applicable).
+
+
+
+copier l'interface d'un programme avec koda
+--------------------------------------------
+Pour lancer koda, dans sci on fait 
+
+
+1- lancer le programme a copier 
+
+2 - lancer koda (alt+M)
+
+3 - fichier -> importer -> import externe
+
+4 - choisir Form Captor.au3
+
+5 - faire glisser la cible de gauche sur l'interface a copier
+
+6 - cliquer sur ok
+
+
+KODA - changer le nom des objets par defaut (form1, button1, ...)
+-----------------------------------------------------------------
+c'est dans la partie "name" des attributs de l'objet en question
+
+
+Nommer des objets graphiques avec koda 
+---------------------------------------
+il faut les renommer dans la liste des objets ET dans la propriété NAME de l'objet
+
+
+Modifier le texte d'un label
+-----------------------------
+
+GUICtrlSetData ($label, "New text for label")
+
+
+
+
+
+Bien presenter son code
+-----------------------
+avec a chaque fois une séparation des parties, genre
+
+;-------------------------------------------------------------
+;--------------------------Nom de la section------------------
+;-------------------------------------------------------------
+
+I - Présentation de votre script
+II - Déclarations des directives de compilation
+III - Déclarations des Includes, 
+III' - Déclaration des variables
+IV - Construction de votre GUI (Graphic User Interface)
+V - Boucle d'attente d'une action sur la GUI
+VI - Définition des fonctions utilisées dans le script
+
+utilisation de timer pour faire des chronos
+--------------------------------------------
+
+On fait comme ça
+$chrono_depart = timerinit() ; ça démarre un chrono
+$chrono_stop = timerdiff($chrono_depart) ; ça retourne le temps qui separe le temps present du moment ou on a demarré le chrono
+
+
+Cryptage: 
+--------
+
+_Crypt_EncryptData ("Texte a chiffrer", "password, clé de chiffrement", "Algorithme de chiffrement" [, $bFinal = True] )
+_Crypt_DecryptData ("Texte a dechiffrer", "password, clé de chiffrement", "Algorithme de chiffrement" [, $bFinal = True])
+
+attention, les valeurs retournées sont binaires, 
+ces fonctions ont pour ATCD du String et retourne (image) du binaire, 
+pour les exploiter en tant que texte, il faut utiliser la fonction BinaryToString(chaine binaire) qui retourne la chaine binaire convertie en String
+
+
+_Crypt_EncryptFile ("fichier source", "fichier final", "pw", "algo")
+_Crypt_DecryptFile ("fichier source", "fichier final", "pw", "algo")
+
+
+
+Fonction FileOpenDialog
+-----------------------
+
+elle permet de selectionner un ou plusieurs fichiers sur son DD
+FileOpenDialog ( "title", "init dir", "filter" [, options = 0 [, "default name" [, hwnd]]] )
+
+retourne en String le chemin du fichier selectionné
+
+
+Lire le contenu d'une boite de texte dans une GUI
+--------------------------------------------------
+Pour une GUI edit1 par exemple
+on fait GUICtrlRead($edit1)
+
+
+gestion des chaines de caracteres
+---------------------------------
+
+StringLeft ( "string", count )
+retourne une String contenant le nombre souhaité de caracteres les plus a gauche de la chaine
+
+Automatisation - "Autoit Window Info
+-------------------------------------
+
+Pour rappel, un Handle est un hexadecimal qui identifie une fenetre
+et un ControllId est un Int qui identifie un bouton d'une fenetre
+
+AWI permet de recuperer des handle et des controllId des CONTROLES STANDARDS DE WINDOWS (ça ne fonctionne pas avec des controles personalisés comme yen a dans firefox, genre les trucs directX)
+On peut le lancer comme un programme classique via le menu demarrer, 
+ou dans SCITE avec CTRL+F6
+
+il y a differents onglets: 
+- Window = contient le titre de la fenetre / La CLASS de la fenetre / Position / taille / Style et exStyle / Handle
+- Control = 
+- Visible Text 
+- Hidden Text 
+- Status Bar
+- ToolBar 
+- Mouse 
+- Summary = contient toutes les informations reunies 
+
+les 3 infos les plus importantes sont
+- Handle
+- class 
+- classnameNN
+
+La plupart des fenetres peuvent être identifiées par leur titre ou une combinaison de titre et leur texte
+
+Le texte de la fenetre se compose de toute ce que autoit peut voir, 
+il peut y avoir d'autres textes comme 
+- le texte des boutons = &Yes, &No, &Next, ...
+- le texte des dialogues genre "vous etes sur de vouloir continuer ?"
+- Le texte des controles
+- Divers textes, genre des trucs on sait meme pas ske c'est
+
+
+
+Automatisation - Fonction WinExists
+------------------------------------
+
+WinExists ("title" [, "text"] )
+
+renseigne si la fenetre en question existe (meme si elle est cachée, minimisée, etc)
+
+Remarque, dans cette fonction, le parametre texte est optionnel, parfois il ne l'est pas. 
+Dans ce cas on met le parametre chaine vide "", la fonction considèrera que cela correspond à n'importe quelle chaine de caractere
+quelle qu'elle soit
+
+Si une chaine vide "" est fournie pour le titre, alors c'est la premiere fenetre active 
+lors de l'execution du script qui sera utilisée
+
+Par exemple, le code suivant nous dit si au moins une fenetre existe et est active
+If(WinExists("")) Then
+  MsgBox(0, "Cool", "Au moins une fenetre active existe")
+EndIf
+
+
+Imaginons qu'on veuille vérifier si ya une fenetre bloc note ouverte sans titre avec un texte ou c'est écrit "coucou tout le monde", 
+on fait 
+WinExists("Sans titre - Bloc-notes", "coucou tout le monde")
+mais ça marcherait aussi avec
+WinExists("Sans titre - Bloc-notes", "coucou tout le") 
+ou meme
+WinExists("Sans titre - Bloc-notes", "le") 
+ça marche tant que le texte CONTIENT LA CHAINE INDIQUÉE DANS LE PARAMETRE
+
+Remarque, pafois cette façon de rechercher est chiante, en effet autoit utilise le debut des titres pour comparer. 
+Mais on peut rajouter une option en début du cote (du genre de l'option pour imposer la portee lors de la declaration des variables)
+Cette option est 
+AutoItSetOption("WinTitleMatchMode", signed int n)
+où n peut être 
+1 = start = option par défaut, cad si la chaine entrée correspond au début de la chaine de la fenetre
+2 = substr = si la chaîne en parametre existe dans la chaine de la fenetre
+3 = exact = si la chaine entrée est la même, exactement, que le titre de la fenetre
+4 = advanced,  = conservé pour les versions antérieures
+
+OU -1, -2, -3, -4 où c'est pareil mais sans case sensitive
+
+Du coup on peut faire
+Opt("WinTitleMatchMode", 2)
+et du coup, faire 
+winWaitActive("Bloc-notes")
+
+
+pour lister la liste des fenetres ouvertes, on utilise la fonction WinList ( ["title" [, "text"]] )
+ATTENTION, si on veut tester toutes les fenetres, il faut faire la fonction SANS PARAMETRES, c'est pas comme les autres, 
+faut faire WinList()
+
+Automatisation - Techniques avancées
+-------------------------------------
+
+A la place du titre comme parametre, on peut utiliser une "description speciale" comme parametre a la place du titre de la fenetre
+on peut alors identifier la fenetre avec les propriétés suivantes
+- TITLE = titre de la fenetre
+- CLASS = nom de la classe interne à windows = classname
+- REGEXPTITLE = le titre de la fenetre en utilisant une expression réguliere
+- REGEXPCLASS = classname d'une fenetre utilisant une expression reguliere
+- LAST = la derniere fenetre utilisée dans une commande precedente de autoit
+- ACTIVE = fenetre courante active
+- X/Y/W/H = position xy et taille wh
+- INSTANCE = la premiere instance lorsque toutes les propriétés correspondent
+
+On fait comme ça: 
+"[PROPRIÉTÉ1:Value1; PROPRIÉTÉ2:Value2; ... PROPRIÉTÉn:Valuen]"
+
+Exemple, verification de l'existence de 2 fenetres qui ont tels parametres
+WinExists("[TITLE:Ma fenetre; CLASS:MaCLasse; INSTANCE:2]")
+
+
+A la place du titre, on peut également directement utiliser le Handle de la fenetre (enfin on en parle putain !)
+il suffit de le mettre a la place du titre, AU SEIN DE LA FONCTION HWnd()
+HWnd ( expression ) = convertie une expression en un handle HWND
+genre mettons avec AWI je scan une fenetre que je veux faire deplacer vers le haut, j'ai son handle par AWI c'est 0x0000000000020238
+je vais pas faire WinMove(0x0000000000020238, "", (WinGetPos(0x0000000000020238))[0], 10)
+mais WinMove(HWnd(0x0000000000020238), "", (WinGetPos(HWnd(0x0000000000020238)))[0], 10)
+sinon ca ne marchera pas.
+
+sinon le handle on peut le get avec la fonction
+WinGetHandle ( "title" [, "text"] )
+ou alors la récupérer avec AWI
+
+
+
+Automatisation - fonctions utiles
+----------------------------------
+
+WinExists ("title" [, "text"] )
+WinWait( "title" [, "text" [, timeout = 0]] ) = met en pause le script en attendant que la fenetre existe (on le fait apres un run() pour etre sur que la fenetre est bien ouverte), on peut utiliser un timeout pour etre sur de ne pas attendre indéfiniement si y aun soucis. La fonction retourne le handle de la fenetre
+WinWaitActive ( "title" [, "text" [, timeout = 0]] ) = met en pause le script en attendant que la fenetre devienne active (on le fait apres un run() pour etre sur que la fenetre est bien ouverte), on peut utiliser un timeout pour etre sur de ne pas attendre indéfiniement si y aun soucis. La fonction retourne le handle de la fenetre
+WinGetPos ( "title" [, "text"] ) = retourne un array avec [0]=X, [1]=Y, [2]=width, [3]=heigh  ou @error<>0 is fenetre non trouvée (X et Y negatifs si la fenetre est minimisée ou dans une position négative du repere, ou -8 si maximisée)
+WinMove ( "title", "text", x, y [, width [, height [, speed]]] )
+WinClose ( "title" [, "text"] ) = ferme la fenetre spécifiée (comme si on avait cliqué sur la croix, on nous proposera alors d'enregistrer, c'est pas comme ProcessClose qui force la fermeture)
+WinSetState ( "title", "text", flag )
+WinSetTitle ( "title", "text", "newtitle" ) = change le titre de la fenetre
+
+
+Automatisation - Manipuler un processus
+----------------------------------------
+
+remarque, pour obtenir le PID d'un processus windows (Int qui change à chage lancement), on peut 
+soit utiliser le gestionnaire de tâche (onglet details)
+soit utiliser cmd avec la commande tasklist (on peut utiliser les expressions regulieres pour recuperer specifiquement cette info)
+soit utiliser la fonction ProcessExists("String programme") qui renvoi son PID si celui ci tourne
+
+la fonction 
+Run ("chemin du programme/progamme" [, "workingdir" [, show_flag[, opt_flag ]]] )
+permet de lancer un programme à partir de son chemin 
+si le chemin a des espaces, il faut les placer entre guillemets
+ça fonctionne avec les programmes EXE, BAT, COM et PIF
+(Si on veut executer d'autres trucs ou lancer des fenetres, il faut utiliser ShellExecute())
+retourne le PID du programme ou 0 si ya un soucis
+
+le parametre showflag permet de lancer le programme: 
+- soit en fenetre cachée = @SW_HIDE
+- soit en fenetre réduite = @SW_MINIMIZE
+- soit en fenetre maximisée = @SW_MAXIMIZE
+
+Le parametre opt_flag permet de spécifier les interactions entre le programme et le script autoit
+= interactions parents-enfants
+==> a checker dans la documentation autoit 
+
+Remarque, pour executer des commandes consoles dos,  Run(@ComSpec & " /c " & 'commandName', "", @SW_HIDE) ; ne pas oublier l'espace " " avant "/c"
+
+La fonction ProcessExists ("process") check si le processus en question est en cours d'execution 
+elle admet en parametre le nom du processus ou son PID
+elle retourne le PID du processus si celui ci est lancé, 0 sinon
+S'il y a plusieurs processus lancés ayant le même programme d'origine (ou le même nom), 
+ça retournera celui qui a le plus petit PID (cad celui qui a été lancé en premier)
+
+
+Pour forcer la fermeture d'un processus, on peut utiliser le processus ProcessClose("String")
+avec comme parametre le nom du processus ou son PID. 
+SI le processus a été lancé 2 fois (genre 2 notepad) et qu'on utilise le nom du process a fermer et pas son PID, c'est celui qui a été lancé en dernier qui sera fermé 
+
+Autoit et clavier
+------------------
+
+Pour que le programme simule le fait que l'on appuie sur des touches de clavier, on utilise la fonction 
+Send ( "keys" [, flag = 0] )
+(Pour envoyer une key dans un processus particulier, il faut utiliser controlsend, ce qui permet de le faire en tache de fond
+Les touches spéciales doivent être entre {} (regarder la doc pour plus d'infos)
+Cette fonction peut même déclencher des trucs poussés genre 
+touche de mise hors tension de l'ordi
+bouton arriere du navigateur
+bouton avant du navigateur
+bouton actualiser du navigateur
+bouton stop du navigateur 
+bouton fav du navigateur 
+lancer le navigateur internet
+couper le son 
+reduire le volume
+augmenter le volume 
+lancer le media player 
+selectionner la prochaine piste / piste precedente du media player / arreter la musique 
+lancer la messagerie internet 
+lancer l'appli 1 def par l'utilisateur 
+lancer l'appli 2 def par l'utilisateur 
+
+Quand un script est lancé sur un ordinateur distant à travers un programme tiers comme psexec (www.sysinternals.com) ou beyondexec (www.beyondlogic.org), il est nécessaire, spécialement en envoyant des touches à un programme lancé par le script via la fonction Run(), d'utiliser ControlSend() ou d'autres fonctions ControlXXX pour communiquer directement avec le contrôle. Send() même avec Opt("SendAttachMode", 1) ne fonctionnera pas.
+cf documentation 
+
+
+Pour nous avertir que l'utilisateur a fait une combinaison de touche clavier, on utilise la fonction 
+HotKeySet ( "key" [, "function"] )
+
+
+Manipuler IE avec autoit
+-------------------------
+
+On le fait avec la bibliotheque ie.au3 qu'on include au debut du code
+Il existe alors un type particulier de variable qui sont les objets ie com, cad issus de la hierarchie InternetExplorer.Application
+
+Un objet ie peut être récupéré lors de sa creation, genre 
+Dim $ie_objet = _IECreate()
+
+On peut faire des actions sur une page ie (genre aller a la page suivante ou precedente, focus ou defocus un truc, etc) avec la fonction _IEAction( ByRef $oObject, $sAction ) où la variable $sAction peut prendre une grande quantité de valeurs définies dans la documentation
+
+Pour récupérer des infos sur l'objet IE, on utilise la fonction _IEPropertyGet ( ByRef $oObject, $sProperty ), dont les propriétés sont définies dans la documentation
+On peut notamment récupérer son handle comme ça _IEPropertyGet($ie_object, "hwnd")
+mais également l'url de la page courante, son titre, la page referrer (SI on accede à la nouvelle page en cliquant sur un lien)
+
+Les objets IE COM ont, comme tout objet, des méthodes, des event et des propriétés
+
+De meme qu'avec les fenetres on a la fonction winwait, avec autoit on a _IELoadWait ( ByRef $oObject [, $iDelay = 0 [, $iTimeout = -1]] )
+
+pour changer d'url, on fait
+object.Navigate(url, Flags, TargetFrameName, PostData, Headers)
+les flags peuvent etre
+    navOpenInNewWindow = 1
+    navNoHistory = 2
+    navNoReadFromCache = 4
+    navNoWriteToCache = 8
+    navAllowAutosearch = 16
+    navBrowserBar = 32
+    navHyperlink = 64
+    navEnforceRestricted = 128
+    navNewWindowsManaged = 256
+    navUntrustedForDownload = 512
+    navTrustedForActiveX = 1024
+    navOpenInNewTab = 2048
+    navOpenInBackgroundTab = 4096
+    navKeepWordWheelText = 8192
+    navVirtualTab = 16384
+    navBlockRedirectsXDomain = 32768
+    navOpenNewForegroundTab = 65536
+
+
+La fonction _IEAttach ( $sString [, $sMode = "title" [, $iInstance = 1]] )
+permet à une variable de pointer vers un objet IE (qu'on retrouve de la meme maniere que winExists() par exemple)
+$sMode permet de définir ce qu'on utilise pour retrouver l'objet (titre, url, handle, ...)
+
+
+Les expressions regulieres
+--------------------------
+ça a toujours la meme gueule, a savoir
+StringRegExp("chaine de départ", "pattern"[, flag])
+le flag c'est pour spécifier si on veut en retour juste un booleen (si oui ou non le pattern est retrouvé) ou si on veut qu'on nous retourne la chaîne en question)
+
+dans le pattern, on met la suite de caracteres à trouver, genre 
+"abcdeMERDE"
+
+On peut aussi utiliser les crochets pour faire office de OU, genre
+[abcde]
+c'est à dire une lettre qui peut être a, b, c, d, ou e
+
+On peut aussi combiner les 2, genre 
+Mer[abcde]de
+c'est à un dire Mer suivi d'une lettre qui peut etre a, b, c, d ou e, puis de
+
+On peut également spécifier le nombre d'occurences possibles d'un truc, genre
+t{1}e{2}s{1}t{1}
+c'est à dire un t suivi de 2 e, suivi d'un s, suivi d'un t
+ou alors
+t{1}e{1,3}s{1}t{1}
+c'est à dire un t suivi de 1, 2 ou 3 e, suivi d'un s, suivi d'un t
+
+Comme ça on peut se dire qu'on aurait pu écrire ee, mais en fait on peut combiner ça avec d'autres trucs genre
+[abcde]{5}
+cad 5 lettres qui se suivent et qui peuvent être a ou b ou c ou d ou e
+
+Enfin, on peut utiliser les parenthèses pour spécifier des groupes à capturer et à renvoyer dans un tableau quand on utilise un flag !=0, genre 
+(test)
+cad capturer l'occurence où ya "test", dans un tableau, genre ici ça retourne un tableau de taille 1, où tableau[0] = "test"
+On peut utiliser les occurences multiples, c'est genre
+(test1)(test2)
+ça retourne un tableau de 2 avec 
+tableau[1] = "test1"
+tableau[2] = "test2"
+bien entendu si les 2 occurences sont présentes, cad si on a pas un @error !=0 (CA FAUT LE CHECKER A CHAQUE FOIS)
+
+Pour spécifier des lettres, on fait
+[a-z] ou [A-Z] ou 
+
+Pour spécifier des chiffres on fait 
+[0-9]
+
+
+Maintenant, imaginons que nous avons une chaine du type 
+"Il restait 18 feuilles dans la rame de papier"
+où ça peut être 18 mais ça peut être n'importe quel nombre
+on sait que: 
+- c'est une suite de chiffres 
+- une rame pleine contient 500 feuilles ==> le nombre est compris entre 1 et 3 caracteres 
+- il n'y a aucun autre chiffre dans la chaine de caractere 
+
+bah du coup on fait comme ça
+[0-9]{1,3}
+
+
+Enfin, les exclusions de groupe (genre PAS ça), 
+genre mettons que dans l'exemple d'avant, le texte soit 
+"vous avez utilisé 39 des 279 pages" et qu'on veuille le 279
+on voit que le 2e nombre est suivit d'un espace puis du mot "pages"
+on pourrait faire "[0-9]{1,3} pages" mais ça nous retournerait le nombre suivit du mot "pages" c'est chiant
+du coup, on fait
+"([0-9]{1,3})(?: pages)"
+
+on fait pareil qu'avec les parentheses mais au lieu de faire 
+(test)
+on fait
+(?:test)
+et ça dit "on veut qu'il y ai ça derriere mais on veut pas que tu nous le retourne"
+() = tu nous retournes
+(?:) = tu le prends en compte dans la localisation de la chaine mais tu ne le retourne pas
+
+
+
+
+

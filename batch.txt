@@ -1,0 +1,268 @@
+===========[intro]==================
+pour executer un script batch, soit on double clique sur le fichier .bat
+soit on va dans la console et on fait start fichier.bat ou simplement fichier.bat
+
+pour ne pas afficher le lancement des commandes on fait 
+@mdecho off
+
+pour donner un titre au programme on fait
+title mon titre 
+(pas de probleme pour les espaces)
+
+pour changer la taille de la console on fait
+mode con cols=80 lines=16
+
+on peut aussi changer la couleur du texte et du fond avec color xy où x est le code hexa du fond et y le code hexa du texte, genre
+color 0F
+on a la correspondance suivante
+0	Noir
+1	Bleu foncé
+2	Vert
+3	Bleu-Gris
+4	Marron
+5	Pourpre
+6	Kaki
+7	Gris Clair
+8	Gris
+9	Bleu Clair
+A	Vert clair
+B	Cyan
+C	Rouge
+D	Rose
+E	Jaune
+F	Blanc
+
+pour clear c'est cls
+pour quitter c'est exit
+
+pour afficher du texte c'est
+echo coucou tout le monde
+
+pour les commentaires on fait
+rem mon commentaire
+ou 
+:: mon commentaire
+
+comme en sh on peut rediriger des sorties avec > et >>
+on a l'equivalent de /dev/null avec nul
+genre 
+echo pouet > nul
+
+pendant le cours, les programmes auront la structure suivante
+@echo off
+title mon programme
+mode con cols=80 lines=16
+color 0F
+
+pause > nul
+
+====[les variables]==========
+
+leur id ne doit contenir que des alphanum et _
+techniquement on peut y mettre des espaces mais c'est une tres mauvaise habitude
+
+on a les variables du script, internes au script, qui n'existent que pendant le programme
+on a les variables d'environnement, genre
+
+%COMPUTERNAME%			Le nom de l'ordinateur
+%COMSPEC%			Indique l'emplacement de la console
+%HOMEDRIVE%			Indique où se situe le lecteur principal
+%HOMEPATH%			Indique où se trouve le dossier personnel de l'utilisateur en cours
+%LOGONSERVER%			Donne l'adresse réseau de l'ordinateur
+%NUMBER_OF_PROCESSORS%		Donne le nombre de processeurs installés sur l'ordinateur
+%OS%				Donne le système d'exploitation installé
+%PATH%				Donne les adresses PATH
+%PROCESSOR_ARCHITECTURE%	Donne l'architecture du processeur
+%PROCESSOR_IDENTIFIER%		Donne l'identification du processeur
+%PROGRAMFILES%			Donne l'adresse du répertoire des programmes
+%SYSTEMDRIVE%			Donne le lecteur principal
+%SYSTEMROOT%			Donne le répertoire où se situe le système
+%TEMP%				Donne l'adresse du répertoire temporaire
+%USERNAME%			Donne le nom de l'utilisateur
+%USERPROFILE%			Donne le répertoire personnel de l'utilisateur en cours
+%WINDIR%			Donne le répertoire où est installé Windows
+%DATE%				Date de l'ordinateur
+%TIME%				L'heure de l'ordinateur
+%CD%				Donne l'emplacement actuel de la console
+%RANDOM%			Nombre aléatoire
+%CMDCMDLINE%			Donne l'emplacement de la console.
+
+remaque. %RANDOM% donne un nombre aléatoire entre 1 et 2^15 - 1
+mais on peut le reduire en utilisant une boucle genre le changer tant qu'il est >lim
+
+sinon on peut tout simplement faire (nb aleatoire entre a et b)
+set /a n="%random%%%x+y"
+
+pour definir des variables de script on fait par exemple
+set a=3
+
+pour utiliser la valeur de la variable et non son identifiant on fait
+%variable% 
+genre
+echo %a%
+
+ATTENTION, si on fait 
+set a=2
+set b=6
+set res=a+b
+echo res
+
+ca echo "2+6"
+
+pour stocker le resultat d'une operation on utilise le COMMUTATEUR /a, cad
+set /a res=a+b
+
+on a aussi le commutateur /p qui permet de input une valeur genre 
+set /p val="entrez un nombre: "
+
+Pour recuperer les chars x à y d'une variable string, on fait
+set substr=%str:~x,y%
+
+=====[les conditions]===========
+
+ya pas de switch ni else if
+ya que if else
+
+c'est
+if [el1] [comp] [el2] (
+	faire des trucs
+) else (
+	faire des trucs 
+)
+
+
+au niveau des comparants on a
+
+equ (ou ==)	égal à
+neq		différent de
+lss		inférieur à
+leq		inférieur ou égal à
+gtr		supérieur à
+geq		supérieur ou égal à
+exist		pour les fichiers, si le fichier existe
+not		operateur de negation, genre if not [el1] [comp] [el2]
+
+comme ya pas de AND, on fait
+if [el1] [comp] [el2] if [el3] [comp] [el4] (
+	des trucs
+) 
+
+=======[etiquettes et boucles]=======
+
+pour les etiquetes c'est des goto
+on fait genre
+:mon_etiquette
+
+et plus tard dans le code pour revenir plus haut au niveau de l'etiquette on fait 
+goto mon_etiquette
+--> en vrai c'est de la merde de faire ca 
+
+pour la boucle for, on fait 
+
+for %%v in (v1, v2, ..., v2) do (
+	des trucs
+)
+
+pour faire une incrementation on fait 
+for /l %%v in (debut, pas, fin) do (
+	des trucs
+)
+
+pour utiliser des listes de fichier on fait
+for /d %%v in (chemin/repertoire) do (
+	des trucs
+)
+
+pour faire des trucs avec chaque char, 
+for /f ["options"] %%v in (fichier.txt) do (
+	des trucs
+)
+
+pour traiter un repertoire et tous ses sous-dossier, on fait 
+for /r %%v in (repertoire) do (
+	des trucs
+)
+
+
+=======[sleep]======
+
+pour faire un sleep de 5s on fait (marche pas)
+choice /t:o,5>nul 
+ou (marche pas)
+TYPE NUL | CHOICE.COM /N /CY /TY,X >NUL
+ou (impec)
+ping 127.0.0.1 -n X > NUL
+ou (qu'a partir de vista )
+timeout /t X /nobreak > nul
+
+===[echapper les caracteres speciaux]=========
+
+pour faire "echo > pierre", on fait
+echo ^> pierre
+
+=========[chainer les commandes]===========
+
+on fait genre
+dir & echo ok & cd c:\
+
+===[cacher le lancement d'une commande]========
+on fait 
+@commandes
+
+et bien sûr si on veut le faire sur un ensemble de commande, on peut faire, au lieu de 
+@commande1
+@commande2
+@commande3
+@commande4
+
+on peut faire
+echo off
+commande1
+commande2
+commande3
+commande4
+echo on
+
+
+===[lancer des fichiers avec le programme par defaut]======
+
+on fait 
+start fichier
+
+==[introduction a l'automatisation]==========
+
+en gros on fait son script batch et on definit quand on le lance (heure, jour, cycle ou une fois, etc)
+dans le planificateur de tâches windows
+
+
+===[ftp]===
+
+en gros pour automatiser les tâches sur un ftp, on fait 2 fichiers
+1 batch qui se connecte au ftp
+1 ftp qui contient les commandes ftp
+
+dans le fichier batch on met
+ftp -s:fichier_ftp.ftp
+
+dans le fichier_ftp.ftp on met les commandes ftp a executer 
+
+====[delayed expansion = expansion retardée]===========
+
+en gros le soucis c'est quand on a des variables qui ont le meme nom qui sont déclarées dans des blocs differents
+genre 
+
+set a=3
+if a==3 ( 
+	set a=6
+	echo %a%
+)
+
+quand le preprocesseur verra 	echo %a%, il remplacera par echo 3
+
+pour empêcher ca, on demande au preprocesseur de ne pas faire ce genre de choses, c'est la delayed expansion
+pour ca on fait 
+setlocal enableDelayedExpansion
+
+====[conclusion]=====
+
+au final le batch a été laissé de côté au profit du vbs et du JScript
