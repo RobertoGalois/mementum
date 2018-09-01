@@ -1,0 +1,2122 @@
+====[historique du js]====
+
+en 1995 Brendan Eich bossait chez netscape, principal concurrent d'IE
+il developpe le liveScript, un langage de script qui s'inspire de java,
+destiné a etre installé sur les serveurs developpes par netscape
+
+netscape developpe une version client de liveScript en hommage a java
+ca sort en decembre 1995 et est embarqué dans netscape 2
+
+c'est un succes total et MS embarque un equivalent du nom de JScript dans IE3 en 1996
+
+puis netscape contacte l'ECMA pour qu'une version standardisée de JS soit crée, l'ECMAScript 
+
+l'ECMAScript c'est la ref de base, et de cette ref decoule
+- JScript = 
+- JScript.NET = embarqué dans le framework .NET de MS 
+- ActionScript = l'implementation faite par adobe pour flash
+- EX4 = implementation de la gestion du XML au sein de spiderMonkey (l'interpreteur JS de firefox)
+
+ES 1 et ES 2, qui sont les prémices du langage JavaScript ;
+ES 3 (sorti en décembre 1999) ;
+ES 4, qui a été abandonné en raison de modifications trop importantes qui ne furent pas appréciées ;
+ES 5 (sorti en décembre 2009), la version la plus répandue et utilisée à ce jour ;
+ES 6, finalisé en décembre 2014 et dont l'implémentation avait déjà été commencée avant cette date au sein de plusieurs navigateurs.
+
+le cours se focalise sur ECMAScript 5 car le 6 n'etait pas encore bien implémenté
+
+a la base, dans les années 90, le dom n'était pas unifié, il etait different en fonction du navigateur
+il fallait coder differement en fonction du browser, genre le dom-0 c'était netscape
+puis le w3c a mis de l'ordre dans tout ca, et a publié une specification, DOM-1 = DOM level 1
+pour definir ce qu'est le dom et comment il se shematise, cad en forme d'arbre
+
+puis, il y a eu DOM-2, avec l'introduction de getElementById().
+
+
+
+====[premiers pas]====
+
+il vaut mieux include un fichier js dans une page html plutot que de taper le code directement dedans car dans le premier cas, le navigateur met le code JS en cache
+
+Il vaut mieux mette la balise <script> avant la fermeture de <body> car si le fichier met du temps
+a charger,ca aura affiché la page avant.
+La plupart des navigateurs chargent les fichiers js en dernier mais pas tous donc dans le doute il vaut mieux faire comme ca
+
+=====[les variables]===
+
+c'est classique au niveau des id
+javascript c'est du typage dynamique
+
+les types sont
+- number 
+- string
+- bool
+- undefined
+
+le kw nothing designe une variable vide ou inexistante et est equivalent a false
+
+on peut tester les variables avec l'operateur typeof ()
+typeof retourne un string correspondant au nom du type de la variable
+
+au niveau des operateurs arithmetiques on a
++
+-
+*
+/
+%
+
+
+pour faire un input simple on fait
+var entry = prompt("message");
+
+pour caster un string en number on fait 
+var number = parseInt(string); 
+si parseInt parce une chaine qui ne contient pas que des chiffres et plus d'un point, il retourne un objet NaN = Not A Number = equivalent a false
+
+remarque, il semblerait que parseint lise la chaine de gauche à droite et recuperer les chiffres, s'il y a des caracteres NaN apres, ça cut même s'il y a a nouveau des chiffres apres,
+en revenche, s'il y a des caracteres avant le premier chiffre, ça marche pas. 
+Du coup, pour verifier si une chaine ne sont que des chiffres, il vaut mieux utiliser des regExps
+
+pour caster un number en string on fait
+var string = number+'';
+
+remarque: 
+on peut declarer des variables locales a une fonction avec var, et des variables globales avec var
+on peut aussi utiliser let pour des variables locales au bloc le plus imbriqué, mais c'est pas forcément supporté par tous les navigateurs
+
+si on utilise une variable sans la declarer avec le kw var, alors c'est comme si on l'avait declarée dans l'espace global
+et elle devient donc un attribut de l'objet window
+
+On peut faire des variables statiques dans des fonctions, pour ca on FAIT PAS tout simplement
+static var maVar = 3;
+==> ya un kw static en js, mais il ne sert pas a faire des variables statiques, wtf
+
+pour faire des variables statiques, on ne peut pas le faire dans des fonctions classiques genre
+function maFonction() {
+
+}
+
+On ne peut le faire que comme ca
+const maFonction = (function () { 
+	var maVarStatique = 0;
+
+	return (function {
+		//mon code
+	});
+})();
+==> on execution la premiere fonction pour qu'elle retourne la seconde fonction. Logique
+
+======[les conditions]=====
+
+en operateurs de comparaison on a
+==
+!=
+===
+!==
+>
+>=
+<
+<=
+
+on a aussi 
+&&
+||
+!
+
+pour switch case on fait
+switch(variable) 
+{
+	case valeur:
+		code
+	break;
+
+	case valeur2:
+		code
+	break;
+
+	default:
+		code
+}
+
+ATTENTION, en js switch fait des comparaisons avec === donc faut anticiper et prendre en compte le cast
+
+pour savoir si une variable est definie on peut utiliser typof comme ca 
+typeof variable === nothing
+toute variable undefined, false, chaine vide et 0 sont equivalentes a false 
+
+
+
+======[les boucles]====
+
+une boucle for execute d'abord l'init, puis verifie la condition a chaque boucle, puis execute les instructions, puis incrémente en dernier. 
+de plus, il faut faire attention car les variables def dans un block for perdurent apres la fin de la boucle, c'est des variables locales, c'est pas comme dans les fonctions en js
+donc ca defonce la ram
+
+en fait, toute variable declarée dans un espace for (y compris les variables d'initialisation)
+sont déclarées et perdurent dans l'espace fonctionnel parent.
+
+
+===[les fonctions]====
+un argument de fonction est toujours facultatif, 
+si on ne le passe pas, il prend la valeur undefined
+
+il faut mettre les arguments facultatifs en dernier dans le prototype pour eviter les emmerdes
+
+les fonctions anonymes se declarent comme ca: 
+
+function (args) {
+	//code
+}
+
+pour faire des trucs genre
+var test = function (args) {
+	//code
+};
+
+ou const test = function (args) {
+	//code
+};
+
+et apres on peut faire 
+test("coucou");
+
+
+on peut aussi les utiliser comme ca
+var test = function (arg) {
+	//du code
+	return ("ok");
+}();
+==> qui stocke la valeur de retour de la fonction dans la variable test
+
+on peut donner un nom a une fonction anonyme pour mieux la retrouver dans la pile d'execution
+genre 
+(function coucou(arg) { code })();
+ou 
+var coucou = (function coucou(arg) { code });
+
+====[sandbox]====
+
+c'est une facon de programmer en mettant son code dans des namespace pour pas etre parasité par le reste du code
+genre en utilisant des fonctions anonymes comme ca
+function (arg) {
+	//code
+}();
+==> on parle de IIFE = immediately invoked function expression
+==> c'est pratique pour optimiser le code sans avoir a factoriser, je ne suis pas sûr que ce soit tres propre 
+
+
+
+=====[les objets]===
+
+un objet en js contient 3 trucs 
+- un constructeur
+- des attributs
+- des methodes
+
+pour acceder on fait
+monObjet.truc 
+ou 
+monObjet.truc()
+
+comme exemple d'objets natifs on peut citer 
+Number
+Boolean 
+String 
+
+pour creer un objet vide on fait
+
+var monObjet = {}
+ou 
+var myObject = {
+    item1: 'Texte 1',
+    item2: 'Texte 2'
+};
+==> les items sont les propriétés=attributs de l'objet
+
+pour rajouter un attribut, on fait 
+monObjet.item3 = 'Texte 3'
+ou 
+monObjet['item3'] = 'Texte 3'
+
+pour retourner un objet dans une fonction
+on fait
+return {
+  x: 3, 
+  y: 6
+}
+
+et pas
+return 
+{
+  x: 3, 
+  y: 6
+} 
+CA NE MARCHE PAS, IL FAUT METTRE { JUSTE APRES RETURN, pareil, va savoir pourquoi...
+
+
+=====[les objets, avancé]=====
+
+on va voir comment creer un objet de toute piece et comment modifier un objet natif
+
+Pour creer un objet on fait simplement
+
+function Person(args)
+{
+	this.var1 = pouet;
+	this.var2 = prout;
+	//etc, definition des attributs
+
+	//definition des methodes
+	this.f1 = function (args) {
+		code de ma fonction
+	};
+}
+
+et pour instancier l'objet on fait
+var test = new Person(args);
+
+on peut lire et modifier les variables en faisant
+test.var1 = caca;
+
+Explication, en fait une fonction est un objet, comme toute chose en js (à part les types primitifs)
+du coup, l'idée c'est pas d'utiliser l'objet directement, mais d'en faire une copie
+c'est à ca que sert le kw "new"
+
+si on voulait appeller le constructeur dans lui-meme, genre pour definir une fonction addFriends(new Person())
+On est obligé de nommer la methode, on ne peut pas faire new this();
+
+pour savoir si une variable est une instance d'un objet donné, on fait
+if (maVar instanceof monObjet)
+
+
+si on veut rajouter une methode ou un attribut, on fait simplement
+monObjet.var3 = caca;
+ou 
+monObjet.f3 = function () {};
+
+on peut egalement ajouter une fonction par prototype = utilisation de l'objet prototype 
+(attention au kw, prototype est aussi une lib js)
+comme ca 
+monObjet.prototype.maNouvelleFonction = function (args) {
+	code, on peut y utiliser this
+};
+
+le fait de faire ca, ca modifie les instances deja réalisées, pas comme la solution précédente
+
+
+
+
+Comme le JS est de la POO par prototype, on peut modifier des objets naifs, comme en C#
+ca marche bien sur pas mal de trucs 
+MAIS POUR TOUT CE QUI TOUCHE AU DOM, C'EST BOF, SURTOUT POUR IE, a eviter donc
+
+====[l'heritage]====
+
+pour gerer l'heritage, on fait
+
+function ObjetFils(args)
+{
+	ObjetPere.call(this, args)  // en gros on appelle la methode constr de l'objet pere en considerant que this c'est le fils
+	//suite du codes
+}
+
+
+
+===[les namespaces]====
+
+var monNamespace = {
+	v1: 3,
+	f1: function () {},
+	f2: function () {}
+}
+
+monNamespace.v1;
+Pour appeller un truc de son namespace dans son namespace on fait
+this.monTruc();
+Par contre, pour appeller un truc parent on n'a pas d'autre choix que de l'appeller en toute lettre, explicitement
+
+REMARQUE: 
+pour s'assurer qu'un namespace n'existe pas deja, on doit le coder comme ca 
+if (typeof monNamespace === "undefined")
+{
+	definition de mon namespace
+}
+else
+{
+	alert("le namespace existe deja");
+}
+
+
+en fait, un namespace c'est juste un objet quoi...
+
+
+===[modification du contexte d'une methode]====
+
+en gros, une methode d'un objet, quand on l'appelle, elle considere que this c'est l'objet en cours
+c'est possible de changer ca, cad qu'au moment où la fonction s'applique, que this designe un autre objet
+
+on fait
+maMEthodeAModifier.call(nouvelObjetCible);
+
+
+genre pour modifier la methode toString() de la classe Object, on fait 
+var result = Object.prototype.toString.call(['test']);
+alert(result); // Affiche : « [object Array] »
+
+en gros
+--------
+var myArray = [];
+myArray.push.call(myArray, 1, 2, 3); // arg1 = newObject, arg2 = args
+
+c'est pareil que
+
+var myArray = [];
+myArray.push(1, 2, 3);
+--------
+var myArray = [];
+myArray.push.apply(myArray, [1, 2, 3]); //arg1 = newObject, arg2 = arg[args]
+
+c'est pareil que 
+
+var myArray = [];
+myArray.push(1, 2, 3);
+---------
+
+
+
+
+====[les array ou tableaux]==== 
+
+on fait 
+var myArray = ['Sébastien', 'Laurence', 'Ludovic', 'Pauline', 'Guillaume'];
+ou 
+var myArray = []
+
+il y a aussi une autre syntaxe qui est vouée a disparaitre
+var myArray = new Array('Sébastien', 'Laurence', 'Ludovic', 'Pauline', 'Guillaume');
+
+pour push une donnée dans l'array on fait
+myArray.push('Ludovic'); // Ajoute « Ludovic » à la fin du tableau
+
+pour push_front on fait 
+myArray.unshift('Ludovic'); // Ajoute « Ludovic » au debut du tableau
+
+pour pop on fait
+myArray.pop(); // Retire le dernier element du tableau
+
+pour pop_front on fait 
+myArray.shift(); // Retire le premier element du tableau et decale tout a gauche
+
+ils ont un attribut
+myArray.length
+
+
+remarque, il est souvent plus interessant d'utiliser le type primitif d'un array plutot que son objet
+
+on fait
+var arr = [];
+ou 
+var arr = new Array();
+
+var arr = ["a", "c", "b", "d"];
+ou 
+var arr = new Array("a", "c", "b", "d");
+
+ou enfin 
+var arr = new Array(5); //5 cases allouées
+
+
+on peut concaténer les 
+tableaux avec la nethode concat() 
+genre
+arr1.concat(arr2) renvoit un array constitué de arr1 suivi de arr2
+
+l'operateur + renvoit une chaine contenant les elements de arr1 et arr2, 
+genre 
+arr1 + arr2 
+renvoit les elements de arr1 separes par une virgule, suivi des elements de arr2 separes par une virgule
+genre 
+"v1,v2,v3,v4,v5"
+
+
+on a aussi myArray.forEach() NON SUPPORTÉE POUR IE < 9
+monArray.forEach(function (value, index, array) {
+	//faire des trucs
+});
+
+ATTENTION, forEach existe pour les tableaux, par pour les collections
+mais pour les collections on peut utiliser for in donc osef
+
+
+pour rechercher un element dans un tableau, on fait (ne fonctionne pas pour IE < 9)
+var index = monArray.indexOf(valeur); //renvoit l'index de la premiere occurence trouvée ou -1
+OU 
+var index = monArray.lastIndexOf(valeur); //renvoit l'index de la derniere occurence trouvée ou -1
+
+pour inverser un tableau, on fait
+monNewArr = monArr.reverse();
+
+pour trier mon array on fait
+monNewArr = monArr.sort();
+
+si on veut utiliser un comparateur specifique, on fait
+monNewArray.sort(maFonction);
+
+
+pour prendre une partie du tableau on fait 
+var sub = monArray.slice(a, b) //a = index debut, b = index de fin non compris: -1 pour jusqu'à la fin
+
+pour retirer une partie du tableau on fait
+var del = monArray.splice(a, b) //a=index de but, b=nombre de valeurs a retirer,
+==> renvoit un array contenant les valeurs supprimées
+
+Pour remplacer des elements, on fait
+var del = monArray.splice(2, 3, v1, v2, v3) //remplace les elements des index 2,3,4 par v1, v2, v3
+
+pour insert, ya pas de fonction dédiée mais on peut utiliser splice comme ca
+monArray.splice(2, 0, valeur1); //insere valeur1 à l'index2 et decale tout le reste vers la droite
+
+
+
+Enfin, on a la methode statique (ne fonctionne pas pour IE < 9)
+Array.isArray(variable) //teste si la variable est un tableau, en objet ou en primitif
+
+
+remarque sur les piles et les files, 
+en JS on prefere utiliser les piles=LIFO (utilisation de push/pop OU shift/unshift)
+plutot que les files=FIFO (utilisation de push/shift OU unshift/pop)
+car les methodes shift et unshift sont pas top niveau performance
+==> apres ca se ressent pour des array > 10 000
+
+
+
+REMARQUE IMPORTANTE SUR LES ARRAYS
+un array initialisé, même à vide, on ne peut pas le redéfinir
+
+===[les strings]=====
+
+on peut split une string, ca renvoit un array, genre 
+cousinsString.split('@');
+
+pour faire l'inverse, cad prendre un array et return une string qui a concatené, on fait 
+new_str = array.join('-');
+
+
+====[les objets littéraux]====
+
+= genre les tables de hashage
+
+var family = {
+    self: 'Sébastien',
+    sister: 'Laurence',
+    brother: 'Ludovic',
+    cousin_1: 'Pauline',
+    cousin_2: 'Guillaume'
+};
+
+
+on peut faire
+family.self
+ou 
+family["self"]
+
+pour parcourir un objet litteral on utilise une boucle for_each qui est for in 
+genre
+for (var id in family)
+{
+	console.log(family.id)
+}
+
+
+attention, for in est plus gourmande que for
+
+===[les objets et l'heritage]====
+
+tout element html est un objet, 
+
+div est un objet HTMLDivElement, 
+derivant de HTMLElement 
+derivant de Element
+derivant de Node
+
+quand un objet derive d'un autre, il a les meme methodes et attributs que le second
+
+
+====[le passage par valeur et le passage par reference]=======
+
+les objets du DOM sont toujours des variables passées par reference
+si on fait
+el1 = el2;
+et qu'on modifie el1, alors on modifie el2.
+
+pour cloner une variable reference, on fait
+el1 = el2.cloneNode(true);
+
+au niveau de l'argument, on fait, soit: 
+true pour cloner egalement les children
+false pour pas le faire
+
+ATTENTION: quand on clone un element,
+ON NE CLONE PAS LES EVENT !
+
+
+======[manipuler le dom]=====
+
+le dom = document object model, c'est une interface de programmation = API = pour le xml et html
+(une api =application programming interface = c'est un ensemble d'outils pour faire communiquer differentes technologies)
+
+l'objet window est un objet global qui represente la fenetre du navigateur
+c'est a partir de cet objet que JS est executé 
+cet objet est implicite, faire alert() et window.alert() donne le meme resultat
+par contre, les fonctions globales comme isNaN(), parseInt() ou parseFloat() ne sont donc pas des methodes de l'objet window
+
+remarque, isNaN(var) regarde si var est de type Number en objet ou primitif, puis check sa valeur et verifie que c'est pas egal a NaN
+
+quand on declare une variable globale, en fait elle devient une attribut de l'objet window
+techniquement, on devrait ecrire window.mavariable
+
+pour acceder aux elements du dom, on a
+window.document.getElementById("id")
+window.document.getElementsByTagName("div") --> retourne un array
+window.document.getElementsByName("classeur") --> retourne un array, deprecié en xhtml mais codifié en html5
+
+ATTENTION, pour getElementsByTagName(), on peut l'utiliser sur n'importe quel element html
+ca retournera tous les elements enfants de l'element en question, genre
+balise.getElementsByTagName("a")
+DE PLUS, on peut recuperer tous les elements enfants d'un element donné en faisant
+window.document.getElementsByTagName("*")
+==> CA NE RETOURNE PAS LES #TEXT
+
+a a egalement
+window.document.querySelector("selecteur css") ==> renvoit le premier element rencontré
+window.document.querySelectorAll("selecteur css") ==> renvoit un array de tous les elements rencontrés
+
+REMARQUE, IE 8 ne supporte pas l'utilisation de selecteurs css3 dans ces methodes
+
+de la meme maniere, on peut utiliser ces methodes sur un element html quelconque, ca cherchera dans les enfants
+
+la classe Element (pour rappel, Node --> Element --> HTMLElement --> HTMLDivElement)
+dispose de methodes telles que
+getAttribute("nomAttribut")
+ou
+setAttribute("nomAttribut", ""new_value)
+ou
+removeAttribute("nomAttribut")
+
+remarque: quand on recupere l'argment href en utilisant getAttribute, on obtient exactement ce qui est entré dans le code html
+(genre "./images/")
+par contre si on le fait avec element.href, ca nous donne le chemin absolu,
+(genre "www.monsite.fr/images/")
+
+un truc important quand on parcourt le DOM
+ya des noeuds qui sont des HTMLElement
+et ya des noeuds qui sont des #text,
+si je fais 
+<balise>coucou<a href="#">pouet</a><p> ouaich </p></balise>
+
+balise comprend pour childElements
+#text coucou
+<a>
+<p>
+
+PAR CONTRE si je fais
+
+<balise>
+ coucou
+ <a href="#">pouet</a>
+ <p> ouaich </p>
+</balise>
+
+balise comprend pour childElements
+#text coucou
+#text \n
+<a>
+#text \n
+<p>
+
+===[innerHTML]====
+
+C'est une propriété crée par MS pour les besoins de IE, normalisée au sein de HTML5
+mais deja supportée par tous les navigateurs auparavant
+
+ca permet de recuperer le code html enfant d'un element sous forme de texte
+
+c'est assez lent, surtout avec un += donc eviter de faire plusieurs +=, plutot concatener dans une variable str
+et faire un += variable
+
+remarque, innerHTML c'est pas la panacée, on ne peut pas faire certaines choses comme créer une balise <script>
+la panacée c'est createElement()
+
+
+====[innerText / textContent]======
+
+innerText a été introduite par MS pour IE, textContent pour les autres
+la standardisation a fait que c'est textContent la base, 
+donc si on fait textContent, ca fonctionne sur tous les browsers SAUF IE < 9 (qui veut innerText)
+
+ca recupere uniquement le texte sans le balisage, tel qu'il est ecrit dans le document, genre
+si je fais 
+coucou tout le monde, comment ca va
+==> ca me l'affiche sur une seule ligne, 
+si je fais 
+coucou tout le monde
+comment ca va ?
+==> ca me l'affiche sur une seule ligne, 
+
+pour savoir si on doit utiliser telle ou telle propriété, cad si le navigateur supporte, on fait
+
+if (div.textContent !== unidefined)
+{
+	code avec textContent
+}
+else if (div.innerText !== unidefined)
+{
+	code avec innerText
+}
+
+
+sinon peut factoriser comme ca 
+txt = div.textContent || div.innerText || '';
+
+
+=====[parentNode]======
+
+monElement.parentNode retourne une reference vers l'element parent de l'element en question
+
+=====[nodeType et nodeName]======
+
+monElement.nodeType retourne le type de noeud que c'est, correspondant à un int
+1 = Node.ELEMENT_NODE = Noeud élément
+2 = Noeud attribut
+3 = Node.TEXT_NODE = Noeud texte
+4 = Noeud pour passage CDATA (relatif au XML)
+5 = Noeud pour référence d'entité
+6 = Noeud pour entité
+7 = Node.PROCESSING_INSTRUCTION_NODE = Noeud pour instruction de traitement
+8 = Node.COMMENT_NODE = Noeud pour commentaire
+9 = Node.DOCUMENT_NODE = Noeud document
+10 = Node.DOCUMENT_TYPE_NODE = Noeud type de document
+11 = Node.DOCUMENT_FRAGMENT_NODE = Noeud de fragment de document
+12 = Noeud pour notation
+
+monElement.nodeName retourne le nom (le tag name en fait genre div) en UPPERCASE, de l'element en question
+mais dans le doute on recommande d'utiliser toUpperCase() pour eviter les mauvaises surprises 
+
+==[firstChild et lastChild]=====
+
+monElement.firstChild retourne le premier enfant de l'element en question
+monElement.lastChild retourne le dernier enfant de l'element en question
+
+si on voulait ne recuperer que les enfants qui sont des elements html (genre ne pas avoir les noeuds #text)
+on aussi les propriétés 
+firstElementChild
+et
+LastElementChild
+==> mais ca ne fonctionne que pour IE >= 9
+
+====[childNodes]====
+
+C'est un attribut qui retourne un array contenant les references vers chaque enfant du noeud en question, genre
+
+var els = monElement.childNodes
+
+====[previousSibling et nextSibling]===
+
+c'est deux propriétés qui permettent d'acceder au noeud suivant et precedent
+
+on a aussi les variantes 
+previousElementSibling et nextElementSibling qui ne ciblent QUE les HTMLElements et pas les #text,
+mais attention, ca ne fonctionne pas si 
+IE < 9
+
+=====[nodeValue et data]=====
+
+monElement.nodeValue renvoit la valeur du noeud en question 
+si c'est un #text, ca renvoit le texte en question
+
+===[hasChildNodes()]====
+
+retourne un bool pour dire s'il y a des elements enfants ou non
+
+
+
+=====[ajouter des elements dans le dom]======
+
+1) on cree l'element en faisant
+monEl = window.document.createElement("div");
+
+2) on lui affecte des attributs genre
+monEl.setAttribute("pouet", "prout");
+
+2') on peut lui affecter un texte au son sein, comme <a>texte</a>
+monEl.appendChild(window.document.createTextNode("texte"));
+
+3) on l'insere dans le dom
+elementParent.appendChild(monEl);
+
+====[replaceChild()]====
+
+ca permet de remplacer un element par un autre dans le dom
+on fait 
+
+elementParent.replaceChild(nouvelElement, ancienElement);
+
+===[removeChild()]===
+
+on fait
+elementParent.removeChild(elementEnfant);
+
+si on veut pas s'emmerder, on fait
+element.parentNode.removeChild(element);
+
+
+ATTENTION, l'element est supprimé du DOM mais PAS DE LA MEMOIRE ! 
+On peut le reintegrer plus tard si on veut
+
+====[insertBefore()]===
+
+pour inserer un element avant un autre, on fait
+elementParent.insertBefore(elementToAdd, elementEnfant);
+
+====[insertAfter()]===
+
+ca existe pas
+on fait
+elementParent.insertBefore(elementToAdd, elementEnfant.nextSibling);
+
+
+====[les events]===
+
+en gros historiquement, on peut le faire de differentes manieres
+- sans le dom
+- avec le dom-0 (créé par netscape avant la specification du w3c = dom-1)
+- avec le dom-2
+
+la liste des evenements sont: 
+- click		= appui puis relâchement (bouton gauche partout, bouton droit et molette parfois selon le navigateur)
+- dblclick 	= double click
+- mousedown	= bouton gauche pressé
+- mouseup	= bouton gauche relâché après pression, c'est plus ou moins pareil que click
+- mouseover	= curseur entre dans la zone de l'element
+- mouseout	= curseur sort de la zone de l'element
+- mousemove	= le curseur bouge quand il est au dessus de l'element
+- keydown 	= pression d'une touche = on peut recuperer la touche entrée, genre A (que maj soit activé ou pas)
+- keyup		= relâchement d'une touche apres pression  (que maj soit activé ou pas)
+- keypress	= appui et relachement d'une touche, ne permet de recuperer QUE les touches caractere, pas de ctrl ou autre
+- focus		= focus sur l'element
+- blur		= retrait du focus sur l'element
+- change	= changement de la valeur de l'element (input, checkbox, etc), cad modifier le contenu, PUIS BLUR !
+- input		= entrer un char dans un champs de texte (pas implémenté partout donc ATTENTION)
+- select	= selection du contenu d'un champ (input, textarea, etc)
+- submit	= quand on appuie sur le bouton submit du formulaire
+- reset		= quand on appuie sur le bouton reset du formulaire 
+
+
+avant, SANS LE DOM, on faisait: 
+<balise onEvent="code javascript">
+la galere
+
+dans le code javascript, quelque soit la facon de faire, on peut utiliser le kw "this" pour designer l'objet qui a declenché l'event
+de même, quelque soit la facon de faire, si on return false a la fin du code js, ca annule l'action par defaut de l'event (genre submit ou click)
+
+remarque: on peut utiliser du js dans des liens mais c'est une technique a proscrire car obsolete (il vaut mieux utiliser un bouton dont on a modifié le design avec du css pour le faire ressembler a un lien)
+genre <a href="code js">lien</a>
+une meilleure facon de faire, toujours sans utiliser le dom, c'est de faire
+<a href="#" onclick="code js">lien</a>
+sauf que du coup la scrollbar remonte tout en haut de la page, on peut l'empecher en finissant le code js par return (false);
+
+du coup on ne peut pas faire plusieurs fonctions pour un meme event, on ne peut pas supprimer les events, 
+
+
+ENSUITE, avec le dom-0
+
+on faisait genre
+monElement.onclick = nomFonction
+ou alors
+monElement.onclick = function() { code };
+
+puis, pour supprimer l'evenement de l'element, on fait
+monElement.onclick = function() {};
+
+du coup on ne peut pas faire plusieurs fonctions pour un meme event
+par contre maintenant on peut supprimer des events
+
+
+
+ENFIN, avec le dom-2, on fait: (mal supporté par IE < 9)
+
+on fait comme ca 
+monElement.addEventListener("event", reference_fonction [, booleean);
+
+le boolean sert dans le cas où on clique sur un span contenu dans un div, etc, qui ont chacun un event click, il peut etre
+- true = utilisation de la phase de capture = les event se declenchent des parents vers l'enfant
+- false = utilisation de la phase de bouillennement = les event se declenchent des enfants vers les parents
+
+
+si on affecte plusieurs fonctions à un meme event, genre
+monElement.addEventListener("click", f1);
+monElement.addEventListener("click", f2);
+==> l'ordre de declenchement de f1 et f2 est aléatoire
+
+pour enlever un event, on faire
+monElement.removeEventListener("event", nomFonction);
+
+
+
+Il y a un objet Event
+il permet d'obtenir pleins d'information sur l'event qu'on traite (touches enfoncées, coordonnées du curseur, etc)
+on l'exploite comme ca
+function maFonction(e)
+{
+	//traitement de l'event
+}
+
+
+e.type = type de l'event declenché (click, dbclick, ...)
+e.target = reference vers l'element responsable de l'event (comme le this sans le dom ou avec le dom-0)
+e.currentTarget = reference vers l'element originellement responsable de l'event. Genre si on a un element parent qui a un event qui, par heritage, herite aux elements enfants (genre mouseover, etc), e.target retour l'element enfants, e.currentTarget renvoit l'element parent ATTENTION, e.currentTarget non supporté par IE < 9
+
+e.relatedTarget = que pour les event mouseover et mouseout = retourne l'element sur lequel le curseur est entré/sorti.
+		concretement, imaginons un <div> a qui on a fait un event mouseover, qui contient un <p> qui contient un <span>
+		- si on avait fait e.target, on aurait eu l'élément en question (<div> si on entre sur le <div>, puis à nouveau un 
+		  event avec <p> si une fois sur le div on entre sur le <p>, puis un avec <span> si on entre sur le <span>, etc)
+		- si on avait fait e.currentTarget, on aurait aussi eu un event déclenché à chaque fois, mais ca ne nous 
+		  retournerait que le <div> à chaque fois
+		- si on avait fait e.relatedTarget, dans le cas de mouseout, ca nous donne une ref vers l'element qu'on a PENETRÉ
+		  dans le cas de mouseover, ca nous donne une ref vers l'element qu'on a QUITTÉ (inverse de la logique)
+
+
+
+
+e.clientX = coord x du curseur dans le repere où 0,0 = coin sup gauche de la page web
+e.clientY = coord y du curseur dans le repere où 0,0 = coin sup gauche de la page web
+==> remarque, il est possible de recupere les coord dans un repere où 0,0 est le coin sup gauche de l'écran
+
+e.keyCode = recuperation du code ascii de la touche tapé, on peut avoir l'equivalent en char en faisant String.fromCharCode(code);
+e.charCode = 
+e.which = 
+
+remarque: on peut generer une suite de chargs en faisant
+String.fromCharCode(65, 66, 67, 68, 69); ( = "ABCDE")
+
+e.preventDefault() = annule l'action par defaut de l'element (genre le submit ou la redirection d'un lien), equivalent à avant quand on faisait return (false) (FONCTIONNE PAS POUR IE < 9, pour que ca fonctionne on fait 
+e.returnValue = false)
+
+e.returnValue = false
+
+
+
+
+
+
+remarque, pour eviter les emmerdes dues au fait que les elements enfant du dom recuperent les event, on fait comme ca
+function isDescendant(child, parent)
+{
+	var node = child;
+	var ret = false;
+
+	if ((parent != null) && (child != null))
+	{
+		while ((node != null) && (ret === false))
+	    {
+	    	if (node === parent) 
+				ret = true;
+
+			node = node.parentNode;
+	    }		
+	}
+     
+    return (ret);
+}
+
+balise.addEventListener("mouseover", function (e) {
+	if (!isDescendant(e.relatedTarget, e.currentTarget))
+	{
+		console.log("j'entre !");
+	}
+});
+
+balise.addEventListener("mouseout", function (e) {
+	if (!isDescendant(e.relatedTarget, e.currentTarget))
+	{
+		console.log("je sors !");
+	}
+});
+
+=====[les formulaires]=====
+
+pour recuperer les données d'un element html, on fait comme ca 
+monObjet.propriété
+
+ATTENTION, ici on ne peut pas utiliser getAttribute() qui renvoit uniquement l'attribut du code html
+
+on a donc
+monObjet.value = valeur entrée/selectionnée dans l'objet, MEME POUR UN TEXTAREA (#contre_intuitif)
+monObjet.disabled = boolean à true si on veut désactiver la modification de l'input
+monObjet.checked = boolean à true si on veut que le radio ou checkbox soit checked
+monSelect.selectedIndex = retourne l'index du SELECT qui est selectionné. Dans le cas d'un select multiple, c'est le 1er selectionné
+monSelect.options = liste dans un array toutes 
+monForm.submit() = fait un submit ===> ATTENTION, NE DECLENT PAS l'EVENT SUBMIT (du truc onSubmit)
+monForm.reset() = fait un reset
+monObjet.focus() = donne le focus a l'objet
+monObjet.blur() = vire le focus de l'objet
+monObjet.select() = donne le focus à l'element et selectionne son texte si cela est possible (textarea, input text, etc)
+
+====[Manipuler le css]====
+
+on accede au style de l'element en faisant
+monElement.style = objet dont les attributs sont les proptiétés
+
+genre 
+monElement.style.width
+
+la galere, c'est que ces propriété permettent de modifier les valeurs, 
+MAIS PAS DE LES LIRE SI ELLE N'ONT PAS ETE MODIFIEES PAR LE JS AUPARAVANT
+
+Pour pas etre emmerdé, il faut utiliser
+getComputedStyle(monElement).attribut = retourne la valeur de l'attribut, 
+genre
+getComputedStyle(monElement).width
+ATTENTION, getComputedStyle non supporté pour IE < 9
+
+Il y a egalement les propriétés de type offset (qui sont des Number et pas des String),
+car certaines valeurs de positionnement ou de taille ne peuvent etre obtenues simplement avec getComputedStyles()
+on a
+monElement.offsetWidth = contient la largeur totale de l'element = width + padding + border
+monElement.offsetHeight = contient la hauteur totale de l'element = height + padding + border
+monElement.offsetLeft = contient la position de l'element par rapport au bord gauche de l'element parent (++utile pour posAbsolue)
+monElement.offsetTop = contient la position de l'element par rapport au bord sup de l'element parent (++pour utile posAbsolue)
+monElement.offsetParent = contient l'objet de l'element parent par rapport auquel l'element en question est positionné
+
+Pour connaitre la position d'un element en top et left par rapport au coin sup gauche de la page, on peut coder une fonction
+function getOffset(element)
+{
+	var top = 0,
+	var left = 0;
+
+	do 
+	{
+		top += element.offsetTop;
+		left += element.offsetLeft;
+        } while (element = element.offsetParent);
+
+        return {
+            top: top,
+            left: left
+        };
+}
+
+
+==> avec tout ca on peut faire un drag n drop rudimentaire mais vu que c'est un truc tres utilisé dans le web, vaut mieux utiliser
+des technos qui existent deja
+
+
+=====[les chaines de caractere]====
+
+il faut distinguer les objets des types primitifs (=datatype)
+genre
+var str = "coucou"; //type primitif
+var str = new String("coucou"); //objet
+
+idem pour les arrays
+var arr = [];
+var arr = new Array();
+
+var obj = {};
+var obj = new Object();
+
+var nbr = 42;
+var nbr = new Number("42");
+
+var b = true;
+var b = new Boolean("true");
+
+
+du coup si on fait
+var str1 = "coucou";
+var str2 = new String("coucou");
+
+str1 instanceof String ==> false
+str2 instanceof String ==> true
+
+par contre
+typeof str1 === "string" ==> true
+typeof str2 === "string" ==> false, c'est object
+
+faut faire gaffe parce que ca peut creer tout un tas de problemes
+la seule valeur de retour dont on peut etre sûr pour typeof c'est "undefined"
+
+
+quand on fait des trucs genre
+"coucou" //type primitif par defaut
+"coucou".length // type objet par defaut
+
+pour les methodes des objets String on a: 
+- toLowerCase() = retourne la meme chaine mais avec tout en maj
+- toUpperCase() = retourne la meme chaine mais avec tout en min
+- charAt(nb) = retourne le char à l'index nb //remarque, sur certains navigateurs on peut faire str[nb] MAIS C'est PAS STANDARD
+- charCodeAt(nb) = idem mais retourne le code ascii 
+- fromCharCode(nb, nb, nb, ...) = retourne une chaine dont chaque char etait passé en arg en code ascii (utilisé en mode String.fromCharCode())
+
+- trim() = supprime les blancs au debut et a la fin
+- indexOf(substr) = retourne l'index du premier char de la premiere occurence trouvée de la chaine ou -1 si pas trouvé
+- lastIndexOf(substr) = retourne l'index du premier char de la derniere occurence trouvée de la chaine ou -1 si pas trouvé
+- substring(a, b) = retourne une string allant de a inclus à b exclus, b étant un PARAMETRE FACULTATIF = length par defaut
+- substr(a, b) = idem mais a est l'index de debut et b le nombre de chars à extraire
+- slice(a, b) = idem que substr mais b est un parmetre pouvant etre negatif et signifier le nombre de chars avant la fin
+- split("sep") = retourne un array avec les str entre les sep
+- 
+
+remarque sur la notation tilde
+en js, le tilde c'est un NON BINAIRE, en gros ca rajoute 1 et multiplie par -1, genre
+~2 = -3
+~8 = -9
+~-4 = 3
+etc
+
+du coup l'expression
+if (maString.indexOf("pouet") === -1)
+est equivalente a
+if (~maString.indexOf("pouet"))
+
+pour tester si une variable contient une str,
+vu que ca peut etre un type primitif ou un object String, plutot que de faire
+if (typeof variable === "string")
+	return (true);
+else if (typeof variable === "object")
+{
+	if (variable instanceof String)
+		return (true);
+}
+else
+	return (false);
+
+on peut faire
+if 
+	return (true);
+return (false);
+
+ou carement
+return ((typeof (variable.valueOf) === "string") ? true : false);
+
+
+====[les regexp]====
+
+en php, ca supporte 2 types de regex, 
+le posix 
+le pcre (celle du perl)
+
+nous on fait du pcre
+
+on a un objet RegExp. 
+on fait 
+var maReg = /expression/param; // pour le type primitif, ou 
+var maReg = new RegExp("expression", "param");
+
+REMARQUE, on peut mettre des variables dans l'expression en appellant le constructeur vu que l'arg est une String, 
+ce qui n'est pas possible en utilisant le type primitif
+
+pour mettre un / on l'echappe avec un \
+genre 
+var maReg = /coucou\/toi/
+L'objet RegExp dispose d'une methode maReg.test(maChaine) = retourne true si ya l'occurence, false sinon
+il y a aussi la methode maReg.exec(), mais qui renvoit un array avec les occurences et null sinon
+
+on peut rajouter un parametre apres, comme ca
+/monExpression/param
+genre
+/\[[0-9]\]/g
+comme parametres on a
+- g = greedy, 
+- i = ignorer la casse
+
+pour rappel, on a
+^ = debut de ligne
+$ = fin de ligne
+| = ou 
+[abc] = a ou b ou c
+[a-z] = lettres de a à z
+[A-Z] = lettres de A a Z
+[a-zA-Z] = lettres de A à z
+[0-9] = chiffre de 0 à 9
+[^abc] = pas a ni b ni c
+. = n'importe quel caractere
+? = 0 ou 1 fois
++ = 1 ou +sieurs fois
+* = 0, 1 ou plusieurs fois
+{n} = present n fois
+{n, m} = present entre n et m fois
+{n,} = present entre n et +infini fois
+! =  
+\d = tout chiffre
+\D = tout char non chiffre
+\s = char blanc = \t \n ou ' '
+\S = qui n'est pas un blanc
+\w = lettre accentuée ou non ou underscore
+\W = tout ce qui n'est ni lettre ni underscore
+\n = retour a la ligne
+\t = tabulation 
+\b = assertion qui trouve une limite du mot (attention, ca considere les char accentués comme une limite de mot) ==> bof
+\B = assertion qui ne trouve pas de limite de mot ==> bof
+
+remarque, pour le lazy mode, on doit mettre ? apres le quantifieur
+genre
+/\[.+?\]/g
+
+il y a 9 propriétés notées $1 à $9
+pour capture du texte, on utilise les parentheses capturantes 
+maReg.exec(mon expression avec les parentheses capturantes)
+puis pour appeller le texte capturé, on fait
+RegExp.$1 (ou 9 si besoin)
+(remarque, s'il y n'y a qu'une seule capture, $1 vaut la capture, et toutes les autres $2-9 valent "")
+
+pour mettre des parentheses non capturantes, on fait 
+(?:expression)
+
+
+
+
+
+On peut egalement gérer des regExp avec des methodes natives, comme celles de String genre 
+- maStr.match(regexp) = retourne un array avec toutes les occurences trouvées dans la chaine
+- maStr.search() = comme indexOf mais avec une regExp
+- maStr.split(reg) = idem mais avec une regExp en arg
+- maStr.replace(reg, replaceStr) = remplace chaque occurence par une autre, dans replaceStr on peut mettre $1, $2, etc pour citer les captures
+  au lieu d'utiliser un str pour le remplacement, on peut carrement utiliser une fonction.
+  ca permet par exemple de realiser des operations sur les elements captures
+  la fonction doit avoir le prototype suivant:
+  function(str, p1, p2, p3, ..., offset, s); str contient le texte recuperé par la regexp, 
+  p1, p2, p3 etc = $1, $2, $3 etc, il faut bien mettre un nombre de parametres pegal au nombre de parentheses capturantes 
+  offset = contient la position de la portion de texte trouvé dans la chaine
+  s = contient la totalité de la chaine
+  la fonction retourne une string qui correspond au texte a remplacer
+
+par exemple
+var reg = /([0-9]+?) ans?/g;
+var str = "Bonjour, j'ai 2 ans et je suis tres gourmand"
+
+console.log(str.replace(reg, function (str, p1, offset, s) {
+	var age = parseInt(p1);
+	var ret = "";
+
+	if (p1 < 13)
+		ret = "un age de mineur";
+
+	else if ((p1 > 12) && (p1 < 18))
+		ret = "un age d'ados";
+
+	else
+		ret = "un age de majeur";
+
+	return (ret);
+}));
+  
+===[L'objet Number]====
+
+il dispose d'attributs
+Number.MAX_VALUE = valeur max qu'on peut stocker dans un objet Number
+Number.MIN_VALUE = valeur min qu'on peut stocker dans un objet Number
+Number.POSITIVE_INFINITY = valeur +infini = resultat d'une division par 0 par exemple, mais on prefere utiliser la fonction Number.isFinite(valeur primitive);
+Number.NEGATIVE_INFINITY = idem mais en divisant un nombre <0 par 0
+
+Ya egalement pleins de methodes mais on prefere utiliser l'objet Math
+
+====[L'objet Math]====
+
+Math.PI = valeur de pi
+Math.E = constante d'euler
+Math.floor() = arrondir à l'inf
+Math.ceil() = arrondir au sup
+Math.round() = arrondir à l'entier le plus proche
+Math.pow(a, b) = renvoit a puissance b
+Math.sqrt(a) = renvoit la racine carree de a
+Math.cos(a)
+Math.sin(a)
+Math.acos(a)
+Math.asin(a)
+Math.max(a, b, c, ...) = renvoit le plus grand nombre parmis ceux entrés
+Math.min(a, b, c, ...) = renvoit le plus petit nombre parmis ceux entrés
+Math.random() = renvoit un nombre aléatoire entre 0 et 1
+
+Ya pas de fonction random avec un min et un max, on peut la coder comme ca
+function rand(pMin, pMax, pInteger) {
+	if(pInteger)
+		return Math.floor(((Math.random() * (pMax-pMin+1)) + pMin));		
+	else
+    		return ((Math.random() * (pMax-pMin)) + pMin);
+}
+
+//same but better way to do
+const rand2 = (pMin, pMax, pInteger) => (pInteger)?Math.floor(((Math.random() * (pMax-pMin+1)) + pMin)):((Math.random() * (pMax-pMin)) + pMin);
+
+=====[la gestion du temps]====
+en gros ca utilise des timestamp = nombre de MILLIsecondes ecoulees depuis le 1er janvier 1970
+(sur unix c'est le nombre de secondes)
+
+On le gere avec l'objet Date
+
+pour avoir le moment t present, on fait 
+var t = new Date();
+
+pour avoir une date d'un moment donné on fait 
+var t = new Date(timeStamp);
+
+ou alors 
+var t = new Date("date en format parsable par parse()");
+
+ou enfin
+var t = new Date(année, mois, jour [, heure, minutes, secondes, millisecondes ]);
+
+l'objet Date possede 2 methodes statiques
+Date.parse() = prend une date et renvoit le timestamp correspondant
+le format doit être
+Sat, 04 May 1991 20:00:00 GMT+02:00
+(Greenwich)
+
+ensuite il y a les methodes
+maDate.getFullYear() = renvoit l'annee en 4 chiffres
+maDate.getMonth() = renvoit le mois = 0 à 11
+maDate.getDate() = renvoit le jour du mois = 1 a 31
+maDate.getDay() = renvoit le jour de la semaine = 0 a 6, commence par dimancge
+maDate.getHours() = renvoit l'heure = 0 a 23
+maDate.getMinutes() = renvoit les minutes = 0 a 59
+maDate.getSeconds() = renvoit les secondes = 0 a 59
+maDate.getMilliseconds() = renvoit les ms = 0 a 999
+maDate.getTime() = renvoit le timestamp de la date
+
+==> on a également leurs equivalents setters, pen remplacant get par set
+
+
+on a egalement des fonctions qui permettent d'executer des fonctions avec un parametre temps 
+setTimeout(fonction, temps_ms); //execute la fonction après Xms d'attente
+setInterval(fonction, temp_ms); //execute la fonction tous les Xms jusqu'à la fin des temps 
+
+si on veut passer des parametres a notre fonction, on fait
+setTimeout(fonction, 200, param1, param2, ...);
+setInterval(fonction, 200, param1, param2, ...);
+ATTENTION, ca ne fonctionne pas avec IE < 10
+
+ces fonctions renvoient un timerID
+
+on peut ruser comme ca
+setTimeout(fonction () { maFonction(param1, param2, ...) }, 200,);
+
+remarque, c'est pas tres utile de specifier un temps < 10ms car la techno n'est pas capable d'etre aussi precise
+
+remarque, c'est setTimeout et PAS setTimeOut !!
+
+Pour annuler un setTimeout ou un setInterval, on fait 
+clearTimeout(monTimerID)
+clearInterval(monTimerID)
+
+
+====[les images]=====
+
+ya un objet Image
+var img = new Image();
+
+les attributs sont 
+monImage.width
+monImage.height
+monImage.src
+(monImage.complete = NON STANDARD sauf en html5 = completement chargée, déconseillé)
+
+remarque sur les event
+si on fait 
+Il se peut que l'event ne se declenche pas car le chargement aura été effectué avant de def l'eventlistener.
+Il va mieux faire dans ce sens là
+monImage.src="42.png";
+monImage.addEventListener("load", f1);
+
+====[les polyfills et les wrappers]====
+
+les polyfills c'est un code qui s'adapte aux compatibilités du navigateur
+
+genre isArray(), c'est pas forcement supporté par tout le monde, du coup on fait 
+
+if (!Array.isArray) //si isArray est undefined
+{
+	//on recode isArray()
+	Array.isArray = function () {
+	        return Object.prototype.toString.call(element) === '[object Array]';
+	};
+}
+
+Array.isArray(machine);
+
+
+ya pas forcement besoin de les re-créer, ya des versions qui existent en libre partout sur internet
+
+
+
+concernant les wrappers, c'est une surcouche d'un objet qu'on fait, pour rajouter des trucs
+par exemple, imaginons que j'ai besoin de rajouter une methode a un objet natif, 
+c'est plutot deconseillé car je risque de modifier une methode existante, ca peut bugger, surtout sur IE, du coup on utilise plutot les wrappers
+
+Concretement, on cree un objet qui dispose des methodes à rajouter, et d'un attribut correspondant
+à l'objet natif.
+on appelle les methodes natives en passant par l'attribut natif et on appelle les nouvelles methodes directement
+
+====[les closures]=====
+
+si on fait ca
+function area() {
+    var myVar = 1;
+
+    function show() {
+        alert(myVar);
+    }
+
+    setTimeout(show, 1000);
+}
+area();
+
+la variable myVar n'est pas undefined, 
+en fait c'est parce que ca passe la variable par reference, du coup quand la fonction se termine, 
+ca del la ref mais pas la variable et il reste une ref quelque part
+tant qu'il reste une ref, 
+
+En fait, en js, quand on passe une variable a une fonction
+si c'est un type primitif, on le passe par valeur, 
+si c'est un objet, on le passe par reference
+
+SAUF QUE, quand on utilise une fonction genre setTimeout ou setInterval, les valeurs passées par la fonction en faisant
+function (param) { code }, 1000
+ou
+function () { f1(param); }, 1000
+==> Ca passe la variable PAR REFERENCE, quelque soit le type
+
+
+de plus, si on fait une setTimeOut(function () {}, 
+dans la fonction, 
+ON NE PEUT PAS UTILISER DE VARIABLES INITIALISÉES DANS LA BOUCLE FOR
+genre
+for (var i = 0, lim = arr.length; i < lim; i++)
+{
+	setTimeout(function () { console.log(arr[i]); }, 1000);
+}
+==> ca va bugger
+
+alors que si on fait
+setTimeout(function () { console.log(arr); }, 1000);
+==> la ca fonctionne
+
+En fait, quand on fait le setTimeout ou le setInterval, en fait ca appelle à ce moment le
+setMachin, mais ca appellera la fonction en utilisant la REFERENCE du truc et pas la valeur, donc
+la reference de i qui a la fin vaut lim, du coup arr[i] = undefined
+
+pour regler ce probleme, on a les closures
+
+une closure, c'est une fonction qui capte des valeurs susceptibles de changer au cours du temps
+de les enregister dans son espace fonctionnel et de les fournir en cas de besoin
+en fait, une closure c'est une iife
+
+en gros, on fait tout simplement comme ca
+for (var i = 0, lim = arr.length; i < lim; i++)
+{
+	(function () {
+		var value = i;
+
+		setTimeout(function () { console.log(arr[value]); }, 1000);
+	})();
+}
+
+ou alors, syntaxe plus light
+for (var i = 0, lim = arr.length; i < lim; i++)
+{
+	(function (value) {
+		setTimeout(function () { console.log(arr[value]); }, 1000);
+	})(i);
+}
+
+
+====[ajax]=====
+
+=Asynchronous Javascript And XML
+
+en gros c'est un ensemble de technos et ca permet d'envoyer et recevoir des données sous forme texte, xml/html ou json (Javascript Object Notation) sans etre obligé de  recharger la page
+c'est tres pratique pour l'autocompletion 
+ou alors les sauvegardes automatiques
+
+le json est plus light tandis que le xml/html est beaucoup plus lourd car comprenant beaucoup plus de caracteres, mais avec le second on a un dom qu'on peut traiter avec des methodes puissantes du dom
+
+
+en utilisant du html ou du xml pour formater les données, on peut utiliser les memes methodes pour parcourir le DOM, pratique++, en fait, js recoit le code sous format text, puis le parse pour obtenir un DOM
+
+un objet json ca a cette gueule
+{
+    Membre1: {
+        posts: 6230,
+        inscription: '22/08/2003'
+    },
+
+
+    Membre2: {
+        posts: 200,
+        inscription: '04/06/2011'
+     }
+}
+
+==> en fait c'est juste un objet classique, dont chaque element est un autre objet
+==> contrairement au format xml/html, ya pas de parseur automatique, 
+du coup faut utiliser les methodes de l'objet JSON
+monObjetJSON.parse(chaineJSON) = renvoit le resultat sous forme d'objet json;
+monObjetJSON.stringify(objetJSON) = renvoit le resultat sous format texte, fonction reciproque quoi
+
+
+le JSON est tres pratique depuis PHP5.2 qui est doté de fonctions 
+json_encode() et json_decode()
+
+
+====[XMLHTTPRequest]=====
+
+dans la techno ajax, ya un objet XMLHTTPRequest
+
+Cet objet a ete concu par MS et implementé dans IE et outlook sous forme d'un controle activeX
+nommé initialement XMLHTTP
+Puis il a été renommé et standardisé par le w3c
+
+en gros le principe, c'est d'envoyer une requete http a l'adresse specifiée, d'attendre une reponse
+de la part du serveur, une fois la reponse obtenue, la requete s'arrete et peut etre relancée si besoin
+
+ya eu 2 versions de XMLHTTPRequest standardisée, 1 et 2
+la version 2 est plus puissante mais pas d'IE < 9
+
+on prepare notre requete comme ca
+var xhr = new XMLHTTPRequest();
+
+ensuite on open la connexion
+xhr.open("methode genre GET, POST ou HEAD", "url d'envoi", bool_asynchrone_ou_pas = true, "login", "pw");
+
+les 2 derniers args sont facultatifs, utilisés si jamais ya besoin de se loger sur la page dest, 
+genre a cause d'un .htaccess
+
+en general on fait 
+xhr.open("GET", "./gestion.php?param1=v1&param2=v2");
+puis 
+xhr.send();
+
+OU 
+
+xhr.open("POST", "./gestion.php");
+xhr.send("param1=value1&param2=value2");
+
+remarque, ici on utilise le protocole http, mais on peut aussi utiliser https ou ftp ou autre
+
+du coup pour envoyer la requete on fait
+xhr.send();
+
+si la requete n'est pas finie mais qu'on veut la stopper, on fait
+xhr.abort(); // ca remet xhr a 0
+
+remarque, pour passer des valeurs en get ou post, il vaut mieux toujours les encoder en
+encodeURIComponent(value)
+
+remarque, si on envoit des données issues d'un form via la methode post, il faut faire
+xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+avant le send()
+(d'ailleurs, meme si ca vient pas d'un form il parait)
+
+
+Ensuite, pour réceptionner les données renvoyées suite à l'envoi, 
+il faut utiliser une fonction callback, c'est la fonction appellée quand la reponse est arrivée
+Pour ca, l'objet xhr a un event readyStateChange
+du coup on fait
+xhr.addEventListener("readyStateChange", function () { //code });
+
+cet event est appelé si (5 etats possibles)
+- UNSET = 0 = xhr créé mais pas initialisé = pas d'open 
+- OPENED = 1 = open fait mais pas send
+- HEADERS_RECEIVED = 2 = send appelée et toutes les infos sont parties pour le serveur
+- LOADING = 3 = le serveur traite les infos et a commencé a renvoyer les données, tous les en-tetes de fichiers ont été recus
+- DONE = 4 = toutes les données ont été receptionnées
+
+ya aussi la propriété status qui est le statut de la requete envoyé par le serveur (genre 404, etc)
+en general, ca renvoit 200 = tout s'est bien passé
+
+du coup, pour verifier qu'on est bon il faut, dans la fonction callback, faire
+xhr.addEventListener('readystatechange', function() {
+    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        // Votre code…
+    }
+});
+
+
+Ensuite, pour récuperer les données, on a differentes facon 
+- soit au format xml = xhr.responseXML = renvoit un DOM
+- soit en json = JSON.parse(xhr.responseText)
+- soit au format texte = xhr.responseText
+
+remarque, pour le format xml, coté serveur il vaut mieux specifier un header avec un mime type text/xml
+qui precise que c'est du xml, sinon sur les vieux navigateurs (notamment firefox) ca fonctionnera pas
+genre en php c'est
+<?php header('Content-type: text/xml'); ?>
+
+pour recuperer les headers de la requete, pour ca on a
+xhr.getAllResponseHeaders()
+et
+getResponseHeader("intitulé")
+
+ATTENTION, ajax transfere les chars uniquement en utf-8 (dont faut tout encoder en utf-8)
+A l'envoi, ajax traduit les chars de la norme vers l'utf-8, puis les envoie au serveur 
+une fois sur le serveur, si il s'attent à autre chose que de l'utf8, il va faire des trucs 
+bizarres genre ecrire 2 chars bizarres au lieu du chars attendu ==> ERREURS DE TRAITEMENT
+Ensuite, le serveur renvoit le texte en question, mais dans la norme du serveur, donc si 
+on s'attend a une autre norme, ca va planter
+
+donc pour eviter les emmerdes, on encode tout en utf-8
+==> les fichiers sources
+==> que le serveur soir parametré en utf-8
+==> que les ressources de la bdd soient en utf-8
+
+
+si c'est trop galere pour une raison x ou y (genre le site est déjà codé en latin-1 ou autre et c'est trop galere de tout changer)
+on a la fonction php
+utf8_decode ==> on sait que c'est de l'utf8 et on va traduire le contenu en latin
+
+==> TOUT CA C'ETAIT POUR LA VERSION 1 DE XHR
+
+
+Pour la version 2, ya pleins de nouveaux trucs
+xhr2 ne fait pas des specifications de html5 attention ! 
+mais elle utilise beaucoup de technos de html5
+
+ya pas trop de soucis avec chrome 13, firefox 6, safari 5 et IE 10
+mais tout n'est pas encore supporté
+
+déjà ya les requetes cross-Domain, (ya plus le same Origin Policy)
+en fait le same origin policy est present dans tous les langages utilisables dans un navigateur web
+C'est une secu pour pas mal de failles, mais un frein pour le dev web
+
+en gros ca foire si
+- nom de domaine different
+- sous-domaine different (genre www.google.fr et moimoi.google.fr)
+- port different
+- protocole different (https plutot que http)
+
+en xhr2 pour permettre le cross domain, il faut mettre un header dans la page appelée
+Access-Control-Allow-Origin: http://monDomaineAutorised.com
+
+pour permettre tout domaine on a le wildcard
+Access-Control-Allow-Origin: *
+
+genre en php on ferait
+<?php
+    header('Access-Control-Allow-Origin: *');
+?>
+
+
+pour eviter les requetes trop longues, on peut simplement faire
+xhr.abort(); au bout d'un certain timer
+mais en xhr2 on peut faire
+xhr.timeout = 10000; (temps en ms avant d'aborder la requete)
+//==> en vrai actuellement, aucun navigateur n'integre ca
+
+
+on peut egalement, si le document qu'on appelle n'a pas de header avec un type/mime, (ce qui peut poser probleme car du coup il peut etre d'emblée considéré comme du xml alors que c'est du texte et on a une erreur de parsing), 
+on fait 
+overrideMimeType("monMimeType");
+genre
+overrideMimeType("text/xml")
+ou 
+overrideMimeType("text/plain")
+==> utilisable quand readyState === 1 ou 2
+
+
+Pour acceder aux cookies, comme c'est pareil, ya une securité qui l'empeche en cross-domain
+il faut alors mettre en header du fichier serveur
+Access-Control-Allow-Credentials: true
+MAIS ca ne fonctionne que si on a fait
+Access-Control-Allow-Origin: http://example.com // UN SEUL nom de domaine
+
+Autrement ca renvoit des valeurs nulles
+parce que le navigateur n'envoit pas les requetes, 
+pour le forcer à les envoyer, on fait, entre open() et send()
+xhr.withCredentials = true;
+
+remarque: si on fait une requete crosse-domain  de cookies, 
+les cookies et sessions seront ceux de du domaine serveur, du domaine appelé
+
+avec XHR2, en plus de readyStateChange, on a d'autres events qui sont
+- loadstart = quand on appelle send()
+- load = requete terminée correctement
+- loadend = requete terminée quelque soit la situation
+- error = non aboutissement de la requete 
+- abort = abandon de la requete (fermeture du navigateur, abort())
+- timeout = atteinte de la durée max specifiee dans xhr.timeout
+- progress = event qui se declenche a intervalle regulier lors de la requete. interessant quand le volume de données qui transite est important.
+l'event fournit un objet en parametre de la fonction associée.
+cet objet a 2 attributs
+	-loaded = nombre d'octets telechargés
+	-total = nombre d'octets total ==> ca permet de faire une progressbar
+
+
+Enfin, il y a l'objet formData = pour les envois de données binaires vers le serveur via POST
+var form = new formData();
+
+l'objet formData() dispose d'une methode
+append("nom du champs", "valeur du champs");
+et ensuite on passe le formData a la methode send();
+
+en gros, au lieu de faire
+xhr.send("p1=v1&p2=v2&p3=v3");
+
+on fait
+form = new formData();
+form.append("p1", "v1");
+form.append("p2", "v2");
+form.append("p3", "v3");
+xhr.send(form);
+
+ou alors tout simplement
+form = new formData(window.document.getElementById("monFormulaire"));
+xhr.send(form);
+
+
+
+
+====[les problemes d'encodages]====
+
+la norme ASCII codait les caracteres sur 7 bits ce qui donne 128 caracteres
+apres ya eu la norme iso8859 = codés sur 8 bits = 256 chars
+==> du coup ya genre une norme iso8859 par langue
+==> pour le francais c'est iso8859-1
+==> c'est chiant si on veut un document qui a des chars chinois et anglais par exemple
+
+utf-8 = stocke les chars sur un nombre variable de bits
+genre le A est codé sur 8 bits mais le A hiragana japonais l'est sur 24 bits
+le max de bits utilisable en UTF-8 pour coder un chars c'est 32 = beaucoup beaucoup de chars
+
+pour pas être emmerdé il faut
+1) bien encoder ses fichiers en UTF-8 lors de l'enregistrement avec l'editeur de texte (sans BOM)
+2) bien spécifier quand c'est possible, l'encodage dans le fichier
+   genre pour un fichier php on fait
+   <?php header('Content-Type: text/html; charset=utf-8'); ?>
+3) bien parametrer son serveur (genre apache)s
+
+remarque, les encodages specifies dans les fichiers html sont en general non pris en compte car 
+les parametrages apaches fait foi avant ce qui est spécifié par le html
+
+
+
+====[cas des iframes]====
+
+pour faire des iframes on fait
+<iframe src="url"></iframe>
+
+en js, on peut changer l'url en faisant
+maFrame.url = newUrl;
+
+bof
+
+====[DSL = dynamic script loading]=====
+
+ca se faisait avant xhr 
+ya pas de same origin policy
+
+en gros déjà, on peut include un fichier js dans le fichier html, avec du js en faisant comme ca
+window.addEventListener('load', function() {
+
+    var scriptElement = document.createElement('script');
+    scriptElement.src = 'url/du/fichier.js';
+
+    document.body.appendChild(scriptElement);
+
+});
+
+
+du coup, on peut faire un fichier php avec un header qui precise que c'est du js
+et genre le fichier php va generer le js en fonction des infos qu'il a
+
+du coup, on peut alors include dynamiquement un fichier js qui sera généré par du php
+
+
+du coup, on peut recuperer du json directement sous forme d'objet js puisque à ce stade
+c'est du code js et pas du texte brut
+
+
+====[webstorage]=====
+
+c'est un moyen de sauvegarde des infos sur le navigateur du client, un peu comme un cookie
+les cookies ont 4MB de stockage, contre 5 pour le webstorage
+
+on fait 
+localStorage.setItem('nom-de-ma-cle', 'valeur de la clé');
+
+on a aussi sessionStorage qui fonctionne pareil mais les données sont effacées lors de la fermeture du navigateur
+
+====[websocket]====
+ca permet de communiquer avec un serveur de maniere bidirectionnelle
+c'est du xhr approfondi
+c'est plus complexe parce qu'il faut un serveur adapté
+
+
+
+====[utiliser l'audio html5]====
+
+on utilise la balise <audio>
+
+et
+monEl.play();
+monEl.pause();
+monEl.currentTime
+monEl.paused
+
+
+===[canvas]===
+
+c'est l'utilisation de la balise <canvas>
+remarque, pour la balise canvas, il faut definir ses width et height dans le html, sinon si on le fait dans le css
+ca fait un espece de zoom chelou
+
+on accede à son contexte en faisant
+monEl.getContext("2d"); //actuellement ya que du 2d mais un jour yaura du 3d
+pour pas se faire chier on peut faire
+var context = monEl.getContext("2d");
+
+
+on definit la couleur de dessin en faisant
+context.fillStyle = "gold";
+OU
+context.fillStyle = "#CODEhexa";
+OU
+context.fillStyle = "valeur rgb ou rgba ou hsl ou hsla";
+genre
+context.fillStyle = "rgba(23, 145, 167, 0.5)";
+
+pour faire un rectangle plein on fait
+context.fillRect(x, y, width, height);
+
+ya un systeme de couche, c'est la derniere figure tracée qui est par dessus.
+
+pour faire des figures creuses on remplace fill par stroke
+
+pour changer l'epaisseur des bords on fait
+context.lineWidth = "nombre"
+
+pour effacer une partie on fait
+clearRect(x, y, width, height);
+
+on peut aussi créer des arcs
+context.arc(x, y, rayon, angleDépart, angleFin, sensAntiHoraire); //ca peut etre des degrés ou des radians
+puis
+context.stroke(); pour le dessiner
+
+
+on peut egalement faire des chemins simples
+genre 
+context.beginPath();
+context.moveTo(x, y);
+context.lineTo(x, y);
+context.closePath(); = relie le dernier point au premier
+context.stroke(); = fait des lignes
+context.fill(); = remplit
+
+le fait de closePath relie le dernier point au premier.
+
+Pour les extremites des chemins, on peut le faire
+- butt = abrupt, par defaut
+- round = arrondie
+- square = carrée, pareil que butt mais ya un bout en plus quoi
+==> on fait 
+context.lineCap = TRUC
+
+pour les intersections de chemin, c'est pareil ya 3 possibiles: 
+- round = ca fait un demi-cercle
+- bevel = plat
+- miter = pointu
+
+
+on peut egalement faire des courbes de bezier = courbes definies par les coordonnees des tangeantes aux 2 extremités
+- cubique = bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, x, y)
+- quadratique = quadraticCurveTo(cp1X, cp1Y, x, y)
+
+on peut egalement integrer des images genre 
+context.drawImage(new Image(), x, y, [width, height, );
+
+remarque, si l'image est trop lourde et qu'on la dessine avant qu'elle soit chargée, ca va l'afficher de maniere saccadée,
+le mieux c'est de la charger comme ca 
+var img = new Image("monImage.jpg");
+img.addEventListener("load", function () {
+	context.drawImage(img, x, y);
+});
+
+en vrai, la le prototype total c'est ca
+drawImage(image, sx, sy, sLargeur, sHauteur, dx, dy, dLargeur, dHauteur)
+s c'est pour source, d pour destination
+en gros sx, dx, sw, sh donnent la partie de l'image que l'on veut prendre
+et dx, dy, dw, dh definissent là on la place dans le canvas
+
+
+ensuite, on peut creer des patterns = sortes de papiers peints
+on fait genre
+var zozor = new Image();
+    zozor.src = 'zozor.png';
+    zozor.addEventListener('load', function() {
+        var pattern = context.createPattern(zozor, 'repeat');
+        context.fillStyle = pattern;
+        context.fillRect(0, 0, 150, 150);
+    });
+
+
+
+pour ecrire du texte, on fait 
+context.font = "bold 22pt Calibri,Geneva,Arial";
+context.fillStyle = "white";
+context.fillText("texte", x, y[, largeur max);
+==> le x,y c'est les coords du debut de la ligne d'ecriture
+
+
+
+on peut faire des degradés lineaires et radial
+var linear = context.createLinearGradient(0, 0, 0, 150);
+linear.addColorStop(0, 'white');
+linear.addColorStop(1, '#1791a7');
+context.fillStyle = linear;
+context.fillRect(20, 20, 110, 110);
+
+var radial = context.createRadialGradient(75, 75, 0, 130, 130, 150);
+radial.addColorStop(0, '#1791a7');
+radial.addColorStop(1, 'white');
+context.fillStyle = radial;
+context.fillRect(10, 10, 130, 130);
+
+
+un code sympa
+var radial1 = context.createRadialGradient(0, 0, 10, 100, 20, 150); // fond
+radial1.addColorStop(0, '#ddf5f9');
+radial1.addColorStop(1, '#ffffff');
+
+var radial2 = context.createRadialGradient(75, 75, 10, 82, 70, 30); // bulle orange
+radial2.addColorStop(0, '#ffc55c');
+radial2.addColorStop(0.9, '#ffa500');
+radial2.addColorStop(1, 'rgba(245,160,6,0)');
+
+var radial3 = context.createRadialGradient(105, 105, 20, 112, 120, 50); // bulle turquoise
+radial3.addColorStop(0, '#86cad2');
+radial3.addColorStop(0.9, '#61aeb6');
+radial3.addColorStop(1, 'rgba(159,209,216,0)');	  
+
+context.fillStyle = radial1;
+context.fillRect(10, 10, 130, 130);
+context.fillStyle = radial2;
+context.fillRect(10, 10, 130, 130);
+context.fillStyle = radial3;
+context.fillRect(10, 10, 130, 130);
+
+
+Pour faire des animations, c'est galere car les setTimeout et setInterval ne sont pas fait pour ca, du coup c'est pas super fluide
+du coup ya une nouvelle fonction
+requestAnimationFrame()
+
+
+genre 
+window.addEventListener('load', function() {
+var canvas  = document.querySelector('#draw');
+var context = canvas.getContext('2d');
+
+function draw(angle) {
+    context.save();
+    context.clearRect(0, 0, 150, 150);
+    context.translate(75,75);
+
+    context.fillStyle = "#8393f2";
+    context.rotate((Math.PI / 180) * (45 + angle));
+    context.fillRect(0, 0, 50, 50);
+
+    context.fillStyle = "#fe9378";
+    context.rotate(Math.PI / 2);
+    context.fillRect(0, 0, 50, 50);
+
+    context.fillStyle = "#8393f2";
+    context.rotate(Math.PI / 2);
+    context.fillRect(0, 0, 50, 50);
+
+    context.fillStyle = "#fe9378";
+    context.rotate(Math.PI / 2);
+    context.fillRect(0, 0, 50, 50);
+
+    context.restore();
+
+    angle = angle + 2;
+
+    if (angle >= 360) angle = 0;
+
+    window.requestAnimationFrame(function() { draw(angle) });
+}
+
+draw(0);
+
+});
+
+
+bon c'est pas mal la galere mais ya des frameworks qui existent pour simplifier le dessin en js
+notamment kineticjs
+
+
+
+====[l'API file]=====
+
+apparue avec html5
+
+today on ne peut pas ecrire un fichier sur un client
+on ne peut que lire sur un client ou lire/ecrire sur un serveur 
+
+on utilise une balise html5
+<input type="file" />
+==> ca fait un bouton parcourir
+
+puis on peut utiliser du js en appliquant a la balise un event "change"
+
+pour acceder a la liste des fichiers selectionnés on fait
+monInput.files = array avec tous les fichiers selectionnés (on peut en selectionner plusieurs avec la balise avec l'attribut multiple)
+
+
+l'objet (interface) blob
+c'est un objet disposant de données binaires en readOnly
+ils ont 2 proprietes 
+- size = taille en octet du fichier
+- type = type mime du fichier
+
+l'objet file, lui, 
+herite des attr et methodes de blob
+il a en plus 
+- name = nom du fichier
+- lastModifiedDate = date de derniere modification du fichier
+
+on a les objets FileReader 
+var fr = new FileReader();
+==> il permet la lecture asynchrone de fichiers grâce a 3 methodes
+- readAsArrayBuffer() = stocke les donnees dans un objet de type ArrayBuffer = permet le read et write de données binaires (tres utiles pour les trucs exigeants genre webGL)
+
+- readAsDataURL() = données converties en format dataURL = conversion des données binaires en base64 puis ecrites en char, complété du type/mime du fichier
+
+- readAsText() = la base
+
+
+(- readAsBinaryString() = pas w3c approved)
+
+concretement on fait
+reader.readAsText(file, 'UTF-8');
+reader.readAsText(file, 'ISO-8859-1');
+
+vu que c'est asynchrone on a differents events
+- loadstart = la lecture vient de commencer
+- progress = comme en xhr, il fournit un objet avec 2 attr, loaded et total avec le nombre d'octets lus
+- load = la lecture vient de se terminer avec succes
+- loadend = la lecture s'est terminée (succes ou faillure)
+- abort = si la lecture est interrompue (avec abort())
+- error = si ya eu une erreur, ca contient un objet FileError pour obtenir des infos
+
+enfin, l'objet fileReader possede une propriété analogue a readyState
+- EMPTY
+- LOADING
+- DONE
+
+du coup on peut faire des trucs genre
+if (reader.readyState === reader.LOADING) {
+  // La lecture est en cours...
+}
+
+
+du coup concretement pour lire des fichiers on fait 
+(function () {
+
+    var fileInput = document.querySelector('#file');
+    fileInput.addEventListener('change', function() {
+        var reader = new FileReader();
+
+        reader.addEventListener('load', function() {
+            alert('Contenu du fichier "' + fileInput.files[0].name + '" :\n\n' + reader.result);
+        });
+
+        reader.readAsText(fileInput.files[0]);
+    });
+})();
+
+
+====[l'api drag n drop]=====
+
+nouveauté html5 
+
+pour rendre un element draggable, on fait
+<machin draggable="true">
+
+(on peut rendre un truc draggable en js avec l'attr .draggable=true)
+
+ya 2 events de notre element 
+- dragstart = 
+- dragend = 
+
+on peut gerer tout ca avec l'objet DataTransfert
+
+cf la doc quand j'en aurais besoin
+
+
+===[frameworks connus]====
+
+- jQuery
+- MooTools 
+- Dojo
+- Yui
+- Prototype
+
+====[lib connues]====
+
+- Sizzle
+- Qwery
+- PopcornJS = simplification de l'utilisation des balises audio et video
+- Raphael
+- ThreeJS
+- Modernizr = pour la portabilité
+
+
+
+=====[deboggage]=====
+
+
+on peut ecrire dans la console avec les methodes
+console.log() ==> sortie standard
+console.warn() ==> sortie warning
+console.error() ==> sortie error
+
+il y a aussi les points d'arrets, 
+c'est genre on stoppe le programme a un moment
+c'est utile quand par exemple on a un bug qui ne dure qu'une fraction de seconde 
+
+par exemple, quand on fait des call stacks = piles d'execution quand on appelle des fonctions qui appellent des fonctions, 
+les points d'arret permettent d'etudier la call stack
+
+pour ca on va dans le debogger du browser, on fait ctrl+o pour ouvrir le fichier concerné par le deboggage, 
+puis on peut mettre des points d'arrets en cliquant sur une ligne donnée
+ensuite on recharge la page
+et alors on peut voir les valeurs des variables globales et celles du scope en cours 
+puis on peut reprendre l'execution du programme en cliquant sur lecture, etc
+
+on peut alors consulter la pile d'execution et checker la valeur de chaque variable
+
+
+
+on peut egalement utiliser l'inspecteur web
+ca permet d'etudier la structure html et le css associé a chaque element 
+ca permet de voir le dom a l'instant t et pas le code source de la page, donc voir les elements generes par du js
+
+on peut faire des points d'arrets lors de la modifications d'elements html 
+
+
+on peut egalement analyser les requetes
+c'est dans la partie network du debogger
+on a acces aux cookies, aux headers de requetes, les parameters, etc
+on peut aussi voir les delais de transmission 
+
+ca peut etre utile pour les bugs lies a la configuration des headers ou la mise en cache
+niveau delais on a
+- le temps d'envoi de la requete 
+- le temps d'attente entre la fin de l'envoi et le debut de la reception = temps de traitement serveur 
+- le temps de reception de la requete
+
+
+
+
+
+
