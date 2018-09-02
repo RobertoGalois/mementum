@@ -1,0 +1,166 @@
+====[introduction]=====
+
+c'est un fichier de configuration apache qui indique des commandes au serveur
+ca permet de creer des pw d'acces a des pages, de creer ses propres pages d'erreur (404, etc)
+
+un .htaccess agit sur le repertoire ou il est et les sous-repertoires
+
+si on a un .htaccess dans un sous-repertoire, les commandes "s'additionnent", cad que c'est comme si on avait toutes les
+commandes d'amont qui s'executent, puis toutes les commandes d'aval, si ya des commandes contradictoires, c'est la commande du
+fichier aval qui fait foi
+
+====[commentaires]===
+on commence la ligne avec #
+genre
+#youpi
+
+===[proteger un repertoire]====
+
+on fait 
+
+#Emplacement du fichier .htpasswd qui contient le mot de passe, on peut l'appeller .htpasswd ou .pouetpouet, question de convention
+AuthUserFile /CheminABSOLU/.htpasswd
+
+#Texte a afficher dans la boite de dialogue
+AuthName "Accès protégé"
+
+#methode d'autentification, ici c'est AuthUserFile ==> utilisation d'un fichier .htpasswd
+AuthType Basic
+
+#seul les utilisateurs identifiés sont autorisés, on peut citer des users specifiques si on veut restreindre l'acces a des personnes specifiques
+Require valid-user
+
+
+dans le fichier .htpasswd, on met
+user:pw
+user2:pw2
+user3:pw3
+etc
+
+il est recommandé de crypter le pw avec la fonction crypt() de php
+<a appliquer>
+
+REMARQUE: 
+sur mon truc, le fait de mettre les pw en clair ca ne fonctionne pas, 
+il faut generer le .htpassw avec la commande
+htpasswd -bc .htpasswd user pw 
+(option -c = ecrase le precedent fichier, pour rajouter des user / modifier un pw, on fait -b)
+
+ca genere le fichier htpasswd avec les pw cryptes en 
+bcrypt (version mod de md5), soit sah1, soit crypt() (routine systeme)
+
+
+remarque: pour les serveurs free, dans le .htaccess, il faut remplacer
+AuthUserFile
+par
+PerlSetVar AuthFile
+et les pw seront en plain text
+
+
+====[proteger un fichier]====
+dans le .htaccess, on met
+<Files test.php>
+AuthUserFile /exemple/.htpasswd
+AuthName "Accès restreint"
+AuthType Basic
+require valid-user
+</Files>
+en gros les balises definissent les fichiers auxquels s'appliquent les regles
+
+ATTENTION, on ne specifie qu'un fichier par balise, 
+sinon ca retourne une erreur, 
+
+ATTENTION, pour apache 1.3 on utilise
+FilesMatch
+plutot que 
+Files
+
+====[personnalisation des erreurs]====
+
+on fait comme ca
+ErrorDocument 401 /erreurs/erreur_401.php
+ErrorDocument 403 /erreurs/erreur_403.php
+ErrorDocument 404 /erreurs/erreur_404.php
+ErrorDocument 500 /erreurs/erreur_500.php
+
+en gros, si error xxx survient, redirect vers machin.php
+niveau codes d'erreurs courants, on a
+400 = bad request = mauvaise syntaxe
+401 = unhautorized = bad login/pw
+402 = ?
+403 = forbidden = acces au contenu interdit
+404 = not found = document non trouvé 
+500 = internal server error = erreur de script serveur ou autre, erreur interne quoi 
+503 = server unvailable = 
+
+===[changement de redirection vers l'index]===
+
+DirectoryIndex index.php index.html /erreurs/erreur_403.php
+==> si rien n'est précisé, redirection vers index.php
+==> si index.php n'existe pas, redirection vers index.html
+==> si index.html n'existe pas, redirection vers /erreurs/erreur_403.php
+
+
+====[AddType, ForceType et DefaultType]=====
+
+rappel sur le mime type, c'est un texte qui designe le type d'un document
+genre documenbt html, c'est
+text/html
+
+pour une image jpeg, c'est
+image/jpeg
+
+quand on charge un document sur un client depuis un serveur, 
+le serveur envoit le mime type
+"Content-type: image/jpeg"
+
+
+AddType application/acad dwg
+==> applique le mime type application/acad pour l'extension .dwg
+==> pratique pour changer un mode de fonctionnement predefini 
+
+ForceType image/jpeg
+==> applique le mime type image/jpeg sur TOUS LES FICHIERS du repertoire de l'htaccess
+
+DefaultType text/html
+==> tout mime type inconnu par le navigateur doit correspondre a un mime type text/html 
+
+
+====[mettre une page de maintenance]====
+
+on fait un .htaccess a la racine avec
+ErrorDocument 403 /maintenance.html 
+deny from all 
+allow from xx.xxx.xxx.xxx 
+<Files maintenance.html>
+allow from all
+</Files>
+
+==[limiter des operations permises]===
+
+avec les balises
+<Limit></Limit>
+
+plus ou moins annecdotique et unsecure avec les 
+<limit GET POST>
+==> poubelle a mon niveau
+
+
+
+====[modifier la config apache pour changer des trucs dans la facon de gerer .htaccess]=====
+
+le fichier de config est /etc/apache2/apache2.conf
+
+en principe, il faudrait configurer l'authentification des users sur le serveur principal plutot que d'utiliser des .htaccess
+normalement le .htaccess c'est uniquement si t'as pas acces au fichier de configuration
+
+pour activer l'utilisation de htacess on modifie les lignes en 
+
+
+pour changer le nom du fichier .htaccess pour le cacher un peu, on fait
+AccessFileName .config 
+au lieu de
+AccessFileName .htaccess
+
+cf documentation 
+https://httpd.apache.org/docs/2.2/fr/howto/htaccess.html
