@@ -1,0 +1,843 @@
+=====[introduction]=====
+
+c'est une lib concue pour simplifier l'ecriture de codes js et ajax
+cree en 2006 par john resig
+
+c'est la lib la plus utilisée a ce jour 
+la devise c'est write less, do more
+
+pour pouvoir utiliser jQuery dans notre page web on a 2 solution
+1) telecharger le fichier jquery.js sur le site officiel et l'include dans la page html avec une balise <script>
+   ==> on recommande alors de mimifier le code pour qu'il prenne moins de place (google closure compiler ou YUI Compressor)
+
+2) l'integrer dans une balise script avec un lien vers le site officiel, mais il faut une connexion internet, on ne pourra pas
+   utiliser notre page web en hors connexion
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+===[c'est parti]====
+
+on a la fonction jQuery(), qui est l'equivalent de querySelectorAll(), qui a un alias $()
+attention si on utilise plusieurs lib qu'il n'y ai pas de conflit
+pour eviter ces conflits et ne pas utiliser l'alias, on fait
+jQuery.noConflict();
+
+Apres si on veut utiliser quand même le $ plutot que le kw jQuery, on a cette astuce: 
+vu qu'on a le droit de nommer une variable "$", on peut faire
+(function($) {
+  // code avec $
+})(jQuery); //==> izi
+
+
+jQuery ca sert a manipuler le dom, donc il faut commencer a faire des trucs une fois qu'il est chargé sinon ca peut foutre la merde
+
+donc on fait comme ca
+jQuery(document).ready(function () {
+
+{);
+
+c'est un peu comme faire
+window.addEventListener("load", function () {
+
+});
+
+avec les alias, onm peut resumer à
+$(document).ready(function () {
+
+});
+
+ET vu que $(document).ready() a pour alias $()
+on peut egalement faire
+$(function () {
+
+});
+
+
+du coup
+jQuery(function () { });
+ou directement
+$(function () { });
+= permet d'executer du code en etant sur de le faire quand la page est chargée.
+
+pour modifier le innerHTML, on fait
+monElementJQuery.html("code html");
+
+genre
+$("div#content").html("coucou<br />ca va ??");
+=
+jQuery("div#content").html("salut toi");
+
+equivalent a
+window.document.querySelector("div#content").innerHTML = "salut toi";
+
+
+on peut egalement modifier les proprietes css en faisant
+el.css("property", "value");
+genre
+el.css("border", "black 1px solid");
+
+====[la fonction jQuery() en detail]====
+
+en gros elle peut prendre differents parametres
+- une string = selecteur css3 ==> renvoit un objet jquery correspondant a l'element du dom (c'est pas un element du dom,
+mais bien un objet). Si cet element n'existe pas, ca renvoit un objet vide {}
+
+- une fonction = fonction a executer quand l'element document est ready
+
+- un element html = element du dom, la fonction retourne l'objet jQuery correspondant
+	(pour convertir un element jQuery en element DOM, on fait elJQ.get(). Si yen a plusieurs, ca return un array)
+
+- une string = contenant des balises html = retourne un objet jqery correspondant a l'element html, pour pouvoir l'ajouter dans un autre element jquery par 
+
+
+les objets jQuery sont des objet qui se comportent comme des collections, contenant les elements du dom selectionnés
+et des methodes qui seront appliquées a tous les elements dom de la collection
+
+
+
+====[rappel des selecteurs css3]=====
+
+[attr] => l'element a un attribut attr
+[!attr] => l'element a pas d'attribut attr
+[attr=val] => l'element a un attribut attr de valeur val
+[attr*=val] => l'element a un attribut attr de valeur CONTENANT partiellement ou totalement val
+[attr~=val] => l'element a un attribut attr de valeur contenant val séparé par des espaces
+[attr$=val] => l'element a un attribut attr de valeur se terminant par val
+[attr^=val] => l'element a un attribut attr de valeur commencant par val
+[attr!=val] => l'element a un attribut attr de valeur differente de attr, ou pas d'attribut attr
+
+ya aussi des selecteurs hierarchiques: 
+p > e => p descendant directe de e
+p + e => elements e directement precedes d'un element p
+p ~ e => elements e precedes d'un element p = freres de p
+e:empty => element sans enfant
+e:first-child => premier enfant
+e:first => premier element de la selection
+e:last-child => dernier enfant
+e:last => dernier element de la selection
+e:nth-child(i) => i-ieme enfant du parent
+e:only-child => elements enfant unique du parent
+e:eq(n) => nieme element de la selection
+
+On peut egalement utiliser des pseudo-selecteurs d'élements selectionnés
+genre pour filtrer la selection, genre
+p:even = tous les p d'index pair
+p:odd = idem mais impair
+p:eq(i) = element d'index i
+p:gt(i) = elements d'index > i
+p:lt(i) = element d'index < i
+p:contains("texte") = element contenant un #text avec le mot "texte"
+p:has("texte") = element qui a un textnode en enfant contenant le texte en question
+
+
+
+ya aussi des selecteurs particuliers genre 
+:header = tous les <h1-6>
+:hidden = tous les elements cachés ==> ?
+:visible = elements visibles => ? 
+:not('property') = elements qui ne sont pas l'element specifié (genre e:not('.maClass'))
+
+:input = tous les elements de formulaires genre input, textarea, select, button, ...
+:button = button et input type button
+:checkbox = 
+:checked = element checked
+:radio
+:reset = input reset
+:image = boutons de type image
+:submit = input submit
+:text = input text
+:password = input password
+:selected = elements selectionnés
+:focus = element quand s'il a le focus
+:enabled = elements validés
+
+
+===[la methode each]====
+c'est une methode d'un objet jQuery
+en gros ca permet d'appliquer une fonction a chaque element selectionné
+genre
+$("p").each(function () {
+	this.css("color", "red");
+});
+
+equivalent à
+var paraphs = window.document.querySelectorAll("p");
+
+for (var i = 0, lim = paraphs.length; i < lim; i++)
+{
+	paraphs[i].style.color = "red";
+}
+
+====[les getters et setters]====
+
+Les getters et setters ont le meme nom, mais 
+- si on lui passe qu'1 param, c'est un getter
+- si on lui en passe 2, c'est un setter
+
+en gros
+el.css("border-color"); //renvoit la valeur de la propriété
+el.css("border-color", "black");
+
+ou el.attr()
+
+avec le setter on peut, pour le second arg, passer 
+- une str = valeur de la propriété
+- une fonction.
+
+On peut egalement, passer un seul argument qui sera une hashtable avec
+- cle = attribut
+- valeur = valeur 
+
+bien entendu, c'est comme pour la methode setAttribute(), on le modifie si existant, sinon on le crée
+
+pour ajouter une classe on fait
+sel.addClass("nomClasse");
+
+pour en retirer une on fait
+sel.removeClass("laClasse");
+
+si la classe existe, elle est del, sinon elle est add
+sel.toggleClass("nom");
+
+pour savoir si un element fait partie d'une classe on fait 
+el.hasClass()
+
+pour ces 3 fonctions on peut mettre plusieurs classes dans la meme str, separees par un espace
+
+on peut utiliser des getters et setters pour les form
+
+$("nom").val() = lit le contenu du inputText, si c'est un checkBox c'est  true/false
+et
+$("nom").val("merde");
+
+c'est comme faire
+window.document.querySelector("nom").value = "merde";
+(remarque, setAttribute modifie le DOM, .propriete, non)
+
+Pour selectionner un bouton radio de valeur "H" on fait
+$(':radio').val(['H']);
+
+
+Pour choper le innerText/textNode, on fait 
+sel.text()
+(si ya plusieurs elements dans sel, ca return la concat de toutes les chaines)
+
+pour le innerHTML on fait
+.html()
+(si ya plusieurs elements dans le sel, ca ne traite que le premier)
+
+
+====[gestion de la position et de la taille des elements]====
+
+pour avoir la position absolue d'un element, on fait
+el.offSet(); //renvoit un objet avec un attribut top et un left
+
+equivalent a the old way
+function getOffset(element)
+{
+	var top = 0,
+	var left = 0;
+
+	do 
+	{
+		top += element.offsetTop;
+		left += element.offsetLeft;
+        } while (element = element.offsetParent);
+
+        return {
+            top: top,
+            left: left
+        };
+}
+
+
+
+pour avoir la position relative, on fait
+el.position();	//idem, QUE GETTER
+==> c'est pareil que el.offsetTop et el.offsetLeft
+
+ensuite, on peut connaitre le width de l'element (taille sans compter le margin et le padding) en faisant
+.width() //retourne un nombre
+ou 
+.css("width"); //retourne une chaine "npx"
+
+on aussi
+el.innerWidth() ==> largeur incluant le padding left et right
+
+el.outerWidth(true) ==> largeur totale, avec le margin, le padding et le border
+equivalent en natif a
+monElement.offsetWidth
+
+idem pour 
+el.height()
+el.innerHeight()
+el.outerHeight() (equivalent a monElement.offsetHeight)
+
+====[associer des données aux balises]====
+
+On peut associer une hashtable à un element jQuery, en faisant
+jQuery.data(elDOM, "key", "value");
+cad
+$.data(elDOM, "key", "value");
+
+ou tout simeplement
+monElJQ.data("key", "value");
+
+==> ces données sont supprimées lors du retrait de l'element du DOM
+
+pour supprimer des entrées. on fait
+jQuery.removeData(elDom, "key")
+cad
+$.removeData(elDom, "key");
+
+ou tout simplement
+elJQ.removeData("key");
+ 
+====[insertion et remplacement d'elements dans le dom]===
+
+on a differentes methodes
+sel.append("strHTML"); // en dernier parmis les enfants
+sel.prepend("strHTML"); // push_front
+sel.before("strHTML"); //insere avant la selection
+sel.after("strHTML"); //insere apres la selection
+
+On peut egalement remplacer les elements, genre
+sel.replaceWith("strHTML");
+ATTENTION, ca remplace l'element ET SON CONTENU
+Si on veut garder le contenu et juste changer le contenant, il faut faire un truc du genre
+sel.each(function(){
+  var el = $(this);
+  el.replaceWith('newEL');
+});
+
+
+on a egalement la possibilité de faire
+elAInserer.appendTo(cible);
+elAInserer.prependTo(cible);
+elAInserer.insertBefore(cible)
+elAInserer.insertAfter(cible);
+
+elAInséré peut être 
+- une strHTML, genre $("<hr>")
+- un objet JQ
+
+
+pour deplacer des elements, il suffit d'utiliser les methodes en mettant en argument l'objet JQ correspondant a l'element a deplacer
+genre
+elREF.append(elADeplacer);
+ou 
+elADeplacer.appendTo(elREF);
+
+
+Pour dupliquer un element, on fait
+elJQ.clone();
+en antif c'est
+elDOM.cloneNode(bool); //true pour cloner les enfants, false pour avoir des refs sur les memes enfants, ca ne clone pas les events
+
+
+on a aussi la methode
+elJQ.wrap("strHTML"); pour entourer notre elJQ par une balise html 
+genre 
+$("p").wrap("<i></i>");	(on aura <i><p>pouet</p></i>)
+
+on a aussi
+elJQ.wrapInner("<i></i>"); pour entourer le contenu de la selection (on aura <p><i>pouet</i></p>)
+
+Si ya plusieurs elements dans sel, ca va les wrapper chacun
+si on veut wrapper l'ensemble dans une balise on fait 
+sel.wrapAll("<pouet></pouet>");
+
+
+Enfin, pour supprimer un element du dom, on fait 
+sel.remove();
+equivalent au natif
+elementDOM.parentNode.removeChild(element);
+
+
+====[les events avec jQuery]====
+
+pour un element surligné avec la souris, on fait
+sel.hover(function () {});
+
+pour cacher un element, on fait (ca fait un display none)
+sel.hide();
+et pour le faire reapparaitre
+sel.show();
+
+
+
+====[les evenements]======
+
+sel.click(function) = click, pour savoir quel bouton a été utilisé, on a e.which (1 = g, 2 = c, 3 = droit)
+sel.dblclick(function) = double click gauche
+sel.mousedown(function) = mouseDown du click gauche ou droit
+sel.mouseup(function) = l'inverse
+sel.mouseenter(function) = debut du survol
+sel.mouseover(function) = idem
+sel.mouseleave(function) = arret de survol
+sel.mouseout(function) = idem
+sel.mousemove(function) = deplacement du curseur au dessus de l'element
+sel.scroll(function) = scroll de la molette
+sel.keydown(function) = pas de difference entre maj et min
+sel.keyup(function) = idem
+sel.keypress(function) = (on a la touche en faisant e.which = code ascii, convertible en char avec String.fromCharCode())
+sel.focus() = focus sur l'element
+sel.blur() = perte du focus sur l'element
+sel.focusin() = focus sur l'element ou un de ses enfants
+sel.focusout() = perte du focus sur l'element ou l'un de ses enfants
+sel.resize() = redimensionnement d'un element 
+sel.change() = modification d'un element 
+
+$(window).load() = une fois la page chargée
+$(window).unload() = quand on change de page 
+
+Sinon ya une methode generique
+sel.on("event", function)
+
+L'avantage de cette fonction est de pouvoir: 
+- associer une meme methode a plusieurs evenements
+==> on fait
+sel.on("event1 event2" function);
+
+- relier plusieurs methodes a un event
+==> on fait <comme en dessous>
+
+- associer differentes a differents events en une seule ligne
+==> on fait 
+sel.on(event: function, event2: function);
+
+- desactiver une methode event
+==> on fait
+sel.off("event", reference a la fonction)
+(si c'est une function anonyme)
+pour tout desactiver pour un meme event, on fait=
+sel.off("event"); //attention car si on utilise des plugins, il peut y avoir des events qu'on ne connait pas
+
+pour eviter les emmerdes, il est possible de creer des namespace pour les events, en faisant
+sel.on("click.mesTrucs", function);
+et du coup pour supprimer sans jouer sur les autres, faire
+sel.off("click.mesTrucs");
+ou, si ya plusieurs namespaces
+sel.off("click.n1.n2.n3);
+
+Et pour supprimer tous les events d'un namespace on fait 
+sel.off(".nameSpace");
+ou si yen a plusieurs
+sel.off(".n1.n2.n3);
+
+
+
+pour faire un event unique = ayant lieu une premiere fois et puis c'est tout
+on fait (c'est la methode one et pas on) 
+sel.one("event", function);
+
+
+Il est possible de declencher un event sans le concours de l'utilisateur (genre simuler un click sur on bouton pour que
+toutes les fonctions liées à cet event soient executées). Pour ca on fait: 
+
+sel.trigger("event");
+==> ca ne fonctionne que pour
+- blur
+- change
+- click
+- dblclick
+- error
+- focus
+- keydown
+- keypress
+- keyup
+- select
+- submit
+
+le truc interessant avec ca, c'est qu'on peut passer une variable supplementaire à la methode pour savoir ce qui a declenché l'event
+genre
+sel.click(function (e, declencheur) {});
+
+sel.trigger("click", "automatique");
+
+==> si le user clique sur sel, declencheur vaut undefined, sinon si l'event est déclenché automatiquement, il vaut "automatique".
+==> on peut passer autant de variables qu'on veut
+
+
+Il est possible de creer nos propres events en faisant
+sel.on("monEvent", function);
+
+et d'associer l'event a un ou plusieurs events (genre clique)
+sel.click(function (e) {
+	sel.trigger("monEvent", "auto")
+})
+
+
+
+la delegation d'event
+---------------------
+
+en gros ca permet d'affecter le meme event a un ensemble d'enfants de sel et a sel lui-meme.
+
+plutot que d'attacher un gestionnaire d'event a a chaque element inséré, on peut definir un listener sur le parent
+
+sel.on("event", "selector_des_enfants_de_sel", function);
+
+pour supprimer une delegation d'event on fait 
+sel.off("event", sel)
+
+
+
+====[animations et effets]========
+
+on peut faire apparaitre et disparaitre des elements jq avec
+.show()
+et 
+.hide()
+(ca fait un display / none)
+
+on a aussi
+fadeIn()
+fadeOut()
+fadeTo(time, value) = set l'opacity a une valeur donnée
+slideDown() = fait appparaitre en deroulant l'element vers le bas
+slideUp() = le fait disparaitre en l'enroulant vers le haut
+slideToggle() = slideUp s'il est affiché, slideDown sinon
+
+
+sans arg, ca fait directement, 
+pour le faire le progressif on peut mettre une durée en ms
+ou une str ("fast"= 200ms, "slow" = 600ms)
+==> ca fait par une opacité allant vers le 0, ca fait genre comme un reduce
+==> pour le truc d'opacity faut faire fadeOut()
+
+on peut redefinir les valeurs de fast et slow en faisant
+jQuery.fx.speeds.slow = 1500;
+jQuery.fx.speeds.fast = 100; // par exemple
+
+On peut passer un 2e argument, une string, correspondant au modele de progression
+"swing"= par defaut
+"linear" = progression linaire
+==> il existe d'autres modeles de progression qu'on peut utiliser avec des plugins jquery
+
+on peut egalement passer en argument une fonction callback
+ca peut permettre de faire des disparitions en cascade en utilisant les methodes .first et .next
+avec un truc du genre
+$(".content").first().hide(400, function hideNextOne() {
+            $(this).next().hide(400, hideNextOne);
+});
+
+
+pour activer les animations dans l'interface, on fait
+jQuery.fx.off = false;
+pour les desactiver on fait 
+jQuery.fx.off = true;
+
+
+pour mettre un delais avant le declenchement d'une animation, 
+on chaine un delay(timems).anim();
+
+
+Enfin, on peut faire des animations personnalisées avec animate()
+$('sel').animate({ prop1: val1, prop2: val2, prop3: val3, etc. }, durée, modèle, function() {
+  //Une ou plusieurs instructions
+});
+
+==> les données specifiées dans le premier arg peuvent etre
+- litterales
+- string
+- relatives = +=100 par exemple
+- pourcentage
+==> on peut utiliser le kw toggle pour ivnerser l'animation
+
+il existe egalement cette syntaxe
+$('sel').animate({ prop1: val1, prop2: val2, prop3: val3, etc. }, {options});
+
+duration : durée de l'animation (entier en millisecondes ou chaîne fast, normal ou slow) ;
+easing : modèle de progression de l'animation (swing, linear ou un modèle issu d'un plugin) ;
+complete : fonction appelée lorsque l'animation est terminée ;
+step : fonction appelée à chaque étape de l'animation ;
+queue : valeur booléenne qui indique si l'animation doit (true) ou ne doit pas (false) être placée dans une file d'attente réservée aux animations. Si la valeur false est attribuée à cette propriété, l'animation démarre immédiatement. Dans le cas contraire, elle est en attente de déclenchement.
+specialEasing : un ou plusieurs couples propriétés CSSmodèle de progression.
+
+
+====[Files d'attentes et timer]===
+
+En fait, quand on lance une animation, elle se place dans une queue
+genre si on fait 
+sel.animate(machin).animate(truc);
+
+ca va d'abord faire l'animation machin, puis l'animation truc une fois que l'animation machin est terminée
+Le truc c'est que
+- c'est pas un soucis si on veut effectuer les 2 animations avec la meme vitesse, il suffit de mettre toutes les propriétés 
+dans l'argument d'une seule methode animate
+
+- C'est un soucis si on veut que les 2 animations aient lieu mais avec une vitesse differente
+==> pour ca on fait 
+$('img').animate({ 'border-width': '100'}, { queue: false, duration: 1500 }).animate({ 'width': '-=100'}, 1500);
+= en gros on specifie dans le 2e arg, queue: false et voila ca le fait en asynchrone.
+
+
+Pour connaitre l'état de la file d'attente on fait
+sel.queue();
+= retourne un array contenant la liste des animation encore a executer
+
+
+on peut stopper les animations en cours, 
+sel.stop(bool, bool2);
+
+bool1 = si on supprimer dans la foulée les animation de la queue()
+bool2 = si on met le sel dans son etat final comme si toutes les animations avaient ete menées a leur terme
+
+
+===[texte et image]===
+
+on a la fonction $.trim() = jQuery.trim(),
+equivalent natif de "machaine".trim();
+
+bon osef
+
+==[la fonction jQuery.grep() = $.grep()]===
+
+array jQuery.grep( array, function(el, indx) [, invert ] )
+
+en gros ca prend un array et une fonction (a laquelle grep passe 2 args, 
+l'element actuellement parsé et son index, et qui retourne un bool
+invert est un bool, true = retourner tous les elements pour qui la fonction param retourne false
+                    false = default = retourner tous les elements pour lesquels la fonction param retourne true
+
+en gros, c'est un peu comme la methode native 
+monArray.filter(function)
+
+===[la fonction $.map()]==
+
+array jQuery.map( array, callback(el, indx) ); 
+
+en gros ca recopie une partie ou la totalite du tableau en lui appliquant une fonction
+la fonction doit retourner un element
+
+on peut faire jQEl.map(function);
+
+===[$.merge()]===
+
+on fait $.merge(arr1, arr2)
+
+retourne un array ayant fusionné arr1 suivi de a2
+
+semblable au natif
+arr1.concat(arr2);
+
+===[$.inArray()]====
+
+on fait
+var position = $.inArray('valeur', tableau, index)
+
+c'est comme faire en natif
+monArray.indexOf(valeur);
+
+
+===[ajax]====
+
+on a
+$('sel').load('nom_page', function() {
+  //callback
+});
+
+ou alors, pour ne selectionner qu'une seule partie du fichier, faire
+$('sel').load('nom_page sel2', function() {
+  //Une ou plusieurs instructions
+});
+
+et du coup ca fill 'sel' avec la response
+
+le prototype complet c'est
+el.load( url [, data ] [, complete ] )
+ou data c'est un objet qu'on peut envoyer au serveur
+complete c'est une fonction callback du type
+f( String responseText, String textStatus, jqXHR jqXHR )
+
+le truc le plus safe c'est de faire
+$('sel').load('nom_page', function(responseText, textStatus, jq) {
+    if ()
+});
+
+
+En gros c'est analogue a
+xhr = new XMLHTTPRequest();
+xhr.open("GET", "url");
+xhr.addEventListener('load', function() {
+    if (xhr.status >=200 && xhr.status < 400) {
+        monElement.innerHTML = (xhr.responseText);
+    }
+});
+
+xhr.send(data);
+
+Il y a une autre forme qui est
+$('sel').load('http://www.site.com/page.php',{ id:50, nom: 'durand'});
+==> envoi en POST
+
+c'est analogue a
+xhr = new XMLHTTPRequest();
+xhr.open("POST", "url");
+xhr.addEventListener('load', function() {
+    if (xhr.status >=200 && xhr.status < 400) {
+        monElement.innerHTML = (xhr.responseText);
+    }
+});
+
+
+C'est un peu abscon, du coup on a les methodes
+$.get() = load avec une methode get
+$.get(adresse, données, Function( PlainObject data, String textStatus, jqXHR jqXHR ) {
+  // Une ou plusieurs instructions
+});
+
+
+$.post() = load avec une methode post
+$.post(url, datas, Function( PlainObject data, String textStatus, jqXHR jqXHR ) {
+});
+
+ENFIN, il y a la methode
+$.getScript()
+qui permet de recuperer du code js via get et de l'executer
+
+
+On peut recuperer du JSON en faisant
+$.getJSON("url", Function( PlainObject data, String textStatus, jqXHR jqXHR ))
+où data est l'objet js correspondant a l'objet json.
+
+en gros ca get, ca JSON.parse(data) et ca permet de faire des trucs avec
+
+
+Enfin, on a la methode
+$.ajax(url, {options})
+où les options peuvent etre
+url : adresse à laquelle la requête doit être envoyée.
+type : type de la requête, GET ou POST (GET par défaut).
+data : données à envoyer au serveur.
+dataType : type des données qui doivent être retournées par le serveur : xml, html, script, json, text.
+success : fonction à appeler si la requête aboutit.
+error : fonction à appeler si la requête n'aboutit pas.
+timeout : délai maximum (en millisecondes) pour que la requête soit exécutée. Si ce délai 
+
+genre par exemple
+$.ajax({
+            type: 'GET',
+            url: 'proverbes.php?l=7',
+            timeout: 3000,
+            success: function(data) {
+              alert(data); },
+            error: function() {
+              alert('La requête n\'a pas abouti'); }
+          });    
+        });
+
+on a egalement des event sur document qu'on peut capter lorsqu'on lance des requetes ajax, genre
+$(document).ajaxSend(function(ev, req, options)) = requete sur le point d'etre envoyee
+$(document).ajaxStart(function()) = debut d'execution de la requete
+$(document).ajaxStop(function()) = fin de la requete 
+$(document).ajaxSuccess(function(ev, req, options)) = requete a aboutie
+$(document).ajaxComplete(function(ev, req, options)) = requete terminée 
+$(document).ajaxError(function(ev, req, options, erreur)) = requete n'a pas aboutie
+
+
+
+===[utilisation de plugins]===
+
+en gros il existe pleins de plugins jquery et ca vaut plus le coup d'en utiliser plutot que de tout
+faire a la main, car
+- probablement plus securisé
+- moins de temps passé à produire
+
+
+
+
+====[jquery UI]====
+
+ca permet de faire des GUI sans avoir a tout recoder, tres utile
+on peut rendre draggable un element en faisant
+monEl.draggable();
+
+on peut rendre un element redimensionnable en faisant
+monEl.resizable();
+
+on peut faire un systeme d'accordeon on faisant
+<div id="accordeon">
+  <h3><a href="#">Titre du bloc 1</a></h3>
+  <div>Contenu du bloc 1</div>
+  <h3><a href="#">Titre du bloc 2</a></h3>
+  <div>Contenu du bloc 2</div>
+  etc.
+</div>
+ 
+puis
+$("#accordeon").accordion();
+
+(il faudra aussi inclure le css de la lib pour qu'elle mette la petite icone dedans)
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/base/jquery-ui.css">
+
+on peut aussi faire un datepicker sur un input text (mais le format est a l'americaine)
+monEl.datepicker();
+pour mettre le calendrier un fr on fait
+
+$.datepicker.regional['fr'] = {
+  closeText: 'Fermer',
+  prevText: 'Précédent',
+  nextText: 'Suivant',
+  currentText: 'Aujourd\'hui',
+  monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+  monthNamesShort: ['Janv.','Févr.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'],
+  dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+  dayNamesShort: ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.'],
+  dayNamesMin: ['D','L','M','M','J','V','S'],
+  weekHeader: 'Sem.',
+  dateFormat: 'dd/mm/yy',
+  firstDay: 1,
+  isRTL: false,
+  showMonthAfterYear: false,
+  yearSuffix: ''};
+
+$.datepicker.setDefaults($.datepicker.regional['fr']);
+
+On peut en faire des boites de dialogue aussi en faisant
+monEl.dialog();
+et apres on peut changer des trucs, cf la doc
+
+
+on peut aussi faire des tabs
+monEl.tabs();
+cf la doc
+
+en fait
+cf la doc
+
+
+====[creer son propre plugin]=====
+
+jquery est bien foutu pour rendre la creation de plugins facile 
+
+En gros, pour ajouter une methode gis() a l'objet jq, on fait
+jQuery.fn.gis = function(param1, param2, param3, …)
+{
+  // Une ou plusieurs instructions JavaScript
+}
+
+et on pourra faire
+$("el").gis();
+
+
+Alors le truc c'est qu'il peut y avoir des conflits entre des lib jq voire des lib js
+du coup ne pas hesiter a utiliser jQuery.noConflict();
+
+un truc aussi, par convention, les methodes jq retournent l'objet jq qui a appellé la fonction, ce qui permet de chainer les fonctions
+
+du coup, quand on code des nouvelles fonctions avec
+$.fn.maFonction = function () {};
+ne pas oublier de return (this);
+
+
+
+
+
+
+
+
+
+
+
+
