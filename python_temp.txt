@@ -1,0 +1,1360 @@
+introduction 
+------------
+
+python est un langage de programmation sorti en 1991
+créé par Guido van Rossum,
+
+au depart c'était sur le mac du gars, et au bout d'un moment ya eu la Python Software Foundation, créée en 2001
+qui etait une communauté tres active autour de ce langage
+
+le nom est un hommage aux monty python
+
+avec python on peut faire
+- des scripts
+- des programmes complets genre des jeux, des suites bureautiques, des logiciels multimedias, des clients de messagerie, etc
+- des projets tres complexes comme des progiciels (ensemble de logiciels fonctionnant ensemble)
+
+on peut ainsi faire tout un tas de trucs, genre des GUI, faire circuler des infos a travers le reseau, dialoguer de facon 
+avancée avec l'os, etc
+
+c'est un langage interprété, portable.
+
+il y a differentes versions de python, 
+avec la creation de la python software foundation, on a eu les versions 2.1, 2.2, etc = 2.x
+depuis le 13 fevrier 2009, la version 3.0.1 est dispo, c'est python 3
+==> c'est mieux, mais ca CASSE LA COMPATIBILITÉ ASCENDANTE
+
+sous linux, quand on execute un script python
+python coucou.py, 
+python c'est sous-entendu python2.7
+on le voit quand on fait python -V
+
+pour utiliser python 3.5, on fait 
+python3.5 coucou.py
+==> on peut bien sur changer ca en modifiant les alias
+
+on peut aussi faire une directive en haut du fichier pour l'executer directement, genre
+#!/usr/bin/python2.7
+ou 
+#!/usr/bin/python3.5
+
+puis faire un chmod 7xx du fichier .py et
+./monFichier.py
+et voila
+
+
+utilisation de python en mode interpreteur
+------------------------------------------
+
+si on fait 
+2.08 + 3.11
+on aura
+5.18999999999999999995
+et non pas 5.19 comme ca devrait etre le cas, du fait de la reprensentation des nombre float en memoire
+
+pour les operations de division, il y a 2 operateurs
+/ = prend 2 int et retourne un float 
+// = prend 2 int et retourne un int = division entiere = partie entiere du resultat
+
+** = puissance, genre 2**3
+
+utilisation de python en mode fichier
+-------------------------------------
+
+on cree monFichier.py
+on met au debut
+# -*-coding:Utf-8 -*
+
+les variables
+-------------
+
+pour mettre des commentaires, on fait
+#commentair
+
+pour declarer une variable on fait 
+maVariable = valeur
+
+le nom de la variable
+- de lettres, chiffres et _
+- ne peut pas commencer par un chiffre
+- case sensitive
+
+sinon par convention on a la syntaxe
+coucou_toi
+ou en camlCase
+
+il y a des types de données en python 
+- int = 5
+- float = 5.0
+- String = 'machin' = "machin" = """machin""" => on a le caractere d'echappement \'
+            => pour faire un retour a la ligne, on fait \n
+            => l'utilisation des """ permet d'écrire des chaines sur plusieurs lignes sans avoir a symboliser les \n, genre
+               test = """salut
+                         toi"""
+
+
+on peut permutter la valeur de variables, genre
+a,b = b,a
+
+on peut affecter une meme valeur a plusieurs variables
+a = b = 35
+
+on peut ecrire une instruction sur plusieurs lignes
+test = 1 + 2 \
++3 + 4
+
+
+pour supprimer une variable, on fait
+del (variable)
+
+
+les fonctions
+-------------
+
+on les appelle comme ca 
+fonction(param1, param2, ...)
+
+il existe une fonction type(var) qui renvoit le type de la variable passée en parametre
+
+avec la methode print, on peut concatener les chaines en faisant
+print("a =", a, "et b =", b)
+==> ATTENTION, quand on met une virgule, ca met un espace !
+
+sinon on peut faire comme ca
+print("a = {0} et b = {1}".format(a , b))
+
+ya aussi l'option d'utiliser un format a la printf
+genre 
+print('a = %d et b = %d' % (a, b))
+
+
+
+la definition de print est la suivante
+def print(*values, sep=' ', end='\n', file=sys.stdout):
+on peut changer cela en nommant les parametres après la liste des elements a afficher
+
+on les definit comme ca:
+
+def nomFonction(param1, param2, param3=valeurDefaut): #NE PAS OUBLIER LES 2 POINTS !
+	code
+	code
+
+Il faut respecter l'ordre des paramètres lors de l'appel, 
+si on ne veut pas les respecter, il faut les nommer comme dans le prototype, genre
+nomFonction(param2=3, param1=4)
+
+remarque: en python, comme le prototype d'une fonction ne precise pas le type des parametres
+une signature d'une fonction est juste son nom
+
+si on defini une nouvelle fonction avec le meme nom d'une precedente, ca ecrase l'ancienne definition
+
+pour retourner une valeur on fait 
+return (valeur)
+
+
+on peut aussi faire des fonctions lambda
+lambda arg1, arg2, ..., argn : (valeur retournée)
+
+pour l'appeller, il suffit de stocker notre fonction dans une variable, genre
+f = lambda arg1, arg2, ..., argn : (valeur retournée)
+
+f(1, 2, ..., n)
+
+
+on peut faire des variables qui pointent sur des fonctions, genre
+print_2 = print
+
+
+
+
+
+
+
+les fonctions de la lib standard
+--------------------------------
+input("chaine") = c'est comme un std::getline(); mais avec un message d'introduction ==> du coup ca input une string et pas autre chose ==> faudra caster ensuite si besoin
+str(valeur) = equivalent de itoa()
+int(string) = equivalent de atoi()
+float(valeur) = equivalent de atof et itof()
+range() 
+	range(int a) = renvoit une sequence des nombres 0, 1, 2, ..., (a-1) ==> sequence de nombres [0, a[ A NON COMPRIS !
+	range(int a, int b) = renvoit une sequence des nombres a, a+1, a+2, ..., (b-1) ==> sequence de nombres [a, b[ B NON COMPRIS
+	range(int a, int b, int c) = renvoit une sequence des nombres a, a+c, a+2c, a+3c, ..., ((a + nc) < b)
+
+les structures conditionnelles 
+------------------------------
+
+pour le if, on fait
+if (condition):
+	instructions
+
+elif (condition):
+	instruction
+
+else:
+	instruction
+
+
+en operateurs de comparaison on a 
+==
+!= 
+> 
+< 
+>=
+<=
+
+au niveau des predicats, on a
+True
+False
+
+au niveau des operateurs binaires on a 
+and 
+or
+not
+is = teste l'égalité des references, en gros ca ne teste pas si les 2 valeurs sont égales mais si les 2 variables sont les mêmes
+     genre, i = 3 et ptr = &i; i is ptr renvoit true, ou si les 2 variables renvoient vers la meme adresse memoire
+in = teste si un element est present au moins une fois dans un ensemble
+
+
+
+
+
+
+les boucles
+-----------
+
+while (condition):
+	instruction
+	instruction
+	instruction
+
+for element in sequence: #PAS DE PARENTHESE SINON CA MARCHE PAS
+	instruction
+	instruction
+	instruction
+
+en fait, ici le for est un for_each qui travaille sur les listes, et non pas le for qu'on connait en C, java, php, etc
+en fait les string sont des sequences de char
+
+On peut faire
+for char in "coucou"
+	print(char)
+
+Pour faire nos for qu'on connait, on peut générer les sequences avec range()
+
+remarque, on peut utiliser le kw in pour generer un boolean, genre
+lettre = 'a'
+if (lettre in "aeiou")
+	print("voyelle")
+
+on a egalement les kw
+break = arrêt de la boucle
+continue = repartir au début du tour de boucle
+
+la modularité
+-------------
+
+un module c'est un bout de code dans un fichier, c'est a dire des fonctions et des variables ayant un rapport entre elles
+pour importer un module on fait
+import monModule
+puis pour appeller une fonction du module monModule, on fait
+monModule.maFonction()
+
+pour avoir des infos sur un module, dans la consol python on fait
+help("nomModule")
+
+pour avoir des infos sur une fonction donnée on fait
+help("monModule.maFonction")
+
+en realité, quand on import monModule, ca cree un namespace monModule
+ca permet d'avoir malgré tout des fonctions de meme nom que dans l'autre namespace
+
+si jamais on voulait changer le namespace, on ferait
+import monModule as monSuperModule
+
+Si on ne voulait importer qu'une seule fonction d'un module, on fait
+from monModule import maFonction
+mais du coup on l'appelle directement
+maFonction()
+et non monModule.maFonction()
+
+
+si on veut importer un fichier qu'on a fait nous meme, on fait 
+from monFichier import maFonction
+ou pour importer toutes les fonctions 
+from monFichier import *
+==> on ne peut pas faire import monFichier, je ne sais pas pourquoi
+
+et apres on appelle la fonction directement
+maFonction()
+==> plus de namespace, logique vu qu'on importe la/les fonction.s et pas le fichier en tant que module comme pour les modules
+
+en fait, au moment d'importer le module, Python va lire (ou creer s'il n'existe pas)
+un fichier .pyc
+à partir de la version 3.2, ce fichier se trouve dans le repertoire
+__pycache__
+
+ce fichier est une sorte de byte code, de code pré-compilé du module (cad du fichier importé)
+
+on peut vouloir tester du code d'un module, ou simplement executer du code quand on execute le module, mais pas quand on l'importe
+pour ca il faut faire
+if __name__ == "__main__":
+    code
+    code
+
+en gros, la variable __name__ existe des le lancement de l'interpreteur, 
+si __name__ vaut "main", ca veut dire que le fichier en cours est le fichier executé directement
+
+
+les packages
+------------
+
+un package ca sert a regrouper plusieurs modules, ca permet d'organiser le bordel
+en pratique, un package c'est un repertoire
+
+le nom du package ne doit pas comporter d'accents, ni d'espaces, les noms de packages sont traités comme des variables et doivent donc respecter les memes conventions de nommage
+en fait quand on fait
+import pack
+ca cree un objet module qui est assigné a une variable du nom du pack
+genre 
+import os
+os.path ==> ca affiche le chemin 
+os = "merde" ==> on peut ecraser notre variable 
+
+en fait, import appelle la fonction __import__()
+Pour charger un module, la fonction __import__ passe par les étapes suivantes :
+    Chercher si le module os existe.
+    Chercher si le module a déjà été importé. Si oui, s’arrêter ici et renvoyer le module existant.
+    Si non, chercher si il a été déjà compilé en .pyc.
+    Si ce n’est pas le cas, compiler le fichier .py en .pyc.
+    Charger le bytecode du fichier pyc.
+    Créer un objet module vide.
+    Éxecuter le bytecode dans le contexte de l’objet module et remplir ce dernier avec le résultat.
+    Ajouter l’objet module dans sys.modules, un dictionnaire qui contient tous les modules déjà chargés.
+    Retourner le module pour pouvoir l’assigner à une variable, par défaut la variable porte son nom.
+
+
+
+donc pour creer un package, on cree un dossier et on fout nos fichiers.py dedans
+pour importer un package, on fait 
+import monPackage
+
+pour importer un sous-package on fait 
+import monPackage.monSousPackage
+mais le mieux c'est 
+from monPackage import monSousPackage
+
+si on avait un sous-sous package on devrait faire 
+from monPackage.monSousPackage import monSousSousPackage
+
+et apres pour appeller les methodes des fichiers du package on fait
+monSousSousPackage.maFonction()
+
+sinon on peut egalement faire
+import package.fichier
+puis
+package.fichier.fonction()
+
+remarque, si on voulait faire des from import, on aurait fait
+from monPackage.monSubPackage import monFichier
+monFichier.maFonction()
+
+remarque sur le fichier d'initialisation, 
+souvent dans un repertoire package, python creera un fichier 
+__init__.py
+ce fichier est optionnel depuis la version 3.3 de python
+
+on n'est donc pas obligé de le créer mais python appelle ce code quand on charge un package, 
+donc ca peut etre interessant de mettre du code dedans pour initialiser son package d'une certaine maniere
+
+
+
+les exceptions
+--------------
+
+ca peut etre utile pour la fonction int(valeur)
+par exemple, une string qui n'est pas convertissable, ca leve une exception, ca peut etre pas mal de l'intercepter pour, par exemple, donner la valeur 0 à la variable convertie
+
+on fait comme ca 
+
+try:
+	code
+except:
+	bloc a executer en cas d'erreur
+
+genre
+try:
+	intValue = int(strValue)
+except:
+	intValue = 0
+
+
+on peut bien sûr intercepter tout un tas d'exceptions, pour en catch une en particulier on fait
+except monException:
+	code
+
+on peut egalement recuperer l'exception et la nommer pour lui faire des trucs, genre
+except monException as e:
+	print(e)
+
+IMPORTANT++++++ : 
+par principe, il faut TOUJOURS specifier quelle exception on catch
+
+
+
+remarque, on peut rajouter une partie else, qui s'execute si aucune exception n'est levée
+et egalement finally qui s'execute dans tous les cas
+
+genre
+try:
+	code
+except monException1 as e:
+	code
+except monException2 as e:
+	code
+else:
+	code
+finally:
+	code
+
+
+remarque: il est possible de ne rien faire en cas de catch d'une exception, c'est pas du tout recommandé de le faire mais on fait comme ca
+except monException:
+	pass
+
+
+les assertions
+--------------
+c'est un moyen simple de s'assurer qu'une condition est bien respectée
+en general on les utilise dans des blocs try except 
+
+on fait comme ca 
+assert test
+
+si le test renvoit True, l'execution se poursuit, 
+sinon une exception AssertionError est levée
+
+genre
+annee = input("Saisissez une année supérieure à 0 :")
+try:
+    annee = int(annee) # Conversion de l'année
+    assert annee > 0
+except ValueError:
+    print("Vous n'avez pas saisi un nombre.")
+except AssertionError:
+    print("L'année saisie est inférieure ou égale à 0.")
+
+pour lever une exception on fait
+raise TypeDeLException("Texte de l'exception a afficher si on la print")
+
+
+random
+------
+
+import random
+
+on a la fonction randrange()
+
+randrange(i) renvoit un entier aléatoire entre 0 et i-1
+randrange(a, b) renvoit un entier aléatoire entre a et b-1
+
+math
+----
+
+on a math.ceil() qui permet d'arrondir a l'entier superieur
+
+les objets, exemple des strings
+-------------------------------
+
+un objet est une structure de données
+
+en python, tout est objet
+
+pour obtenir une chaine en tolower on fait 
+chaine.lower()
+genre 
+"Pouet".lower()
+
+pour creer une chaine vide on fait
+chaine = ""
+ou 
+chaine = str() ==> methode constructeur
+
+en fait, les methodes 
+int(valeur)
+float(valeur)
+str(valeur)
+sont en fait des METHODES CONSTRUCTEUR qui construisent un objet int, float ou str à partie de la valeur passée en parametre
+
+on a aussi la methode chaine.center(taille totale de la chaine) qui va rajouter des espaces au debut et a la fin
+de la chaine pour obtenir le texte centré, et donc donner une nouvelle chaine de taille totale passé en arg
+si arg<len(chaine), ca fait rien
+
+
+pour avoir des infos sur un objet on fait 
+help(objet)
+genre 
+help(str)
+
+
+on peut utiliser chaine.format(a, b, ...)
+pour remplacer dans la chaine, les valeurs a, b, genre
+print("a = {0} et b = {1}".format(a , b))
+
+c'est puissant car ca str() toutes les valeurs passées en parametre, pas besoin de faire genre
+"machin" + str(a) + " et puis " + str(b)
+
+Mais on n'est pas obligé de spécifier un numéro (uniquement si on veut le réutiliser plus loin dans la chaine)
+genre
+print("a = {} et b = {}".format(a , b))
+
+
+il y a une autre syntaxe de chaine.format(), si on ne veut pas s'emmerder avec l'ordre des parametres
+print("a = {rue} et b = {ville}".format(rue="perret" , ville="Paris"))
+
+on peut obtenir le nombre de char d'une string avec 
+len(chaine)
+
+pour parcourir une string, on peut le faire
+- par indice, genre chaine[3] = 4e char de la chaine, chaine[-1] = last char de la chaine
+  ==> si on essaye d'acceder à un index qui n'existe pas, ca raise une IndexError
+  ==> ON NE PEUT PAS MODIFIER UN CHAR PAR INDEX, genre chaine[3] = 'k'
+
+- par selection, genre chaine[a:b] = renvoit la substr de chaine avec les caracteres d'index a à (b-1)
+  ==> si on fait chaine[:b] ca fait de 0 à b-1
+  ==> si on fait chaine[a:] ca fait de a à len-1
+  ==> du coup pour modifier une lettre dans une string on fait
+      au lieu de chaine[i] = "a"
+      on fait chaine = chaine[:i] + "a" + chaine[i+1:]
+  
+
+pour spliter une chaine on fait
+liste = maChaine.split("sous-chaine")
+
+ca renvoit une liste de toutes les strings
+
+pour faire l'inverse, c'est à dire fusionner l'ensemble des chaine d'une liste en les séprant d'une substring, on fait
+sousChaine.join(liste)
+genre
+" ".join(liste)
+
+par defaut, quand on fait 
+maChaine.split()
+c'est comme faire
+maChaine.split(" ")
+	
+
+les listes
+----------
+
+les listes sont des sequences d'objets
+c'est un objet qui contient d'autres objets
+les objets peuvent etre du meme type, ou pas
+
+on peut creer une liste comme ca 
+maListe = list() ==> methode constructeur
+
+ou alors 
+maListe = []
+
+ou alors
+maListe = [1, 2, "pouet", 3.14]
+
+
+pour ajouter un truc a la fin de la liste on fait
+maListe.append(monTruc)
+
+pour insérer un truc dans une liste on fait
+maListe.insert(index, valeur)
+genre 
+maListe.insert(2, 'c')
+==> ca ajoute 'c' à l'index 2, et décale tous les autres vers la droite
+==> si je met un index > len, ca me le append
+
+
+pour concatener 2 listes on fait
+liste1.extend(list2)
+ou alors
+liste1 += liste2
+
+pour supprimer un element de la liste on utilise le kw del
+del(maListe[3])
+
+pour remove un element en particulier, on fait
+maListe.remove(valeur)
+==> ca del LE PREMIER ELEMENT valeur RENCONTRÉ
+
+
+pour avoir le nombre d'elements dans la liste, on fait 
+len(maListe)
+
+pour lister un liste de facon formatée, on peut utiliser for, mais on n'aura pas l'indice, 
+ou alors utiliser while mais c'est plus lourd à ecrire
+
+mais il y a une syntaxe toute faite
+for indx, value in enumerate(liste)
+	print("liste[{0}] = {1}".format(indx, value))
+
+en fait, enumerate prend une liste et renvoit un objet assimilable a une liste contenant des objets de 2 elements
+en fait, enumerate retourne une liste contenant un tuples de 2 elements, un index et une valeur (un couple (k, v) quoi)
+
+donc a la limite on peut meme utiliser cette syntaxe
+for i in enumerate(liste)
+	print("liste[{0}] = {1}".format(i[0], i[1]))
+
+==> CA VEUT DIRE UN TRUC, ON PEUT FAIRE CETTE SYNTAXE
+
+pour une liste contenant des tuples de n elements, on peut faire
+for a1, a2, ..., an in liste:
+	print(a1, a2, ..., an)	
+
+
+
+la comprehension de liste = list comprehension, c'est un moyen simple de filtrer ou modifier tres simplement une liste
+
+genre on peut generer une liste a partir d'une autre liste, comme ca 
+liste1 = [1, 2, 3, 4, 5, 6]
+liste2 = [(nb * nb) for nb in liste1] ==> generer une liste dont chaque element est l'element de liste1 eleve au carré
+
+on peut egalement faire un filtrage conditionnel
+genre
+list2 = [nb for nb in list1 if (condition)]
+genre
+list2 = [nb for nb in list1 if (nb %2)]
+
+on peut bien sur combiner les deux, genre
+list2 = [(nb * nb) for nb in list1 if (nb %2)]
+
+on peut trier une liste contenant des nombres, ou des tuples dont le premier element est un nombre en utilisant sorted
+genre 
+sorted(maliste) qui retourne une autre liste
+
+
+les tuples
+----------
+
+On definit le contenu du tuple à sa creation, mais on ne peut le modifier par la suite, c'est a dire, ni ajouter, ni retirer, 
+ni modifier d'elements
+
+on la defini comme ca
+monTuple = tuple()
+
+ou alors 
+monTuple = ()
+
+et pour mettre des trucs dedans on fait
+monTuple = (1, 2, 3, 4, 5)
+
+ATTENTION, si on veut faire un tuple avec 1 element il faut LAISSER LA VIRGULE, genre 
+monTuple = (3, )
+
+
+en fait les tuples, c'est pratique pour les fonction qui doivent renvoyer plusieurs valeurs
+genre
+
+def div(a, b):
+	q = a // b
+	r = a % b
+	return (q, r)
+
+
+
+les dictionnaires
+-----------------
+
+en gros c'est un systeme cle valeur, c'est une map quoi
+sauf que les clés peuvent etre de type melangées, comme les valeurs
+
+
+pour creer un dictionnaire on fait
+dico = dict()
+ou 
+dico = {}
+ou 
+dico = { cle:valeur, cle:valeur }
+
+c'est comme pour les maps en c++, quand on fait 
+dico[cle] = valeur, 
+ca affecte la valeur à l'espace de clé cle
+si cet espace n'existait pas encore, ca le cree, sinon ca l'ecrase
+
+pour recuperer une valeur, on fait
+dico[cle]
+==> si la clé n'existe pas, ca leve une exception KeyError
+
+
+pour supprimer des clés d'un dictionnaire, on peut utiliser le kw del
+del (dico["pouet"])
+ou alors
+dico.pop(cle)
+genre
+dico.pop("pouet") ==> del la data de clé "pouet" et renvoit la valeur supprimée
+
+remarque, dans les dico comme les autres types de collections on peut mettre des fonctions
+
+si on fait
+for temp in dico
+	print(temp)
+
+ca affiche les clés 
+
+c'est pareil que de faire ca
+for temp in dico.keys():
+	print(temp)
+
+on peut egalement faire
+for temp in dico.values():
+	print(temp)
+
+et meme
+for k, v in dico.items():
+	print(temp)
+
+
+
+
+
+les set
+-------
+
+on dit que c'est une
+Unordered collections of unique elements
+
+on le cree comme ca 
+s = set()
+
+en gros c'est comme une liste mais il ne peut pas contenir 2 elements identiques, genre comme un ensemble non ordonné
+
+on fait s = {v1, v2, v3}
+
+si on ajoute 2 fois la meme valeur, si la valeur est deja contenue dedans, ca laisse le set tel quel
+et ca le tri par ordre croissant / ascii
+
+
+on peut lui faire tout ca
+len(s) 	  	number of elements in set s (cardinality)
+x in s 	  	test x for membership in s
+x not in s 	  	test x for non-membership in s
+s.issubset(t) 	s <= t 	test whether every element in s is in t
+s.issuperset(t) 	s >= t 	test whether every element in t is in s
+s.union(t) 	s | t 	new set with elements from both s and t
+s.intersection(t) 	s & t 	new set with elements common to s and t
+s.difference(t) 	s - t 	new set with elements in s but not in t
+s.symmetric_difference(t) 	s ^ t 	new set with elements in either s or t but not both
+s.copy() 	  	new set with a shallow copy of s
+
+s.update(t) 				s |= t 	return set s with elements added from t
+s.intersection_update(t) 		s &= t 	return set s keeping only elements also found in t
+s.difference_update(t) 			s -= t 	return set s after removing elements found in t
+s.symmetric_difference_update(t) 	s ^= t 	return set s with elements from s or t but not both
+s.add(x) 	  			add element x to set s
+s.remove(x) 	  			remove x from set s; raises KeyError if not present
+s.discard(x) 	  			removes x from set s if present
+s.pop() 	  			remove and return an arbitrary element from s; raises KeyError if empty
+s.clear() 	  			remove all elements from set s
+
+
+fonction au nombre de parametres inconnu
+-----------------------------------------
+
+on fait comme ca 
+
+def maFonction(*parametres):
+
+et parametres sera un tuple
+
+on peut egalement faire ca
+def maFonction(param1, param2, *parametres):
+
+mais pas
+def maFonction(*parametres, param1, param2):
+
+
+si on veut nommer les parametres lors de l'appel, genre
+param1=machin, param2=bidule, 
+alors EN REVANCHE, il faudra nommer les parametres apres la liste de parametres, genre
+maFonction(a, b, c, d, param1=machin, param2=bidule, )
+
+
+pour transformer une liste en parametres de fonction, on fait 
+fonction(*listeq)
+
+on peut donc passer une liste en parametre d'une fonction, 
+liste = [a, b, c]
+fonction(*liste)
+equivalent a
+fonction(a, b, c)
+
+on peut egalement passer un dict a une fonction, genre
+dico = {"param1" : a, "param2" : b}
+fonction(**dico)
+equivalent a
+fonction(param1 = a, param2 = b)
+
+utilisation des dictionnaires pour recupere les parametres nommés d'une fonction
+---------------------------------------------------------------------------------
+en gros ya 2 facons de passer des parametres a une fonction 
+mafonction(a, b)
+mafonction(param1=a, param2=b)
+
+il peut etre interessant, quand on code une fonction, de pouvoir recupere les parametres dans un dico genre
+{"param1" : a, "param2" : b}
+
+pour ca on fait
+
+def mafonction(*paramsList, **paramsDict)
+	on traite les parametres en liste si on veut, 
+        ou en dictionnaire, paramsDict est un dict avec k="parametre" et v = value
+	
+
+gestion des fichiers
+--------------------
+
+on peut avoir le chemin absolu du repertoire du programme en faisant
+os.getcwd()
+cwd = Current Working Directory
+
+pour ouvrir le fichier on fait
+monFichier = open("./fichier.txt", "r")
+==> ca renvoit un objet TextIoWrapper
+au niveau du second argument, c'est un string, on a
+r = lecture
+w = ecriture, si le fichier n'existe pas il est créé, s'il existe, son contenu est ecrasé
+a = pareil que ecriture mais en mode append
+b = mode binaire
+
+r+ = c'est rw = w+
+a+ = c'est ra
+
+ensuite pour fermer le fichier on fait
+monFichier.close()
+
+pour avoir l'integralité du contenu du fichier on fait
+contenu = monFichier.read()
+
+pour ecrire on fait
+monFichier.write("texte")
+==> renvoit le nombre de chars ecrits
+
+a chaque fois qu'on ecrit ou qu'on lit, ca deplace le curseur
+pour positionner le curseur a un endroit on fait 
+monFichier.seek(i)
+genre pour le mettre au debut on fait
+monFichier.seek(0)
+
+le module os contient pleins de trucs pour creer, modifier, supprimer des fichiers
+
+
+le probleme avec la gestion des fichiers c'est qu'il peut y avoir une erreur, donc levee
+d'exception et donc que le fichier reste ouvert
+donc la syntaxe la mieux c'est
+plutot que 
+fichier = open("./fichier.txt")
+c'est
+with open("./fichier.txt") as variable
+#faire des trucs sur le fichier
+
+
+variable peut exister, ou pas pas, alors python creera la variable
+
+en fait, with crée un CONTEXT MANAGER
+= verification que le fichier est bien ouvert puis bien fermé meme s'il y a des levee d'exception
+
+on peut appeller monFichier.closed pour verifier qu'il est bien fermé
+==> il est donc inutile de fermer le fichier a la fin du bloc with mais c'est plus propre !
+
+enregistrer des objets dans un fichier
+--------------------------------------
+
+on utilise le module pickle
+import pickle
+
+puis on fait (pour enregistrer monObjet dans fichier.save)
+
+with open("fichier.save", "wb") as fichier:
+	myPickler = pickle.Pickler(fichier)
+	myPickler.dump(monObjet)
+	fichier.close()
+
+pour charger un objet, on fait
+
+with open("fichier.save", "wb") as fichier:
+	myUnpickler = pickle.Unpickler(fichier)
+	valeur = myUndepickler.load()
+	fichier.close()
+
+
+portée des variables et references
+----------------------------------
+
+si je definie une variable en dehors d'une fonction, toutes les fonctions suivantes y auront accecs
+
+il faut bien savoir quand est-ce qu'on copie des valeurs et quand est ce qu'on utilise des references 
+
+genre si j'ai liste1 = [1, 2, 3, 4]
+et liste2 = liste1
+
+si je fais liste2.append(3)
+
+liste1 et liste2 sont modifiées
+
+pour copier le contenu on doit faire
+liste2 = list(list1)
+
+
+on aura list2==list1
+mais list2 is not list1
+
+alors qu'avant on aurait eu
+list2==list1
+et list2 is list1
+
+
+pour utiliser dans une fonction une variable déclaree dans l'espace global, on fait 
+global nomVariable
+et apres on peut l'utiliser
+
+
+premiere approche des classes
+-----------------------------
+
+pour definir une nouvelle classe on fait 
+class MaClasse:
+	def __init__(self):
+		self.var1 = val1
+		self.var2 = val2
+		self.age = 42
+
+
+ensuite pour instancier notre objet on fait
+variable = MaClasse()
+
+et on peut appeller un attribut en faisant
+variable.age
+
+on peut creer des variables statiques pour compter le nombre d'objets, genre
+class Compteur:
+    """Cette classe possède un attribut de classe qui s'incrémente à chaque
+    fois que l'on crée un objet de ce type"""
+
+    
+    objets_crees = 0 # Le compteur vaut 0 au départ
+    def __init__(self):
+        """À chaque fois qu'on crée un objet, on incrémente le compteur"""
+        Compteur.objets_crees += 1
+
+
+ATTENTION, c'est NOMCLASSE.objets_crees et non pas self.objets_crees
+
+Ensuite, pour definir des methodes qui vont avoir acces au attributs, il va falloir passer self en argument a chaque prototype
+genre
+class TableauNoir:
+    """Classe définissant une surface sur laquelle on peut écrire,
+    que l'on peut lire et effacer, par jeu de méthodes. L'attribut modifié
+    est 'surface'"""
+
+    
+    def __init__(self):
+        """Par défaut, notre surface est vide"""
+        self.surface = ""
+    def ecrire(self, message_a_ecrire):
+        """Méthode permettant d'écrire sur la surface du tableau.
+        Si la surface n'est pas vide, on saute une ligne avant de rajouter
+        le message à écrire"""
+
+        
+        if self.surface != "":
+            self.surface += "\n"
+        self.surface += message_a_ecrire
+
+
+le truc du self, c'est un pointeur vers notre objet instancié, c'est pour permettre à python de savoir quel objet modifier 
+vu qu'il lit les methodes depuis le pattern cad depuis la classe
+
+
+Remarque sur les docStgrings
+==> en fait quand on cree des classes, si on fait help(nomClasse) on a une aide qui s'affiche avec la liste des methodes et des 
+attributs
+==> les docstrings c'est des commentaires entre """ et """, sous le prototype d'une methode, decrivant la methode et
+qui s'affichera dans l'aide
+
+
+self designe un pointeur vers l óbjet instancié
+cls designe un pointeur vers la classe ==> pour les methodes statiques
+
+genre
+cls.objet_crees
+==> utile si, dans une fonction self, on a besoin d'appeller une methode statique de la classe
+
+
+on faire une methode de classe (cad qui joue sur des variables de classe et non d'instance) on fait 
+def nom(cls):
+	#faire des trucs
+nom = classMethod(nom)
+
+
+une methode statique peut etre appelée comme ca
+nomClasse.methode()
+ou comme ca
+objetInstancie.methode()
+
+
+pour faire une methode statique, on fait:
+def nom(/*pas de parametre*/):
+	#faire des trucs
+def = staticMethod(def)
+
+
+la built-in fonction dir(objet) retourne la liste des attributs et fonction de notre objet
+
+
+
+par defaut, quand on cree une classe, il y a un ensemble d'attributs speciaux et de methodes speciales avec des __nom__
+
+genre __dict__
+==> dict qui contient k = nom des attributs et v = valeur de ces derniers
+
+les propriétés
+--------------
+
+en python, ya pas d'attribut privé, tout est publique
+
+
+du coup, on fait plutot comme ca 
+l'utilisateur fait comme d'hab
+et nous dans la definition de la classe, on fait
+si on get, on fait ca
+si on set, on fait ca (ca peut etre ne rien faire)
+==> pour le user c'est transparent
+
+pour ca on utilise des PROPRIÉTES
+c'est l'objet property
+son constructeur prend 4 parametres
+- la methode donnant l'acces a l'attribut
+- la methode qui modifie l'attribut
+- la methode appellee quand on souhaite supprimer l'attribut
+- la methode appellee quand demande de l'aide sur l'attribut=
+
+
+concretement on fait comme ca
+on fait comme d'hab, on cree notre constructeur et on definit nos attributs
+SAUF QUE les attributs encapsulés on ne les appelle pas 
+nomAttribut
+mais
+_nomAttribut
+(En fait, par convention, on considere qu'on ne doit pas acceder à un attribut dont le nom commence par _, c'est
+juste une convention, on ne doit pas le faire mais on peut le faire...)
+
+on fait des methodes getters comme ca 
+def _get_nomAttribut(self):
+	#faire des trucs
+def _set_nomAttribut(self, pParam):
+	#faire des trucs
+nomAttribut = property(_get_nomAttribut, _set_nomAttribut)
+#en 3e position on peut rajouter la fonction a appeller en cas de del(attribut), et en 4e position, en cas de help(attribut)
+
+
+Les methodes speciales
+----------------------
+
+def __repr__(self):
+	#c'est la methode toString, c'est a dire la string a retourner quand on fait print(monObjet)
+
+
+mais la vraie methode c'est
+def __str__(self):
+	#idem
+
+==> si aucune methode __str__(self) n'est definie, python appelle __repr__()
+
+
+on a aussi la methode __getattr__(self, nomAttr)
+= permet de definir une methode d'acces a nos attributs plus large que celle que python propose par defaut
+c'est cette methode qui est appellee quand on fait 
+monObjet.attribut
+et que l'attribut n'existe pas
+
+on a aussi __setattr__(self, nomAttr, valeur)
+= methode appellee des que l'attribut en question est appellé
+
+on a aussi __delattr__
+
+on a aussi des builtin fonction du genre
+objet = MaClasse() # On crée une instance de notre classe
+getattr(objet, "nom") # Semblable à objet.nom
+setattr(objet, "nom", val) # = objet.nom = val ou objet.__setattr__("nom", val)
+delattr(objet, "nom") # = del objet.nom ou objet.__delattr__("nom")
+hasattr(objet, "nom") # Renvoie True si l'attribut "nom" existe, False sinon
+==> ca peut etre utile de travailler avec des str plutot que des noms d'attributs
+
+
+derriere le kw in se cache la methode __contains__()
+en fait
+ma_liste = [1, 2, 3, 4, 5]
+8 in ma_liste
+# Revient au même que ...
+ma_liste.__contains__(8)
+
+
+on a aussi __len__ 
+appellee lorsqu'on fait len(monObjet)
+len(monObjet) 
+ca fait 
+monObjet.__len__()
+
+__add__()
+pour la surcharge de +
+
+__sub__()
+pour la surcharge de -
+
+__mul__()
+pour la surcharge de *
+
+__truediv__()
+pour la surcharge de /
+
+__floordiv__()
+pour la surcharge de //
+
+__mod__()
+pour la surcharge de %
+
+__pow__()
+pour la surcharge de **
+
+==> yen a d'autres
+https://www.python.org/
+
+
+ATTENTION, en faisant comme ca
+objet + 4 ca marche, 4 + objet ca marche pas
+==> pour que ca soit commutatif, il faut  METTRE UN r AVANT LE NOM genre
+def __radd__(self, objAdded):
+
+
+__eq__()
+pour la surcharge de ==
+
+etc pour
+==
+!= 
+>
+<
+>= 
+<= 
+
+
+pour la serialiation on a 
+__getstate__()
+et 
+__setstate__()
+
+
+
+Les méthodes__getattr__,__setattr__et__delattr__contrôlent l'accès aux attributs de l'instance.
+Les méthodes__getitem__,__setitem__et__delitem__surchargent l'indexation ([]).
+Les méthodes__add__,__sub__,__mul__… surchargent les opérateurs mathématiques.
+Les méthodes__eq__,__ne__,__gt__… surchargent les opérateurs de comparaison.
+
+
+parenthese sur le tri en python
+-------------------------------
+
+on peut faire
+maListe.sort()
+ou alors 
+sorted(maListe) ==> retourne la liste triée sans modifier la liste de depart
+
+si on trie une liste qui contient des tuples, ca trie en utilisant le premier element,
+et etc
+
+
+si on veut que ca utilise une autre colonne, on fait 
+sorted(etudiants, key=lambda colonnes: colonnes[2])
+
+ou alors, plus simple
+from operator import itemgetter
+sorted(etudiants, key=itemgetter(2))
+
+ou, dans le cas d'un tuple, 
+from operator import attrgetter
+sorted(etudiants, key=attrgetter("moyenne"))
+
+pour trier suivant plusieurs critères avec un ordre de priorité
+sorted(etudiants, key=attrgetter("age", "moyenne"))
+
+on peut chainer les tris
+inventaire.sort(key=attrgetter("quantite"), reverse=True)
+sorted(inventaire, key=attrgetter("prix"))
+
+l'heritage
+----------
+
+pour definir une classe fille heritant de classe mere tu fais
+class maClasse(classeMere):
+	#des trucs
+
+
+ou bien, pour l'heritage multiple, 
+class maClasse(classeMere, classeMere2):
+	#des trucs
+
+
+il ne faut pas oublier d'appeller la methode mere constructeur dans le constructeur de la classe heritée, genre
+class maClasse(classeMere):
+
+	def __init__(self):
+		ClasseMere.__init__(self)
+
+	#des trucs
+
+built in isInstance(a, b) permet de savoir si la classe est une classe derivée ou directe de b
+
+
+quand on appelle une methode d'un objet,
+python check dans la classe de l'objet, s'il trouve pas 
+python check dans la classe mere de gauche à droite, s'il la trouve pas
+etc
+
+
+concernant les exceptions, elles derivent de la classe BaseException qui derive de object
+Exception = erreur
+BaseException = exception qui n'est pas forcement une erreur 
+==> exception derive de baseException
+
+une classe exception doit contenir 
+- une methode __init__(self, message)
+- une methode __str__(self)
+
+
+L'envers de la boucle for
+-------------------------
+
+ici il sera question d'iterateurs et de generateurs
+
+quand on fait 
+for el in liste:
+
+python appelle l'itérateur de liste
+l'iterateur c'un un objet chargé de parcourir l'objet conteneur
+
+
+l'iterateur d'un objet est definit et renvoyé dans la methode
+__iter__(self)
+de l'objet
+
+a chaque tour de boucle, python  appelle la methode
+__next__
+de l'iterateur, qui 
+doit renvoit l'element suivant 
+soit leve une exception StopIteration
+
+pour recuperer l'objet iterateur d'un objet, on la fonction built-in 
+iter(monObjet)
+
+pour recuperer la valeur de retour de la fonction __next__ d'un iterateur, on fait
+next(monIterateur)
+
+
+exemple: on peut creer un objet RevStr qui derive de str et dont l'iterateur affiche les lettre dans l'ordre inverse
+
+class RevStr(str):
+    """Classe reprenant les méthodes et attributs des chaînes construites
+    depuis 'str'. On se contente de définir une méthode de parcours
+    différente : au lieu de parcourir la chaîne de la première à la dernière
+    lettre, on la parcourt de la dernière à la première.
+    
+    Les autres méthodes, y compris le constructeur, n'ont pas besoin
+    d'être redéfinies"""
+    
+    def __iter__(self):
+        """Cette méthode renvoie un itérateur parcourant la chaîne
+        dans le sens inverse de celui de 'str'"""
+        
+        return ItRevStr(self) # On renvoie l'itérateur créé pour l'occasion
+
+class ItRevStr:
+    """Un itérateur permettant de parcourir une chaîne de la dernière lettre
+    à la première. On stocke dans des attributs la position courante et la
+    chaîne à parcourir"""
+    
+    def __init__(self, chaine_a_parcourir):
+       """On se positionne à la fin de la chaîne"""
+        self.chaine_a_parcourir = chaine_a_parcourir
+        self.position = len(chaine_a_parcourir)
+    def __next__(self):
+        """Cette méthode doit renvoyer l'élément suivant dans le parcours,
+        ou lever l'exception 'StopIteration' si le parcours est fini"""
+        
+        if self.position == 0: # Fin du parcours
+            raise StopIteration
+        self.position -= 1 # On décrémente la position
+        return self.chaine_a_parcourir[self.position]
+
+
+
+un iterateur a donc besoin de: 
+- la data a parcourir
+- un repere dans la data a parcourir
+- une methode next qui renvoit l'element suivant en fonction de la position dans le conteneurs par rapport au repere
+
+
+Les generateurs quant a eux sont des moyens plus pratiques pour manipuler les iterateurs
+c'est une methode dans laquelle il y a des instructions
+yield valeur1
+yield valeur2
+yield valeur3
+
+en gros on fait comme ca
+
+on cree notre generateur comme ca
+def monGen():
+	yield valeur1
+	yield valeur2
+	yield valeur3
+
+ensuite on cree un iterateur se basant sur mon generateur
+it = iter(monGen())
+
+et ensuite a chaque appel de next(it), ca renverra la valeur valeur1, puis valeur2, puis valeur3, puis ca raise StopIteration
+
+
+du coup on peut l'utiliser comme ca
+for el in monGen()
+	print(el)
+
+
+on pourrait definir un generateur intervalle
+def intervalle(borne_inf, borne_sup):
+    """Générateur parcourant la série des entiers entre borne_inf et borne_sup.
+    
+    Note: borne_inf doit être inférieure à borne_sup"""
+    
+    borne_inf += 1
+    while borne_inf < borne_sup:
+        yield borne_inf
+        borne_inf += 1
+
+
+
+remarque: plutot que de definir une classe iterateur, on peut definir un generateur dans la classe de notre objet et l'utiliser 
+dans __iter__(self)
+
+
+il peut etre utile d'altere un parcourt lors de sa realisation, c'est possible avec les co-routines
+on peut interrompre une boucle for en faisant
+generateur = intervalle(5, 20)
+for nombre in generateur:
+    if nombre > 17:
+        generateur.close() # Interruption de la boucle, ca fait comme break quoi
+
+
+et pour envoyer des valeurs a notre generateur, on fait
+monGen.send(valeur)
+et on receptionne cette valeur en faisant, dans le corps de notre generateur
+valeur_recue = (yield val)
+si ya eu un send au tour de boucle, alors elle est stockée dans valeur_recue
+sinon, valeur_recue = None
+
+

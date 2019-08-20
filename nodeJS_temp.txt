@@ -1,0 +1,727 @@
+===[introduction]===
+
+en gros c'est le fait de considérer javascript, non plus comme une techno (pour faire des trucs dans des navigateurs web)
+mais comme un langage.
+
+nodeJS c'est une techno qui permet de faire des trucs en bas niveau en utilisant le langage
+javascript comme langage de programmation
+
+au depart, dans les années 90 on utilisait JS pour faire des effets dans les pages web
+puis dans les 2000's on l'a utilisé pour faire des interfaces clients avec des libs (jQuery, Mootools)
+utilisation du DOM, etc
+
+Puis vers 2010, creation de V8 par google, un moteur open source qui permet d'executer le JS de facon beaucoup 
+plus optimisée
+
+un des buts de nodeJS c'est d'utiliser javascript comme langage backend
+avec nodeJS on peut
+creer
+un serveur de Chat
+Un système d'upload très rapide
+etc
+==> et de façon générale n'importe quelle application qui doit répondre à de nombreuses requêtes rapidement et efficacement, en temps réel
+
+
+nodeJS est tres rapide d'execution car
+- il utilise V8
+- il se base sur un modele non bloquant = utilisation des fonctions callback
+
+===[installation]===
+
+faut recuperer le package en faisant un truc genre curl http://url | bash -E -
+et apres tout simplement
+sudo apt-get install nodejs
+
+===[script de base pour faire un serveur http]===
+
+comme nodejs est bas niveau, faut faire le serveur http et tout gerer a la main, pas comme apache quoi (explication nulle)
+
+en fait, nodejs est monoThread là où apache est multithread ==> un seul processus pour nodejs, ne tourne que sur 1 noyau du CPU
+mais comme c'est ultra-optimisé, ca fonctionne bien.
+
+pour faire un serveur http, on fait
+
+var http = require('http');
+
+var server = http.createServer(function(req, res) {
+  res.writeHead(200);
+  res.end('Salut tout le monde !');
+});
+server.listen(8080);
+
+là ca retourne du texte brut, donc si on fait
+<strong>Salut</strong> tout le monde, 
+ća affichera <strong>Salut</strong> tout le monde, 
+et pas une mise en forme speciale avec Salut en gras
+
+pour modifier le mime-type de ce qui est renvoyé (html, image, feuille de style css, etc)
+il faut faire
+  res.writeHead(200, {"Content-Type" : "text/html"}); pour faire du text/html
+==> par defaut, plain/text
+
+mais bon, tout foutre dans res.end() c'est chiant, on peut faire comme ca 
+res.write('des trucs');
+res.end();
+
+c'est un peu chiant mais il existe des outils / templates pour simplifier tout ca 
+
+du coup, là ca affiche toujours la meme chose quelque soit la page appellée
+genre localhost:8080/pouet ou localhost:8080/prout/pouet
+
+pour savoir quelle page a été appellée dans l'url et agir en conséquence, on fait
+req.url ==> valeur de l'url apres l'ip/nom de domaine
+genre si je fais localhost:8080/pouet/prout
+req.url vaudra /pouet/proutn
+si c'est /pouet/prout/
+ca vaudra /pouet/prout/
+si je fais /caca?pouet=prout
+ca affichera
+/caca?pouet=prout
+
+ensuite, pour avoir juste le path, sans les arguments genre ?id=machin&truc=etc
+on fait
+var page = url.parse(req.url).pathname;
+et pour avoir les arguments, on fait
+var args = url.parse(req.url).query;
+
+bon, le truc c'est que ca renvoit une chaine qu'il va falloir parser nous meme
+soit on recode la fonction de parsing, 
+soit on utilise le module querystring comme ca
+
+const queryString = require('querystring');
+let params = queryString.parse(url.parse(req.url).query);
+==> ca retourne un array où ya des clés et des valeurs.
+==> on peut donc faire l'équivalent d'un isset($_PHP['key']) en faisant 'key' in params;
+
+===[les events]===
+
+en gros, quand ya des objets qui sont ecoutables, ils ont une methode on()
+genre
+
+const http = require('http');
+
+const server = http.createServer(function (req, res) {
+	res.writeHead(200, {"Content-Type": "text/plain"});
+	res.end('<p>Bonjour tout le monde</p>');
+});
+
+server.on('close', function() {
+	console.log('bye bye');
+});
+
+server.listen(8080);
+server.close();
+
+
+D'ailleurs, chose importante, la fonction callback qu'on utilise dans createServer, 
+en fait c'est une contraction de code, 
+en fait cette fonction callback va être appellée quand il y a l évent
+server.on('request');
+
+en gros c'est comme faire
+server.on('request', function (req, res) { 
+	//des trucs
+});
+
+Maintenant, si on veut émetter des évents nous meme, 
+il suffit:
+
+1) de require eventEmitter, comme ca
+const EventEmitter = require('events').EventEmitter;
+
+2) d'instancier un objet observable, cad qui peut emettre des events, genre
+const game = new eventEmitter();
+
+3) d'observer notre objet observable, comme ca genre comme d'hab
+game.on('gameover', function (message) { faire des trucs});
+
+4) que notre observable emit un event, comme ca
+game.emit('gameover', 'Vous êtes nul !');
+
+en fait quand on émit, on peut mettre autant d'arguments qu'on veut, 
+on peut même mettre res pour write des trucs dans la page
+genre 
+game.emit('gameover', res, 'Desolé c'est fini.');
+puis
+game.emit('gameover', function (res, msg) {
+	res.write(msg);
+});
+
+
+===[les modules nodeJS]===
+
+De base, nodeJS ne fait pas grand chose,
+Ya des modules pour gerer tout un tas de trucs
+==> faire un server http
+==> gestion des fichiers uploadés
+==> connexion a des bdd genre mysql ou redis
+==> frameworks, systemes de templates
+==> communication temps reel, ...
+
+quand on fait
+const http = require('http');
+
+node va chercher un fichier http.js dans ./nodes_modules/
+si le dossier ./nodes_modules/ n'existe pas, il ira chercher ce dossier plus haut dans l'arborescence
+et ainsi de suite.
+
+en fait si on fait
+require('pouet');
+==> ca va chercher pouet.js dans ./nodes_modules/
+si on fait
+require('./pouet');
+==> ca va chercher pouet.js dans ./
+
+En fait, les fichiers modules js, c'est juste du JS, mais, dont a la fin, les fonction qu'on veut
+pouvoir utiliser dans les autres fichiers, sont exportées, en faisant
+
+function sayHello() {
+	console.log('Hello.');
+}
+
+exports.sayHello = sayHello;
+==> en gros sa veut dire que quand on fera monModule.sayHello, ca pointera vers la fonction sayHello();
+==> on aurait pu donner des noms differents, genre faire
+exports.prout = sayHello, puis apres faire monModule.prout();
+
+en gros toute fonction non exportée est un peu comme une fonction static en C
+
+on peut egalement coder en accélerer (un poil crade), comme ca
+exports.sayHello = function () { 
+	//faire des trucs
+};
+
+et du coup, pour reutiliser les fonctions entre elles dans le fichier, au lieu de faire
+const say = function (msg) {
+	console.log(msg);
+};
+
+const sayHello = function () {
+	say('hello');
+};
+
+exports.say = say;
+exports.sayHello = sayHello;
+
+on fait, directement
+
+exports.say = function (msg) {
+	console.log(msg);
+};
+
+exports.sayHello = function () {
+	exports.say('hello');
+}
+
+
+
+
+===[Utilisation de NPM pour installer des modules]===
+
+c'est un peu l'équivalent de apt-get sous linux
+npm gère les dépendances, donc si le module en cours d'install a besoin d'un autre module pour fonctionner, npm ira le telecharger automatiquement
+
+pour trouver un module on fait par exemple
+npm search postgresql
+
+pour installer un module on fait 
+npm install nomModule
+ou pour le faire en global
+npm install -g nomModule
+
+ATTENTION, il faut distinguer l'installation locale et l'installation globale
+- l'installation locale, ca installe le module pour le dossier projer en cours, ca le met dans ./node_modules/
+- l'installation globale, ca donne un executable qui permettra d'utiliser les fonctions directement dans la console
+
+==> donc pour require dans un projet, on est obligé de faire une install locale..
+
+pour mettre a jour les modules, on fait 
+npm update
+==> ca fait gaffe a pas casser la compatibilité
+
+
+===[declarer et publier son module]===
+
+le soucis des modules externes c'est que ca peut etre galere au niveau de la maintenance du projet
+genre probleme d'incompatibilité suite à une maj externe
+
+on peut regler tout ca en definissant les dependances de notre programme dans un fichier package.json a la racine du projet
+qui contient des paires clés valeurs comme ca
+
+genre
+{
+    "name": "mon-app",		//nom de notre app
+    "version": "0.1.0",		//current version de notre app
+    "dependencies": {		//dependances
+        "markdown": "~0.4"	//signifie que pour le module markdown, on peut update juska 1.0 non inclus
+				//en gros ~a.b.c = juska a.(b+1) non inclus, ~a.b = juska (a + 1) non inclus, etc 
+				//et bien sûr si on fait a.b.c, c'est que pour a.b.c, on laisse comme ca 
+    }
+}
+
+==> ca permet, quand on fait des npm update, de mettre a jour sans casser la compatibilité
+
+sur openclassroom ils disent que pour garantir la compatibilité à terme, il faut faire que des 
+~a.b.c comme ca ca fait que des maj de sécurité et de patch.
+
+
+===[partager ses modules npm]===
+
+on creer un nom de user en faisant
+npm adduser
+
+puis on se place dans le repertoire du module a partager, il faudra bien qu'il y ai
+- un fichier README.md
+- un fichier package.json, avec au moins le nom du module, sa version et ses dependances
+
+en gros ca aurait cette gueule la
+{
+    "name": "mon-app",
+    "version": "0.1.0",
+    "dependencies": {
+        "markdown": "~0.4"
+    }
+}
+
+
+remarque pour package.json, on a montré la base mais ya masse de trucs qu'on peut mettre dedans:
+
+{
+  "name": "http-server",
+  "preferGlobal": true,
+  "version": "0.3.0",
+  "author": "Nodejitsu <support@nodejitsu.com>",
+  "description": "a simple zero-configuration command-line http server",
+  "contributors": [
+    {
+      "name": "Marak Squires",
+      "email": "marak@nodejitsu.com"
+    }
+  ],
+  "bin": {
+    "http-server": "./bin/http-server"
+  },
+  "scripts": {
+    "start": "node ./bin/http-server",
+    "test": "vows --spec --isolate",
+    "predeploy": "echo This will be run before deploying the app",
+    "postdeploy": "echo This will be run after deploying the app"
+  },
+  "main": "./lib/http-server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodejitsu/http-server.git"
+  },
+  "keywords": [
+    "cli",
+    "http",
+    "server"
+  ],
+  "dependencies" : {
+    "colors"   :  "*",
+    "flatiron" :  "0.1.x",
+    "optimist" :  "0.2.x",
+    "union"    :  "0.1.x",
+    "ecstatic" :  "0.1.x",
+    "plates"   :  "https://github.com/flatiron/plates/tarball/master"
+  },
+  "analyze": false,
+  "devDependencies": {
+    "vows"    :  "0.5.x",
+    "request" :  "2.1.x"
+  },
+  "bundledDependencies": [
+    "union",
+    "ecstatic"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.6"
+  }
+}
+
+
+===[exemple de framework avec express.js]===
+
+bon le bas niveau c'est cool, re-coder la roue c'est super pedagogique par contre en terme de sécurité et de productivité
+c'est pas ouf
+
+c'est pour ca qu'il y a les frameworks
+
+avec express.js.
+au lieu de faire des if-else a l'infini pour les routes (genre url.parse(req.url).pathname == 'bidule')
+
+du coup pour gerer les routes, on fait comme ca
+
+
+
+const express = require('express');
+
+const app = express();
+//if url.parse(req.url).pathname == 'route'
+app.get('route', function(res, req) { 
+	faire des trucs
+});
+
+//else
+app.use(function (res, req, next) { 
+	//faire des trucs
+	//next
+});
+
+app.listen(8080);
+
+ATTENTION, ils considèrent que
+/musiques
+et
+/musiques/
+c'est pareil (ce qui n'est pas le cas en natif),
+pareil pour la casse
+
+genre
+app.get('/', function (req, res) { faire des trucs });
+app.get('/pouet/', function (req, res) { faire des trucs });
+app.get('/trucs/', function (req, res) { faire des trucs });
+app.use(function (req, res, next) { faire des trucs});
+
+ou alors, comme app.get return app, on peut faire
+app.get('/', function (req, res) { faire des trucs })
+.get('/pouet/', function (req, res) { faire des trucs })
+.get('trucs', function (req, res) { faire des trucs })
+.use(function (req, res, next) { faire des trucs });
+
+Attention: si on fait app.get(), ca fait une route pour la page mentionnée pour les infos qui passent en GET
+ca ne fonctionnera pas pour les autres protocoles
+du coup si on veut le faire avec du post, il faudra faire un truc genre
+app.post('page', (req, res) => {})
+==> c'est plus pratique car ca permet de dissocier les traitements de formulaire des affichages classiques.
+
+
+ATTENTION cependant, les arguments req et res ne sont pas les mêmes que en natif, du coup c'est plus 
+res.writeHeader(code, {"Content-Type" : "text/html"}), 
+mais
+res.setHeader('Content-Type', 'text/html')
+res.status(code);
+
+pareil, c'est pas 
+res.write('texte');
+mais 
+res.send('texte');
+
+DE PLUS, a chaque fois qu'on utilise res.methode(), ca renvoit res
+du coup, on peut faire
+res.status(200).setHeader('Content-Type', 'text/plain').send('Coucou tout le monde.');
+
+
+Ce qui est cool, c'est qu'on peut egalement faire des routes dynamiques
+genre
+app.get('/etage/:etagenum/chambre', function(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Vous êtes à la chambre de l\'étage n°' + req.params.etagenum);
+});
+attention, c'est req.params.etagenum
+req, et pas res !
+
+==> ca permet de faire passer des variables dans l'url suivant un protocole different de get
+(c'est le meme principe à savoir parsing d'url)
+
+ATTENTION, avec le framework express(), quand ya des erreurs, ca les affiche dans la console (comme en natif)
+MAIS AUSSI EN OUTPUT SUR LA PAGE :/
+
+
+===[les templates, exemple avec EJS]===
+
+express semble fonctionner avec EJS
+
+Ya aussi des templates pour echo des trucs plus simplement que en faisant les trucs genre
+res.send('des trucs');
+
+un peu comme en php, qui permet de faire 
+echo 'pouet';
+en faisant
+?> pouet <?php
+ou alors <?= pouet ?>
+
+en gros, un template c'est un truc qu'on appelle en lui passant des arguments pour qu'il construire la page
+
+pour l'exemple de EJS, ca fonctionne comme ca
+
+app.get('/etage/:etagenum/chambre', function(req, res) {
+    res.render('chambre.ejs', {etage: req.params.etagenum});
+    //le fichier chambre.ejs doit se trouver dans ./views/
+    //le 2e parametre est un objet js
+});
+
+et ensuite, dans le fichier chambre.ejs, on pourra mettre du code html
+et eventuellement appeller des variables comme ca
+<p>Vous êtes à l'étage n°<%= etage %></p> 
+
+en fait c'est le meme principe que pour php
+tu fais <?= $var ?> et ca equivaut a <?php echo $var; ?>
+
+du coup on peut executer du js en faisant
+coucou <%= name %> comment ca va ? 
+<% for (let i = 0; i < 10; i++)  {
+	<%= i %>
+<%
+}
+%>
+
+ATTENTION, c'est pas comme en php où ils recommandent de ne pas fermer la balise ?> a la fin
+ici tout <% doit être fermé par un %>
+
+
+On a utilisé EJS ici pour l'exemple mais yen a pleins d'autres comme 
+Jade
+ou
+Haml
+là c'est le cas de EJS, 
+
+
+
+===[les middlewares, exemple avec express]===
+
+express est un framework basé sur les MIDDLEWARES
+en gros ca veut dire que c'est des petits morceaux d'applications qui rendent chacun un service spécifique.
+On peut charger uniquement les middlewares dont on a besoin.
+
+Express est fourni avec une quinzaine de middlewares de base, et d'autres développeurs peuvent bien entendu en proposer d'autres via NPM. Les middlewares livrés avec Express fournissent chacun des micro-fonctionnalités, genre
+compression pour faire des gzip de la page pour avoir un envoi plus rapide vers le navigateur
+cookie-parser = pour manipuler les cookies
+cookie-session = pour gerer les informations de session
+serve-static = pour renvoyer des fichiers statiques contenus dans un dossier genre images, fichier a dl, etc
+serve-favicon = pour renvoyer la favicon du site (wut ?)
+csrf = protection contre les failles csrf
+...
+
+ces middlewares sont connectés entre et peuvent communiquer entre eux
+express ne fait qu'ajouter les routes et les vues par dessus
+
+ils communiquent entre eux en s'envoyant juska 4 parametres:
+- err = erreurs
+- req = requete du visiteur
+- res = reponse a envoyer, toujours pareil
+- next = callback vers la prochaine fonction a appeller
+
+
+Pour utiliser un middleware, on utilise app.use
+où app = express();
+
+du coup, tout a l'heure quand on faisant les routes et qu'on avait la page 404 qui etait definie par
+app.use(function (req, res) {faire des trucs})
+en fait, c'est le meme app.use();
+
+
+il est TRES IMPORTANT de reflechir à l'ordre dans lequel on utilise les middlewares, car chaque middleware va renvoyer des données
+(req, res, next) a la fonction middleware d'apres
+
+
+DOC POUR RESUMER EXPRESS et l'utilisation des get et posts et les sessions
+1) on require en faisant
+const express = require('express');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+
+2) on definit notre app en faisant
+const app = express():
+const server = http.server(app);
+
+3) on cree notre session severSide en faisant
+app.use(session({
+	secret: 'bordel de merde',
+	resave: false,
+	saveUninitialized: true,
+	cookie: { 
+		path: '/',
+		httpOnly: 'true',
+		saveUninitialized: true,
+		sameSite: true,
+		secure: false,
+		maxAge: 15552000000		//6 months
+	}
+}));
+
+4)  on include les trucs dont on a besoin pour recuperer les parametres du post
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+5) on code une fonction checkSession(req) qui verifie si on est loggé ou pas
+
+6) on fait nos routes, comme ca
+app.get('route', (req, res) => {
+    res.status(200).setHeader('Content-Type', 'text/html:W');
+    res.render('chambre.ejs', {etage: req.params.etagenum});
+    ou si on ne veut pas utiliser ejs
+    res.sendFile('/chemin/index.html');
+    //faire des trucs
+})
+.get(idem)
+.post(idem)
+etc
+.use(idem)
+
+7) 
+si on veut mettre des parametres dans l'url, suivant le même principe que get, on fait
+.get('/maroute/:variable', (req, res) => {faire des trucs})
+ou .post(idem)
+
+et pour recuperer la valeur de la variable on fait
+req.params.variable
+
+8) 
+pour recuperer la variables passées en post, on fait
+.post('route', (req, res) => {
+	req.body.nomDeLaVariabledonnéedanslename
+})
+
+
+9) ensuite, pour gerer ses vues avec ejs, on met les fichiers .ejs dans ./views/
+et on affiche leur contenu dans les routes en faisant, a l'interieur des app.get/post
+res.render('fichier.ejs')
+on peut passer des variables pour generer pseudo-dynamiquement le fichier ejs, en faisant
+res.render('fichier.ejs', {variable: valeur, var2: valeur2}) etc
+et on peut les appeller dans le fichier ejs comme ca
+<%= variable %>
+et on peut meme executer du code pseudo-javascript comme ca
+<% code %>
+
+10) on n'oublie pas le server.listen(8080); a la fin du main.js
+
+
+===[socket.io]===
+là on a vu comment faire une todo list en mode asynchrone, genre c'est le client qui fait des requetes et le serveur envoit, 
+avec un refresh de page ou directement avec maj du DOM
+
+Maintenant, il est possible de faire du synchrone avec une nouvelle technologie qui s'appelle les webSockets
+websocket c'est un standard du web, un protocole reseau de la couche application (7), avec un API mise a disposition, 
+pour creer des cannaux de communication full-duplex = bidirectionnel simultanément, genre le telephone, par dessus une connexion (et donc une socket) TCP, pour les navigateurs web
+protocole normalisé en 2011
+
+en gros ca permet de faire facilement un tchat
+sans les websockets, faudrait que le client fasse des requetes toutes les n ms, pas forcement tres optimisé, 
+on est dans un paradigme ou c'est le client qui demande et le serveur qui donne en retour
+avec les websockets, ya de la communication bi-directionnelle
+
+l'avantage de socket.io c'est que ca va utiliser les websockets
+et si le navigateur les gere pas, il pourra utiliser d'autres technos pour obtenir le meme resultat
+genre, dans l'ordre
+- WebSocket
+- Adobe Flash Socket = utilise flash, faut qu'il soit installé sur le navigateur
+- AJAX long polling = le client demande en continu au serveur si ya du nouveau
+- AJAX multipart streaming
+- Forever Iframe = iframe invisible qui se charge progressivement pour get les nouveautés du server
+- JSONP Polling
+
+du coup, socket.io ca fonctionne sur un paquet de trucs memes anciens
+- Internet Explorer 5.5+ (oui oui, vous avez bien lu !)
+- Safari 3+
+- Google Chrome 4+
+- Firefox 3+
+- Opera 10.61+
+- Safari sur iPhone et iPad
+- Le navigateur Android
+
+c'est toujours pareil, quand on utilise socket.io, on doit utiliser 2 fichiers
+- le fichier js cote serveur 
+- le fichier js cote client
+
+
+ici pour l'exemple, plutot que d'utiliser un systeme de templates pour afficher les views,
+on va utiliser le fait d'envoyer le contenu d'un fichier,
+genre 
+const fs = require('fs');
+
+fs.readFile('./index.htm', 'utf-8', (err, content) => {
+	res.writeHead(200, {"Content-Type": "text/html"});
+        res.end(content);
+});
+
+
+du coup, pour utiliser socket.io, en ultra basique, on fait
+const http = require('http');
+const server = http.createServer();
+server.on('request', function (req, res) {
+  fs.readFile('./index.htm', 'utf-8', function (error, content) {
+    res.writeHeader(200, {'Content-Type' : 'text/html'});
+    res.send(content);
+  });
+})
+
+const ioStream = require('socket.io').listen(server);
+ioStream.socket.on('connection', function (socket) {
+	console.log('quelqu'un est connecté');
+});
+
+du coup, on a parametré le truc pour que le server puisse repondre un truc en cas de connexion
+il reste plus qu'a parametrer le truc dans index.htm pour que le server 
+
+donc, dans le fichier index.htm, il faut
+mettre ca
+<script src="/socket.io/socket.io.js"></script>
+==> c'est nodeJS qui va lui envoyer ca, ca genere une route speciale du fait de require('socket.io');
+    ceci MEME si on a paramétré des routes, le package surclassera nos routes
+    du coup si je fais un if (req.url === '/socket.io/socket.io.js'), ca fera rien, ca renverra juste mon fichier
+    socket.io.js
+
+
+et enfin, dans le fichier html, on mettra ensuite un
+<script>
+const socket = io.connect('http://localhost:8080');
+</script>
+    
+
+ensuite, tout fonctionne avec des events
+du coup, pour envoyer un 'message' du client vers le server, on fait
+socket.
+
+client-->server: 
+---------------
+const socket = io.connect('localhost:8080');
+EN FAIT CA MARCHE MIEUX SI ON FAIT io(), sinon ca met ERR connection refused
+socket.emit('nom dEvent', 'message');
+ou
+pipe.emit('nom dEvent', {k1: v1, k2: v2});
+
+==> et au niveau du server, pour intercepter, on fait
+ioStream.sockets.on('connection', function (socket) {
+	socket.on('nomDevent', function (datas) {//faire des trucs });
+})
+
+et pour envoyer un message du server vers le client on fait
+
+server-->client
+---------------
+ioStream.emit('nom de l\'event', 'message');
+ou, si on veut envoyer plusieurs trucs
+ioStream.emit('nom de l\'event', {key: value, key2: value2});
+
+==> et au niveau client il revoit le truc comme ca
+const socketIO = io.connect('localhost:8080');
+socketIO.on('nom de lEvent', function (message) { //faire des trucs avec le message})
+
+
+===[socket.io avec plusieurs clients connectés sur le meme server]===
+
+envoyer le meme message a pleins de clients c'est ce qu'on appelle le broadcast
+
+pour faire ca, on fait
+ioStream.sockets.on('connection', function (socket) {
+	socket.broadcast.emit('message', 'Message à toutes les unités. Je répète, message à toutes les unités.');
+});
+
+on peut gerer les variables de sessions: 
+soit en utilisant la technique d'avant, genre express-session
+soit en utilisant un autre middleware genre 
+session.socket.io
+
+Faut faire gaffe car j'ai l'impression qu'il y a des pertes, ou des communications en oubliant des users
+quand on utilise le broadcast
+
+==> maj, j'ai refait le tchat avec diffusion des messages en broadcast en utilisant express et ca marche beaucoup mieux
+==> conclusion, les libs gerent tout un tas de trucs que je fais pas en faisant tout moi meme donc privilegier l'utilisation
+    des libs et regarder les sources pour comprendre les subtilités
+
+
+===[session.socket.io]===
+
+

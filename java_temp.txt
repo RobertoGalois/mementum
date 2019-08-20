@@ -1,0 +1,4646 @@
+Avec java on peut faire
+- des applis qui tournent en mode console 
+- des applis qui tourne en mode fenetre avec des gui 
+- des programmes implantés dans des pages web sous forme d'applet
+- des applis mobiles avec J2ME
+- autres...
+
+TOUT PROGRAMME JAVA EST CONSTITUÉ AU MOINS D'UNE CLASSE
+LE POINT DE DEPART DE TOUT PROGRAMME JAVA EST LE 
+public static void main(String[] args)
+
+l'interet de java c'est la MACHINE VIRTUELLE = JRE = Java Runtime Environnement 
+des que la machine virtuelle est installée sur la machine, le programme java pourra tourner dessus quelque soit l'OS et sa config 
+Quand on compile le code source de java, il prend une forme intermédiaire qui est le BYTE CODE, pas encore binaire comme un programme C compilé mais interprétable par la machine virtuelle \
+- JRE = Java RunTime Environment = machine virtuelle java = tout ce qu'il faut pour faire tourner des programmes java
+- JDK = Java Developpement Kit = contient le JRE + tout le nécessaire pour développer et compiler les programmes java à faire tourner 
+
+Concernant les environnements, il y en a des différents en fonction de ce qu'on veut développer: 
+- J2SE = Java 2 Standard Edition = permet de développper les applications dites "CLIENT LOURD" = genre word, excel, openoffice = ce qui est abordé dans le cours
+- J2EE = Java 2 Entreprise edition = pour les applications dites "CLIENT LEGER" = genre les applications web ou les Applets web 
+- J2ME = Java 2 Micro Edition = pour les applications pour les appareils portables = genre Telephones mobiles, PDA, ...
+
+
+Presentation de Eclipse
+-----------------------
+c'est un IDE = Integrated Developpement Environnement = Environnement de développement intégré 
+Alt+Shift+N = new projet 
+Ctrl+S = sauvegarder le fichier en cours
+Ctrl+Shift+S = sauvegarder tous les fichiers 
+Ctrl+W = fermer le fichier en cours
+Ctrl+Shift+W = fermer tous les fichiers ouverts
+Ctrl+Shift+O = import toutes les classes nécessaire à l'execution du code dans le fichier class. Awsome ! 
+Ctrl+F11 = compiler et executer
+
+remarque, une classe c'est un ensemble de codes contenant plusieurs instructions que dois effectuer le programme 
+c'est une sorte de patern permettant de créer des objets dont la configuration sera celle décrite dans la classe
+le mieux dans Eclipse pour faire une nouvelle classe, c'est de faire un clic droit dans l'explorateur de projet pour créer la classe précisément là où on veut la faire
+
+pour run un script, on peut utiliser le raccourcis ctrl+f11
+
+
+Remarque concernant la méthode main()
+il ne peut y avoir qu'une dans un projet, pour constituer un point de départ au programme 
+il peut y en avoir plusieurs dans differentes classes cohabitant au sein du meme projet, mais une seule sera considérée comme le point de départ du projet
+
+REMARQUE IMPORTANTE: on a le droit de créer une classe dans une classe !
+
+presentation des classes existantes 
+-----------------------------------
+- la classe "System" permet d'utiliser les entrées et sorties standard (saisie clavier et affichage à l'écran)
+  l'objet out contient les methodes permettant d'afficher des trucs a l'ecran genre print()
+  remarque: la méthode print affiche le texte sans retour chariot a la fin, on peut enchainer les print pour avoir une seule et meme ligne de texte
+            la methode println affiche le texte avec un retour chariot a la fin, si on enchaine les println on aura une succession de lignes de texte
+  on peut appeller le garbage collector avec System.gc();
+
+
+- la classe String 
+
+- la classe Integer
+
+
+les methodes print() et println()
+---------------------------------
+c'est 
+System.out.print(), et 
+System.out.println()
+
+on a comme caractères spéciaux
+\n = retour a la ligne 
+\t = tabulation 
+\r = retour chariot, parfois utilisé comme retour a la ligne
+\" = "
+
+remarque, si on fait
+Object testObjet = new Object();
+puis
+System.out.println(testObjet);
+C'est équivalent, pour la JVM, que 
+System.out.println(testObjet.toString());
+
+pour connaitre le nombre de processeurs dans notre systeme, on fait
+Runtime.getRuntime().availableProcessors();
+
+
+faire de la prog en invite de commande
+--------------------------------------
+on modifie la variable d'environnement %PATH% pour pouvoir taper les commandes java sans avoir a mettre leur chemin complet avant 
+Pour compiler un fichier script.java, on fait 
+javac script.java
+cad 
+javac <nomFichier.java> ==> Ca donnera un fichier nomFichier.class
+Pour executer mon script java, on fait 
+java script
+cad 
+java <nomFichierSansExtension>
+
+pour javac, -d cheminDestination/ -cp cheminDesSources/ (sources c'est le repertoire src, contenant des sources et des repertoire packages)
+
+ATTENTION: 
+Si le fichier java fait partie d'un package, cad s'il a une mention au début du code du type 
+package nomPackage; 
+si je fais javac nomFichier.java ça compilera sans soucis 
+puis si je fais java nomFichier, le programe ne trouvera pas le fichier en question 
+Cela est du au fait que quand il s'agit d'un script faisant partie d'un package, 
+il faut se placer dans le répertoire parent (cad non pas dans le dossier où il y a toutes les sources et les fichiers compilés, mais dans le dossier parent de celui-ci 
+qui est le dossier src, contenant les dossiers contenant toutes les sources et qui a le nom nomPackage
+et enfin d'utiliser la syntaxe suivante: 
+java nomPackage.nomfichier
+
+Donc, concretement, quand on bosse en mode console et qu'on veut organiser proprement notre projet de dev, 
+on a un dossier projet, qui contient 2 dossiers
+1 dossier src, avec les sources
+1 dossier bin, contenant les .class (bytecode)
+
+si on ne bosse pas avec des packages, on fout les fichiers sources .java dans monProjet/src
+on compile en faisant
+javac -d ../bin/ -cp ./ ./Main.java
+ou alors, si on est dans le dossier projet, ce qui est plus souhaitable
+javac -d ./bin/ -cp ./src/ ./src/Main.java
+ou alors, si on est dans le bin, on fait
+javac -d ./ -cp ../src/ ../src/Main.java
+
+
+Ensuite pour lancer le programme, on fait
+java -cp ./bin/ Main
+
+Si on bosse avec des packages, on fait
+javac -d ../bin/ -cp ./ ./mainPackage/Main.java (ou alors ./Main.java si Main.java ne fait partie d'aucun package)
+==> ca va creer dans bin la même arborescence que dans src, avec un dossier par package qui contiendra, non plus les sources mais les .class
+pour executer le programme, on fait
+java -cp ./bin/ packageMain.Main (ou alors ./bin/Main si Main ne fait partie d'aucun package)
+
+
+
+
+
+
+Les variables en java
+-----------------------
+yen a differents types 
+on les declare comme suit
+<type de variable> <Nom de la varibale>;
+
+On peut diviser les types de variables en 2 categories
+les primitives ou simples = natives = entiers, reels, boolen, caractere
+les complexes = objets
+
+De maniere generale, un type nombre contenant n octets pourra contenir un nombre compris entre -2^n et +(2^n)-1
+
+le type Byte = 1 octet = contient tout nombre compris entre -128 et +127 (-2^7 et +2^7-1 soit 2^7 nombres <0 et 2^7 >=0) 
+genre 
+byte temperature = 64; 
+
+Le type short = 2 octets = contient tout nombre compris entre -32768 et +32767 (-2^15 et +2^15-1 soit 2^15 nombres <0 et 2^15 >=0)
+genre 
+short vitesse = 32500; 
+
+Le type int = 4 octets = contient tout nombre compris entre -2 147 483 648 et +2 147 483 647 (-2^31 et +2^31-1 soit 2^15 nombres <0 et 2^15 >=0)
+genre 
+int temperature_soleil = 15000000; 
+
+Le type long = 8 octets = contient tout nombre compris entre -9 223 372 036 854 775 808 et +9 223 372 036 854 775 807 (-2^63 et +2^63-1 soit 2^63 nombres <0 et 2^63 >=0)
+genre 
+long PIB_Mondial = 1000 000 000 000L;
+ATTENTION, Il faut absolument, lors de la declaration d'un long, mettre un L majuscule à la fin de l'assignation de la variable ! 
+Autrement le compilateur le prendra comme un int et si ça depasse, ça compilera pas 
+
+
+Le type float = 4 octets = pour les nombres à virgule flottante 
+genre 
+float pi = 3.14159265f;
+float bin = 2.0f; 
+
+ATTENTION, de la meme maniere il faut mettre un f à la fin de l'assignation de la variable, 
+DE PLUS, meme si le nombre déclaré est un entier, il faut mettre un .0 après. 
+
+Le type double = 8 octets = pareil que float mais avec plus de nombre derriere la virgule 
+genre 
+double tiers = 1.333333333333333333333333333333333333333333333d;
+ATTENTION, de la meme maniere il faut mettre un d à la fin de l'assignation de la variable, 
+
+
+ATTENTION, concernant la variables numériques, quand on fait des opérations, il faut le faire entre des variables de meme type et affecter le resultat dans une variable de même type, 
+quitte à modifier/convertir la variable en amont, autrement on risque de perdre en précision
+En effet, chaque type de variable a une capacité en bits (et donc en octet), si on affecte le résultat d'une division de 2 doubles à un int, le résultat ne sera pas un nombre réel mais un entier
+pour convertir, on fait 
+(type)variable
+genre
+int nombre = 3;
+float nombre2 = (float)nombre;
+
+Le type char = contient un caractère (codé en ascii, du coup on pourrait le stocker sous forme de nombre) 
+genre 
+char a = 'a';
+char b = 98;
+ATTENTION, ce sont des SIMPLES guillemets
+
+
+Le type boolean = ne peut contenir que 2 valeurs, true=1 et false=0
+genre 
+boolean test = true; 
+c'est pareil que 
+boolean test = 0;
+
+
+le type String = type complexe = contient une chaine de caractere
+genre 
+String Chaine; 
+Chaine = "Coucou tout le monde"; 
+ou
+String Chaine = "Coucou tout le monde";
+MAIS comme c'est un objet, on peut egalement la declarer comme on le fait pour un objet 
+genre 
+String Chaine = new String();
+Chaine = "Coucou tout le monde";
+ou 
+String Chaine = new String("Coucou tout le monde");
+ATTENTION, ce sont des DOUBLES guillemets
+
+remarque sur la classe String, on peut convertir un int (ou autre) en String de cette façon
+
+int nombre = 10;
+int intNombre;
+String chaineNombre = new String();
+
+// stockage du nombre dans une chaine de caractère, celui-ci devenant une chaine de caracteres
+chaineNombre = chaineNombre.valueOf(nombre);
+//la methode valueOf() de String renvoit une conversion en en string de la valeur, c'est un peu comme toString() de l'objet.
+
+Ensuite, tout classe Wrapper (Integer, etc) a une methode pour avoir sa valeur en primitif
+(++ utile pour faire des comparaisons genre ==, >, etc)
+pour un Integer, ca serait monInteger.intValue();
+pour float, ca serait .floatValue(), etc
+
+//
+intNombre = Integer.valueOf(nombre).intValue();
+//on aurait aussi pu plus simplement faire
+intNombre = Integer.valueOf(nombre);
+
+//on peut également faire du cast comme ça
+float floatNombre = Integer.valueOf(nombre).floatValue();
+
+Pour récupérer le caractère situé à une position précise d'une chaine, on fait 
+String chaine = new String("coucou");
+char a = chaine.charAt(i)
+où i compris entre 0 et nombre de caracteres dans la chaine - 1 (une chaine étant un tableau)
+
+Ya des méthodes pratiques de la classe String: 
+String.toUpperCase() = renvoie la chaine toute en majuscule
+String.toLowerCase() = renvoie la chaine toute en minuscule
+String.length() = renvoie la longueur de la chaine = nombre de caracteres
+String.equals(String autreChaine) = retourne true si les 2 chaines sont identiques, faux sinon = comparaison de 2 chaines de caracteres
+String.charAt(int i) = retourne le caractère situé à la i ieme position 
+String.subString(int pos_début, int post_fin) = retourne une sous-chaine de la chaine de caractère, située entre la position_debut et la position_fin INCLUS
+String.indexOf(char a OU String chaine) = retourne la position de la premiere occurence du caractere passé en parametre (scan de la premiere à la derniere position), ou -1 si yen a pas dans la chaine
+String.lastIndexOf(char a) = idem mais en scannant de la derniere a la premiere position, CES 2 METHODES FONCTIONNENT AVEC UN CARACTERE OU UNE CHAINE
+
+
+
+Remarque generale: on peut initialiser des variables sans leur donner de valeur, pour leur en donner plus tard, genre 
+int nombre; 
+pour plus tard faire 
+nombre = 3;
+
+C'est vrai aussi pour les objets, genre
+Scanner sc; 
+pour plus tard faire 
+sc = new Scanner(System.in);
+
+
+
+Regles d'ecriture
+-----------------
+- Tout nom de classe doit commencer par une majuscule 
+- Tout nom de variable commence par une minuscule 
+- Si ya plusieurs mots dans le nom de la variable on fait comme ça: maVariableEnMousse
+- Jamais d'accents ou caracteres speciaux
+
+
+depuis java 7, il est possible de déclarer des variables en notation binaire (en précedant 0b) ou hexadécimal (en precedant de 0x), comme ceci: 
+int nombre = 1000; 
+int nombre = 0b1111101000; 
+int nombre = 0x3E8; 
+
+
+Concaténation 
+-------------
+On fait comme ça
+"text" + "Texte" + variable + fonction(variable2) + "Texte";
+genre
+System.out.println("text" + "Texte" + variable + fonction(variable2) + "Texte");
+
+
+Convertion de variable = cast de variable 
+-----------------------------------------
+si je fais 
+int nb1 = 10;
+int nb2 = 3; 
+int resultat = nb1/nb2; 
+System.out.println(resultat);
+
+ça m'affichera 3 et non pas 3.3333333
+
+Si je change la 3e ligne par 
+float resultat = nb1/nb2; 
+j'aurai 3.0 et non pas 3.33333333
+
+Si je change la 3e ligne par 
+float resultat = (float)(nb1/nb2); 
+j'aurai egalement 3.0 et non pas 3.33333
+
+Pour que ça marche, je dois faire pour la 3e ligne 
+float resultat = (float)nb1/(float)nb2;
+
+Le fait que la façon de faire juste avant ne fonctionne pas, donnant 3.0 au lieu de 3.333, parcequ'il y a une priorité des operations, 
+il y a conversion de la division de 2 int qui retourne un int qui est seulement ensuite converti en float, ce qui fait qu'on a 3.0
+
+Les packages
+------------
+C'est un ensemble de dossiers avec des sous-dossiers contenant pleins de scripts java définissant pleins de classes 
+C'est le cas de java.util par exemple
+
+Le package java.lang est automatiquement importé par java sans qu'on ai besoin de donner l'instruction. 
+il contient notamment la définition de la classe System. 
+
+Pour preciser qu'un fichier appartient a un package on fait
+package nomPackage;
+
+Pour importer un package, on met au début du code, avant la création de la classe,
+import <nom du package>.* // ca importe tous les fichiers du package
+import <nom du package>.nomFichier // sans l'extension
+
+exemple
+import java.util; 
+
+Comme chaque package est subdivisé en sous-package, on peut prendre tout le package ou juste une partie du package (genre une seule classe du sous-package)
+exemple: 
+import java.util.Scanner; // On n'importe qu'une seule classe, la classe Scanner.
+import java;  // on importe toute la classe java avec toutes ses sous-classes ensemble, balèze
+
+
+Pour organiser son projet en differents packages dans Eclipse, 
+On peut creer des packages et creer des fichiers class dedans (ca rajoute automatiquement package machin;)
+Il faut ensuite bien import les packages dans les fichiers mais en cas de doute, un seul ctrl+shit+O et le tour est joué
+Et alors pas de soucis à la compilation
+
+Pour organiser son projet en differents packages en mode console, 
+On met chaque fichier d'un meme package dans un dossier du nom du package et le compilateur fera le reste
+
+ATTENTION, pour l'utilisation de fichiers externes (genre des images), 
+quand on met genre 
+new Image("./Pictures/image.png");
+En fait, le ./ ne désigne, non pas l'endroit où se trouve l'executable, mais l'endroit d'où on lance l'executable, c'est à dire d'où on lance la commande java
+Du coup, si je suis dans un repertoire qui contient ./bin/ et ./pictures/
+si je fais java -cp ./bin/ Main, ca va fonctionner
+par contre si je fais 
+cd ./bin
+puis
+java Main
+là ca ne fonctionnera pas
+
+Le mieux étant de tout foutre dans un .jar
+Pour generer un .jar executable en mode console, 
+on se place dans le ./bin apres avoir tout generé, 
+puis on fait
+jar cvf nomJar.jar [fichiers]
+où les fichiers sont tous ceux dont on a besoin, 
+genre 
+./formPanel/*
+ou alors 
+./Pictures/*
+
+Lorsqu'on ajoute des fichiers d'un repertoire, ca conserve l'architecture, genre si j'ajoute
+./Pictures/* 
+dans le point jar, j'aurai un dossier ./Pictures/ avec mes fichiers ajoutés dedans
+
+Enfin, dans le .jar il y a un dossier
+META-INF
+qui contient un fichier
+MANIFEST.MF 
+(On peut mettre le fichier.mf a la racine du dossier mais c'est une convention de faire comme ca)
+==> Ce fichier sert à determiner un ensemble de choses pour rendre le .jar runnable, et notamment le fichier contenant le main 
+il a cette gueule
+============================
+Manifest-Version: 1.0
+Rsrc-Class-Path: ./
+Class-Path: .
+Rsrc-Main-Class: Main
+Main-Class: org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader
+============================
+La ligne la plus importante etant
+Main-Class: com.mypackage.MyClass
+et
+Class-Path: .
+ATTENTION
+- le fichier se termine par un retour chariot
+- aucun espace a la fin du fichier
+
+le probleme c'est que si on ne specifie aucun manifest.mf, jar.exe en genere un automatiquement qui est
+=============================
+Manifest-Version: 1.0
+Created-By: 1.8.0_151 (Oracle Corporation)
+=============================
+Mais du coup le jar n'est pas runnable
+
+du coup il faut le specifier en faisant
+jar cmvf META-INF/MANIFEST.MF <new-jar-filename>.jar  <files to include>
+voila
+
+Bon ca galere de ouf, une solution peut etre d'utiliser les fichiers de eclipse et son manifest pour faire son propre bordel..
+
+Le probleme quand on utilise des Images ou des fichiers externes dans un .jar, c'est que la jVM ne les retrouve plus
+genre 
+new Image("./Chemin relatif");
+
+Pour que ca fonctionne, il faut faire
+new Image(this.getClass().getResource("/Chemin relatif"));
+==> ATTENTION, ICI ON NE MET PAS LE POINT SINON CA PLANTE !
+
+Puis on met le dossier contenant les fichiers dans le jar en respectant le chemin relatif, et voila
+
+
+gerer des entrées clavier en mode console 
+-----------------------------------------
+On utilise la classe Scanner (qui présente des failles ! Sans controle, on peut rentre n'importe quoi et faire des injections de code)
+Pour rappel, quand on affiche un truc en mode console avec System.out.println(""); 
+on utilise la méthodes println() de la sortie standard du system constituée par l'objet System.out
+
+Pour les entrées standard en mode console, on va utiliser l'objet System.in
+Sauf qu'on peut pas faire un truc genre System.in.input(String input);
+Là, l'objet Scanner il faut le creer pour pouvoir faire des input console, il faudra l'"INSTANCIER", en lui indiquant quelle est l'entrée standard (en l'occurence, System.in)
+
+
+Il faut donc instancier un objet Scanner, mais avant, pour ça il faut include le package java.util qui contient la définition de la classe Scanner
+import java.util.Scanner;
+Puis instancier un objet Scanner
+Scanner sc = new Scanner(System.in);
+Puis à tout moment on peut faire un input comme ça 
+String Str = new String(sc.nextLine());
+ou bien 
+String str = sc.nextLine();
+
+Remarque, on fait sc.nextLine(); pour récuperer du texte, 
+pour récuperer un int, on fait 
+sc.nextInt();
+de manière generale, pour récuperer une donnée d'un type et la stocker dans une variable de ce meme type, on fait 
+sc.next<type>();
+ATTENTION, 
+il faut savoir que Scanner.nextLine() récupère le contenu de toute la ligne qui a été tapée, PUIS replace la tete de lecture au début de la ligne suivante (une nouvelle ligne du coup) 
+ça veut dire que si on fait un premier Scanner.nextLine(), puis un autre Scanner.nextLine(), ça demandera à chaque fois d'entrer une nouvelle ligne
+en revanche, ce n'est pas le cas des autres méthodes de récupération des données genre nextInt(), nextFloat(), etc
+si on utilise Scanner.nextInt() ou Scanner.nextDouble(), puis qu'on invoque Scanner.nextLine(), Cette fois-ci Scanner.nextLine() ne nous invitera pas à taper un texte, 
+Elle récupérera la ligne commencée par les autres instructions (une ligne vide du coup),  
+genre si on fait 
+Scanner sc = new Scanner(System.in);
+String str = new String("");
+int input; 
+
+System.out.println("Saisissez un nombre entier: ");
+input = sc.nextInt();
+System.out.println("Vous avez tapé: " + input);
+
+System.out.println("Maintenant tapez une chaine de caracteres: ");
+str = sc.nextLine();
+System.out.println("Vous avez tapé: " + str);
+System.out.println("Fin !");
+
+On n'aura pas la possibilité d'entrer d'entrer notre chaine de caractère, elle sera rentrée d'emblée et sera vide. 
+
+il faut donc faire un nextLine() avant pour mettre la tete de leture sur la prochaine ligne. 
+(soit apres tout input qui n'est pas un nextLine(), soit avant tout nouvel input faisant suite à un input n'étant pas un nextLine();)
+
+Operateurs logiques
+--------------------
+== 
+!= 
+< 
+<= 
+> 
+>=
+&& = et 
+|| = ou
+?: = opérateur ternaire équivalent d'un if else dont l instruction serait l'affectation d'une valeur à une variable
+genre int nombre = (x<y) ? x : y; 
+équivaut à 
+int nombre
+if (x<y) { nombre = x; }
+else {nombre = y; }
+Remarque, on peut imbriquer une condition ternaire dans une condition ternaire, etc a l'infini
+
+Chronometre dans java
+---------------------
+On fonctionne avec des variables Long
+pour connaitre le timestamp system à t1 on fait 
+long start = System.currentTimeMillis();
+pour connaitre le timestamp system à t2 on fait 
+long end = System.currentTimeMillis();
+pour connaitre la durée séparant t1 et t2 on fait tout simplement
+long diff = end-start
+
+La construction switch
+----------------------
+on fait comme ça 
+switch(variable)
+{
+  case argument:
+    instructions
+  break; 
+
+  case argument:
+    instructions
+  break; 
+
+  case argument:
+    instructions
+  break; 
+
+  default: instructions
+
+}
+
+
+La construction do while
+---------------------
+c'est comme ça 
+do 
+{
+  instruction
+} 
+while (condition);
+
+c'est comme le while mais la condition est vérifiée apres, ce qui permet de lancer les instructions au moins une fois dans tous les cas, 
+il y a donc une itération de plus que dans un while (si on raisonne avec un ++)
+
+la construction for
+-------------------
+c'est comme ça 
+
+for(initialisation du compteur, initialisation d'un autre compteur optionnel; condition,conditions optionnelles; instruction, instruction optionnelle)
+{
+  instruction
+}
+c'est comme un while mais on défini le nombre de tour par un incrément 
+
+
+variante de la condition for, tres utile pour afficher un tableaux
+-------------------------------------------------------------------
+
+En gros c'est plus simple on fait comme ça: 
+on a un tableau qui contient des variables de type Type, on fait
+for(Type variableContenant : nomTableau)
+  System.out.println(variableContenant);
+
+int tableau[] = {1,2,3,4,5}
+
+for(int i : tableau)
+  System.out.prinltn(i);
+
+Equivalent à 
+
+for(int i=0; i<tableau.length; i++)
+  System.out.println(i);
+
+dans la nouvelle façon, on crée une variable du meme type que le tableau et on y stocke temporairement la variable a traiter
+mais du coup, un peu plus gourmand.
+
+Pour les tableaux a multidimension genre mettons int tableau[][] on fait 
+
+for (int sousTableau[] : tableau)
+{
+  for(int nombre : sousTableau)
+  {
+    System.out.println(nombre); 
+  } 
+}
+
+equivalent a 
+
+for(int i=0; i<tableau.length; i++)
+{
+  for(int j=0; j<tableau[i].length; j++)
+  {
+    System.out.println(tableau[i][j]);
+  }
+}
+
+et enfin si on prend un tableau genre int tableau[][][][] on fait
+
+for(int sousTableau[][][] : tableau)
+{
+  for(int sousSousTableau[][] : sousTableau)
+  {
+     for(sousSousSousTableau[] : sousSousTableau)
+     {
+       for(int donnee : sousSousSousTableau)
+       {
+         System.out.println(donnee);
+       }
+     }
+  } 
+}
+
+equivalent a 
+
+for(int i=0; i<tableau.length; i++)
+{
+  for(int j=0; j<tableau[i].length; j++)
+  {
+    for(int k=0; k<tableau[i][j].length; k++)
+    {
+       for(int l=0; l<tableau[i][j][k].length; l++)
+       {
+         System.out.println(tableau[i][j][k][l]);
+       }  
+    }
+  } 
+}
+
+
+
+Les variables tableau 
+----------------------
+Un tableau est un objet en java
+Il a donc pour patern une classe dans le package standard (java.lang)
+
+il se déclare comme suit 
+
+soit en l'initialisant d'emblée
+<Type variable> nomVariable[] = {element, element, ..., element};
+genre 
+int tableau[] = {1, 2, 3};
+
+soit en en créeant un vide, comme suit: 
+<type variable> nomTableau[] = new <type variable>[dimension];
+genre 
+int tableau[] = new int[10];
+
+De la meme maniere, pour déclarer les tableaux multidimensionnels on fait comme ça 
+<type variable> nomTableau[][] = {{element, element, element}, {element, element, element}};
+(ATTENTION, le nombre d'élement dans le chaque sous-tableau doit être le meme)
+genre 
+int table[][] = {{0,2,4,6,8}, {1,3,5,7,9}};
+
+ou alors 
+<type variable> nomVariable = <type variable>[dimension][dimension]
+genre
+int table[][] = int[2][5];
+
+Comme tout objet, il dispose d'attributs
+un attribut tres interessant est l'attribut length qu'on a comme ça 
+nomTableau.length
+Attention, length c'est le nombre de cases, soit l'INDICE DE LA DERNIERE CASE +1 !!!!
+Du coup pour faire des trucs dans le tableau, on fait 
+for(int i=0; i<=tableau.length-1; i++) {}
+ou tout simplement
+for(int i=0; i<tableau.length; i++) {}
+
+pour les tableaux multidimensionnels, on fait, pour la premiere dimension 
+tableau.length
+pour les dimensions suivantes, 
+tableau[i].length
+puis
+tableau[i][j].length
+etc
+
+
+Si on essaye de lire ou ecrire dans une case qui n'existe pas dans une variable tableau, on aura le message suivant a la compilation
+java.lang.ArrayIndexOutOfBoundsException
+
+Remarque, il existe des classes qui consistent à avoir des variables tableau dynamique, genre 
+CharArray ou StringArray ou ByteArray etc
+ça utilise les flux
+plus d'infos ici 
+https://openclassrooms.com/courses/apprenez-a-programmer-en-java/les-flux-d-entree-sortie#/id/r-2182398
+
+
+Les methodes 
+------------
+
+en POO, on ne parle pas de fonction mais de méthodes, mais c'est pareil 
+
+Dans la classe math (présente dans java.lang donc importée par défaut), on a
+la méthode random() super utile. Si on met pas d'argument, ça retourne un float aléatoire entre 0 et 1.
+Math.random();
+Math.sin();  = fonction sinus 
+Math.cos();  = fonction cosinus
+Math.tan();  = fonction tangente
+Maths.abs(float); = fonction valeur absolue
+Maths.pow(float nombre, float exposant) = fonction puissance, qui retourne nombre^exposant
+
+Dans la classe Object on a
+this.toString() = retourne une chaine de caractere decrivant la classe 
+this.getClass() = retoure une chaine de caractere avec le nomPackage.nomClasse
+
+
+Creer sa propre methode
+-----------------------
+les méthodes ne peuvent pas etre imbriquées 
+
+<public / default / Protected / private / > <static / > <type de variable de retour / void> <nomMethode> (arguments)
+{
+  instructions
+
+  return (variable)
+}
+
+void = ya pas de return
+
+public = accessible depuis toute classe du package
+
+static = accessible sans avoir besoin de creer un objet 
+
+toute methode n'utilisant que des variables static doit être déclarée static.
+
+
+
+REMARQUE: si on a une méthode qui pourrait recevoir comme parametre un char, mais parfois un String ou alors un int mais parfois un float etc, on peut utiliser la 
+SURCHARGE DE LA METHODE. 
+cad garder le meme nom de méthode mais que ses actions soient differentes en fonction du type de parametre
+Pour cela c'est tout simple, il suffit de donner à la méthode le meme nom mais de changer les parametres et les instructions. 
+ça fonctionne aussi si on veut rajouter des parametres. 
+C'est la JVM qui s'occupera de choisir la bonne methode en fonction des parametres entrés 
+
+
+remarque2: dans les méthodes de la classe, plutôt que d'appeller les variables d'instance directement genre nomVille 
+il vaut mieux le faire comme on le ferait depuis un autre fichier classe genre maVille.nomVille, 
+mais en utilisant le mot clé this, cad
+this.nomVille.
+
+
+Creer une classe: 
+----------------
+une classe c'est comme un moule
+On la déclare comme suit: 
+
+<public / > class <nomClasse> 
+{
+  //Declaration des variables d'instance
+  // ON NE PEUT PAS FAIRE AUTRE CHOSE QUE DECLARER DES VARIABLES DANS CETTE PARTIE LA DE LA CLASSE
+  // pour faire des trucs, faut le faire au sein des méthodes
+  int instance1; 
+  char instance2; 
+  float instance3; 
+  //etc
+
+  //declaration de la/les méthodes constructeur 
+  public <nomClass>()
+  {
+
+  }
+
+  //déclaration des méthodes dans lesquelles on va pouvoir faire des opérations et tous les trucs
+  public void méthode()
+  {
+    // du code
+  } 
+
+}
+
+Apparemment, dans la 
+
+
+la portée en POO
+----------------
+
+Pour les variables 
+Public = la variable pourra être lue et modifée au sein de la classe et dans toute autre classe du package ou qui aura import la classe de départ, 
+default = visible et modifiable partout dans le package, mais pas à l'exterieur du package.
+Private = la variable ne pourra être lue et modifée QUE dans le fichier class d'origine, tout autre fichier class ne pourra pas la modifier NI MEME LA LIRE !
+Protected = idem que private mais la variable est tout de même accessible depuis les classes héritées. Ça permet de les "copier" dans les classes héritées
+Static = C'est une variable globale, définie une fois pour tout pour tout le package. Si on défini une variable static quelque part, on peut l'appeller depuis partout, on pourra la retrouver.
+         genre si on fait dans un fichier Class1, static byte var=1; et qu'on fait depuis un autre fichier Classe2: print(Classe1.var), on la trouvera, on pourra la modifier, etc. 
+final = on ne peut pas la redéfinir dans une classe dérivée
+transient = si l'objet est serialisé, la variable transient n'est pas sauvegardée (et n'a pas besoin d'être serializable)
+volatile = probablement modifiable par un autre processus (++ utile lors de dev de pilotes mais je sais pas si c'est pertinent en java)
+
+
+Pour les méthodes
+Public = La méthode peut être appellée depuis la classe dans laquelle elle est définie, ET depuis toute autre classe (genre dans la classe classMain, on peut faire maClasse.maMethode(), pas de soucis.
+Private = La méthode peut être appellée depuis la classe dans laquelle elle est définie, pas dans les autres classes (genre on peut faire au sein de la classe de départ méthode(); mais on NE PEUT PAS, au sein de la classe classMain(), faire maClasse.maMethode();
+default = La méthode peut être appellée depuis n'importe quelle classe du package mais pas depuis une classe en dehors du package qui aurait inclue le package
+          C'est surtout pour les fonctionnements internes à la classe. 
+Protected = idem que private mais la méthode peut quand même être appellée (en fait elle est "copiée") dans les classes héritées.
+Static = c'est une fonction n'utilisant que des variables static. Celle-ci peut être appellée depuis une autre classe sans avoir besoin de créer un objet de cette classe, 
+         on peut donc faire Classe.methode() depuis toute classe directement sans avoir forcement a faire Classe objet = new Classe(); puis objet.methode();
+final = on ne peut pas la redéfinir dans une classe dérivée
+abstract = méthode abstraite, définine uniquement dans une classe abstraite, sans corps (donc pas d'accolades, juste un ; apres les ()), qui n'est définie que pour exister dans les classes héritées et pouvoir etre redefinie 
+synchronized = 
+native = 
+strictfp = 
+
+
+Pour les classes
+Public = tout utilisateur important un package ou seulement le fichier class dans son package peut utiliser la classe en question
+default = toute classe du package peut y faire appel mais pas les autres
+Private = seules les classes définies dans le même fichier peuvent utiliser la classe en question
+Protected = La classe est accessible dans les classes héritées mais pas les autres classes
+abstract = Définie une classe abstraite, cad qui ne peut pas être instanciée, cad qui ne peut pas servir de patron pour faire un objet
+final = On ne peut pas faire de classe héritée à partir de cette classe
+Static = c'est une classe qui n'a pas à être instanciée et dont toutes les variables et méthodes peuvent être invoquées directement
+
+
+Remarque: concernant les variables, comme on ne peut pas discriminer lecture et ecriture (cad que soit une variable est lisible et modifiable, soit elle n'est ni lisible ni modifiable)
+on ne peut rendre une variable lisible par une autre classe sans qu'elle soit modifiée 
+IL EST TRES DANGEREUX DE LAISSER UNE VARIABLE D'INSTANCE D'UNE CLASSE MODIFIABLE PAR UNE AUTRE CLASSE 
+C'est pourquoi le mieux c'est de les mettre toutes en private et d'utiliser des méthodes qui renvoient leur valeur
+ces méthodes qui permettent de lire nos variables d'une autre classe sans pouvoir les modifier s'appellent des ACCESSEUR
+c'est une simple méthode du type 
+public String getNomVille()
+{
+  return nomVille;
+}
+
+Pour modifier ces variables d'instance, c'est pareil, on va utiliser des méthodes qu'on appelle des MUTATEURS
+c'est une simple méthode du type
+public void setNomVille(String p_nomVille)
+{
+  nomVille = p_nomVille;
+}
+
+
+par convention, les méthodes accesseurs s'appellent getNomVariable
+et les mutateurs s'appellent getNomVariable 
+
+
+Méthode constructeur d'une classe
+---------------------------------
+Dans une classe, ya 3 types de variables
+- les variables d'instance = celles qui définissent les caracterstiques de notre objet (genre nombreHabitants, pays, nom, ...)
+- les variables de classe = ce sont des variables COMMUNES A TOUTES LES INSTANCES DE CLASSES. En d'autre terme, cette variable a la même valeur pour tous les objets et la modifier modifiera sa veleur dans tous les objets, c'est le meme conteneur. Ce sont des variables STATIC
+- les variables locales = utilisées et accessibles que au sein de la classe (fonctionnement interne)
+
+On défini les variables caractérisant la classe (des attributs particuliers qu'on appelle variable d'instance), 
+puis déclarer une méthode constructeur qui INDISPENSABLE: 
+- sera de portée public (logique car on l'appellera depuis d'autres fichiers class pour construire des objets en utilisant le pattern de notre classe de départ...
+- aura comme nom le nom de la classe (pour une classe ville, la méthode constructeur aura comme nom ville()
+- on ne précisera pas de type de retour
+
+Cette méthode constructeur est appellée lors de la création d'un objet utilisant notre classe comme pattern, 
+il signale a la JVM qu'il faut reserver telle quantité de mémoire pour creer l'objet en question
+
+donc pour une classe classVille
+la méthode constructeur est déclarée comme suit
+public classVille() {}
+
+Globalement ça donne un truc comme ça
+
+public class maClass
+{
+  //Declaration des variables d'instance
+  int instance1; 
+  float instance2; 
+  char instance3; 
+  String instance4; 
+
+  //Declaration de la méthode constructeur
+  public maClass()
+  {
+
+  }
+
+} 
+
+et pour creer un objet maClass dans un autre fichier class du projet (ou fichier class qui aura import le fichier class de départ), on fera
+maClass monObjet = new maCLass();
+
+On peut faire plusieurs constructeurs (en rajoutant des parametres dans la méthode), en suchargeant la méthode
+du coup on peut faire 
+public maClass() {}
+public maClass(int intance1) {}
+public maClass(int intance1, float instance2) {}
+public maClass(int intance1, float instance2, char instance3) {}
+public maClass(int intance1, float instance2, char instance3, String instance4) {}
+
+
+remarque: si on ne défini aucune méthode constructeur dans une classe, la JVM appelle une methode constructeur "implicite" de la superclasse.
+Si notre classe n'est pas dérivée, ça appellera donc la méthode constructeur implicite de la classe Object
+  
+
+Les variables de Classes et méthode de classe
+---------------------------------------------
+Utiles notamment pour connaitre à un instant t combien d'objets d'un type Class donnée sont crées. 
+les variables de classe sont static. 
+on les déclare donc comme suit: 
+static variableDeClasse; 
+
+Une méthode de classe n'est rien d'autre qu'une méthode qui n'utilise QUE des variables de classe (cad des variables static, donc déclarée static car c'est la regle). Du coup on la déclare comme suit: 
+public static int methodeDeClasse() {}
+
+On peut par exemple faire un compteur du nombre d'instances de l'objet crée. 
+on crée une variable d'instance static genre 
+private static int compteur;
+
+puis dans chaque méthode constructeur on va l'incrémenter genre
+public maClasse()
+{
+  compteur++;
+}
+
+puis on va faire un accesseur a cette variable puisqu'elle est private comme toute variable d'instance de classe
+public static int getCompteur()
+{
+  return compteur; 
+} 
+
+REMARQUE IMPORTANTE, à la différence des autres accesseurs, on ne fait pas un 
+return this.compteur; 
+car il s'agit d'une variable de classe, donc static, donc non spécifique de l'objet en question, donc on ne fait pas de this, c'est une variable globale. 
+
+Enfin, si dans notre programme, on appelle une méthode au sein d'une classe qui n'est pas définie dans notre classe, la JVM va checker 
+
+
+Le principe d'encapsulation 
+---------------------------
+
+C'est le fait que les variable d'instance de la classe soient toutes private donc accessibles et modifiables que par des accesseurs et mutateurs.
+C'est encapsulé quoi. 
+
+Ça permet de s'assurer que le fonctionnement interne à l'objet est integre, puisque toute modification d'une donnée est maitrisée, fait par une fonction qui peut donc 
+s'assurer de la modification, si c'est ok, si on le fait suivant les bonnes conditions. 
+
+
+dualité static / objet
+----------------------
+en concept objet, tout element (methode, variable, etc) est spécifique de l'objet, c'est une instance de l'objet
+une variable test sera spécifique de l'objet et sa valeur sera celle specifique de l'objet. 
+tout element ne sera accessible qu'apres avoir crée un objet specifique et ne sera accessible que par cet objet specifique
+
+
+en concept static, l'element est global, il ne peut etre defini qu'une fois, dans un fichier classe donné et peut être modifié depuis n'importe ou si on donne ce droit (public) 
+
+
+L'héritage
+-----------
+C'est un fondement de la programmation objet
+Imaginons qu'on a développé notre classe Ville pour faire des objets Ville, mais qu'on aimerait faire des Ville spéciales qui seraient des capitales 
+on pourrait développer un autre classe qui serait Capitale, qui serait exactement comme la classe Ville mais avec un parametre en plus, genre monument.
+
+Au lieu de recoder tout le contenu de la classe Ville et de rajouter un attribut dedans, on va creer une sous-classe de la classe Ville, qu'on appellera Capitale, avec un attribut en plus
+
+On parle de classe HERITÉE ou classe DÉRIVÉE
+héritées ou dérivées de classe MERES ou classe DE BASE
+
+on peut creer autant de classe dérivée d'une classe mere que l'on veut 
+On peut dériver une classe dérivée etc a l'infini 
+
+on fait comme ça 
+public class Capital extends Ville
+{
+
+}
+
+la classe héritée a donc tout le code de la classe mere, avec toutes ses méthodes et variables PUBLIC ou PROTECTED
+En revanche, elle ne dispose pas des méthodes constructeur (par défaut, la JVM va chercher dans la méthode de la superclasse si yen a pas dans le classe heritée)
+
+Contrairement au C++, java ne gère pas les héritages multiples (le fait qu'une classe dérivée hérite de plusieurs classes meres)
+quand ça fait genre public class Chimere extends Loup, Mouton {} 
+Ça ça n'arrivera jamais en java
+
+Dans une classe héritée, on peut faire appel aux variables définies dans la classe mere avec le mot clé SUPER qui récupere les elements de l'objet de base pour les envoyer a l'objet herité
+Au meme titre que this renvoi à l'objet/classe en cours (this.methode(), ...) super renvoie a la classe mère (super.methode(), ...) 
+De plus, la fonction super() appelle la méthode constructeur par défaut de la classe mère, c'est comme si on faisait un copier-coller de cette fonction. (de même que la fonction this() pourrait être le constructeur de la classe en cours)
+genre 
+class Capitale extends Ville 
+{ 
+  private String monument;
+ 
+  //Constructeur par défaut
+  public Capitale()
+  {
+    //Ce mot clé appelle le constructeur de la classe mère  
+    super();
+    monument = "aucun";
+  }
+}
+
+De meme, on peut fait un copier-coller de la fonction mère avec un super.methode();
+genre le showInfos de Capitale donnera 
+public void showInfos()
+{
+  super.showInfos();
+  System.out.println("Monument: " + this.monument);
+}
+
+
+Remarque: Toute classe existance est une classe dérivée de la classe Object
+
+Remarque: ON NE PEUT PAS HERITER D'UNE CLASSE DÉCLARÉE FINAL
+
+covariance des variables
+------------------------
+du fait de l'héritage, certains objets peuvent s'apparenter à d'autres
+par exemple si j'ai une classe mere Ville et une classe héritée Capitale
+Je peux creer un tableau 
+Ville[] tableau = new Ville[10]; 
+et y foutre des Ville mais aussi des Capitale
+
+De meme, si j'ai une méthode 
+String joujou(Ville parametre), 
+je peux mettre en parametre un objet Ville mais aussi un objet Capitale
+C'est la covariance des variables 
+
+c'est le fait qu'une variable objet peut contenir cet objet ou tout autre objet hérité de l'objet de départ
+
+Comme dit plus haut, au dessus de toute classe, il y a la classe object.
+Comme toute classe est une classe dérivée de la classe object, et que l'intéret d'avoir une classe dérivée, c'est de définir de nouvelles méthodes et de redéfinir des méthodes déjà presentes dans la superclasse 
+on peut redéfinir des méthodes de bases présentes dans la superclasse Object
+Une méthode la plus souvent redéfinie c'est la méthode toString() (qui retourne un String décrivant l'objet en question).
+
+genre on pourrait redéfinir la méthode toString() de la classe Ville pour y foutre le code de showInfos()
+Comme ça si on fait une méthode qui affiche le toString de tous les objets d'un tableau, on fait une méthode qui prend en parametre un tableau de Object et on le parse et 
+on est sûr que quel que soit l'objet, la méthode toString() fera son boulot correctement en fontion de l'objet, sans qu'on ai à se préoccuper de la particularité de caractériser l'objet en question.
+
+Quand la JVM tombe sur un appel de méthode par un objet ou une classe (en mode static donc), elle regarde si cette méthode est definie dans la classe appelante, si oui, elle execute celle-la, 
+sinon, elle remonte dans la superclasse puis fait de meme etc juska la classe Object et si ya rien, le compilateur dit VTF
+
+Remarque importante: le code suivant ne fonctionnera pas
+for(Object v : tableau)
+{
+  System.out.println(v.decrisToi());
+}
+Car la JVM va checker si la méthode decrisToi() est définie dans la classe Object
+Il faut donc préciser a la JVM qu'ici précisement il est question d'un objet Ville (le code d'exemple est debile de toute facon)
+for(Object v : tableau)
+{
+  System.out.println(((Ville)v).decrisToi());
+}
+
+
+Une autre méthode de la classe Object qui est souvent redefinie en aval c'est 
+public boolean equals(Object o) qui permet de vérifier si un objet est égal à un autre
+
+ou aussi
+public int hashCode() qui attribue un code de hashage (cad un identifiant qui sert a categoriser) à un objet
+ 
+
+
+
+Polymorphisme
+-------------
+Il permet de manipuler des objets sans connaitre leur type 
+Par exemple, pour reprendre la situation de tout a l'heure avec les classes ville et capitale 
+comme capitale est héritée de ville, on peut utiliser la meme méthode showInfos();
+On pourrait par exemple créer un tableau d'objets Ville et Capitale Melangés et appeller la méthode showInfos() sans se soucier de savoir si c'est des ville ou des capitale
+
+On pourrait avoir des méthodes qui prennent en parametre ce genre d'éléments, sauf que dans leur definition il faut etre précis, donc on est baisé 
+mais en fait non, grace à la COVARIANCE DES VARIABLES
+
+En gros le polymorphisme, c'est d'utiliser la covariance des variables pour redefinir des méthodes existantes dans une classe mère, au sein d'une classe fille, 
+afin, si on a besoin de faire une méthode générale, que tout se passe correctement. 
+
+
+Remarque: ON NE PEUT PAS HERITER D'UNE CLASSE DÉCLARÉE FINAL
+      et: toute METHODE déclarée final N'EST PAS REDEFINISSABLE
+
+
+
+Modeliser son bordel objet avec UML
+------------------------------------
+UML = inified modeling langage = language de modelisation unifie 
+
+c'est pour schematiser l'organisation des classes entre elles, l'architecture du bordel et tout et tout 
+l'avantage c'est que c'est comprehensible par tous 
+
+Ya differents types de diagramme, ya 
+les diagrames de classe, dont on va se servir, 
+les diagrammes de use case, qui montrent les differents cas d'utilisation du programme 
+les diagrammes de sequence, pour le deroulement de l'application dans un contexte donné, 
+etc 
+
+un diagramme de classe des classes Ville et capitale donne un truc comme ça: 
+
+Object
+======
+
+---------
+toString(): String
+
+^
+|
+|
+|
+
+Ville
+=====
+nomVille: String 
+nomPays: String 
+nombreHabitants: int
+-------------------
+showInfos(): String
+toString(): String
+
+^
+|
+|
+|
+
+Capitale
+========
+Monument: String
+--------
+toString(): String
+
+
+Da manière generale, une classe est donc modélisée comme suit
+
+NomClasse
+=========
+liste des nom des variables d'instance : Type de la variable
+-------------
+liste des méthodes(): Type du retour de la méthode
+
+
+De manière generale 
+- les fleches verticales sont des relations Classe héritée / classe mère (A est super de B, B est dérivée de A)
+- les fleches horizontales de G-->D sont des relation de description, genre on utilise un objet de ce type dans la classe, voila la description de la classe de cet objet (A a une seule instance de B, B est une instance unique présente dans A)
+- les fleches diagonales de HG<--BD sont des relations du même type mais genre yen a plusieurs genre un tableau (A est composé de plusieurs instances de B, B compose par plusieurs instances A) 
+
+
+Les packages 
+------------
+- leurs noms: 
+  . doivent être tout en minuscule
+  . avec a-z, 0-9 et . rien d'autre 
+  . il commence par com, edu, gov, mil, net, org ou les 2 lettres qui identifient le pays (ISO Standard 3166, 1981)
+  . Aucun mot clé java ne doit être présent, sauf s'il est suivi d'un _ genre: String_
+
+Attention: seules les classes déclarées public sont visible depuis l'exterieur du package
+
+
+Classes abstraites
+---------------------------------
+classes abstraites et interfaces: derriere ces 2 fondements se cachent les 2 façons de structure son programme en java = on parle d'architecture logicielle
+
+Une classe abstraite est une classe qui a la particularité de ne pas pouvoir être instanciée, cad qu'on ne peut pas créer d'objet utilisant le pattern de la classe en question. 
+c'est le genre de classe qui utilise des méthodes static, tout ça. 
+Elles servent principalement à DEFINIR UNE SUPERCLASSE
+genre on a une superclasse Animal et des classes héritées Loup, Chaton, Serpent, chaque méthode deplacement() sera differente pour chaque classe héritée mais la méthode deplacement() pour la classe Animal n'a pas de sens, elle n'existe que pour pouvoir être héritée et définie spécifiquement
+
+On les crée avec le mot-clé abstract, cad 
+abstract MaClasse 
+{
+
+}
+
+
+Il y a également des méthodes abstraites qui ne peuvent exister QUE DANS DES CLASSES ABSTRAITES
+qui ne sont constituées que de l'en-tête de la méthode avec abstract dedans et suivie d'un point virgule
+abstract void manger();
+
+Remarque, dans une classe abstraite, on peut mettre des methodes abstraites et aussi des non abstraites, c'est pas parce qu'un classe est abstraite qu'on est obligé qu'il y ait des méthodes abstraites ou que toutes les méthodes soient abstraites.
+
+Sauf que le soucis, c'est que quand on a une superclasse abstraite avec des méthodes abstraites dedans et qu'on crée des classes héritées, 
+le compilateur ne va pas aimer car il va implémenter dans les classes héritées, les méthodes abstraites et voudra donc que TOUTES les classes héritées soient également abstraites
+c'est pourquoi tout classe héritée devra redéfinir les méthodes qui étaient abstraites dans la superclasse. 
+==> l'intérêt étant d'être sûr que toutes les classes héritées ont bien défini toutes les méthodes présentes dans la superclasse pour être sûr que tout est tout bien
+
+Remarque importante sur les classes abstraites et le transtypage: 
+----------------------------------------------------------------
+Comme on le sait déjà, toute classe java est une classe héritée de la classe Object
+
+Du coup, si je fais
+Serpent serp = new Serpent(); 
+serp.deplacement();
+==> yaura pas de soucis, ça me fera "Je suis un serpent et je rampe"
+
+Si je fais 
+Animal serp = new Serpent();
+serp.deplacement();
+==> yaura pas de soucis non plus car Animal est une classe abstraite avec une méthode deplacement() abstraite aussi, du coup la JVM va checker dans la classe Animal, trouver la méthode abstraite et donc checker dans la classe héritée Serpent pour appeller sa propre méthode deplacement()
+
+si je fais 
+Object serp = new Serpent(); (ça, pas de soucis)
+serp.deplacement(); 
+==> Ca compile PAS, car la classe Object ne dispose pas de méthode deplacement();
+
+si je fais
+Object serp = new Serpent(); (ça, pas de soucis)
+((Serpent)serp).deplacement(); 
+==> yaura pas de soucis, car je précise à la JVM, par transtypage, que je passe par la classe Serpent et non la classe Object pour acceder a la methode deplacement, même si ma variable dans laquelle je stocke mon Serpent est une variable de type Object
+
+enfin, si je fais
+Object Animal = new Serpent(); (ça, pas de soucis)
+((Chat)serp).deplacement(); 
+==> ca compile PAS car on ne peut pas transtyper un objet autrement que d'une classe mere vers fille ou fille vers mere, on ne peut pas transtyper de fille vers fille.
+
+En gros ce qu'il faut comprendre dans tout ca est qu'il ne faut pas confondre La variable = receptacle dans lequel on stock un objet, 
+variable qui peut etre du type de la classe de l'objet OU de celui d'une superclasse de niveau n (vive la covariance des variables), et l'objet, qui ne peut être que tu type de l'objet quoi...
+On peut stocker un objet dans une variable d'un type donné, 
+mais lorsqu'on tentera d'acceder aux attributs, aux méthodes, etc
+1 - la JVM verifie l'existence de l'attribut/methode dans la classe qui DEFINI LA VARIABLE (Sinon, erreur de compilation)
+2 - si yen a une, il verifie si elle n'est pas redefinie dans la classe QUI DEFINI l'OBJET
+3 - Si ya redéfinition dans la classe qui défini l'objet, on utilise celle redefinie, sinon, on utilise celle de départ dans la classe qui défini la variable
+==> la JVM fonctionne comme ça, faut faire avec
+
+Si on fait un transtypage lors de l'accès, on envoie comme info a la JVM lors de la phase 1 de considérer la classe qui défini la variable comme le type entre parenthese. 
+cad d'aller checker dans la classe (nomClasse)
+
+Les interfaces en java
+-----------------------
+classes abstraites et interfaces: derriere ces 2 fondements se cachent les 2 façons de structurer son programme en java = on parle d'architecture logicielle
+L'atout majeur de la POO c'est la réutilisation des objets, utiliser des classes déja existentes pour creer d'autres classes, etc
+c'est comme une classe 100% abstraite, qui n'a pas de constructeur (comme une classe abstraite quoi) QUI NE CONTIENDRAIT QUE DES MÉTHODES ABSTRAITES et des ATTRIBUTS CONSTANTS (final var), du coup ya pas besoin de préciser abstract dans les caractéristiques de ses méthodes, ça sera abstract de toute façon
+Mais à la difference d'une classe, une autre classe (ou une autre interface) peut hériter de PLUSIEURS interfaces. Il y a donc de l'héritage multiple avec les interfaces.
+et de plus, les méthodes ne peuvent pas être protected, elles peuvent seulement être public / default, abstract / N, static / N,  et final / N
+
+Du coup les expressions 
+public abstract class maClasse
+{
+  public abstract void maMethode();
+}
+
+et
+
+public interface monInterface
+{
+  public void maMethode();
+}
+sont "équivalentes"
+
+MAIS DU COUP ATTENTION, à la différence des classe où on peut définir des méthodes public pour pouvoir les appeller par des classes externes en créant des objets, 
+et des méthodes privées ou protected qu'on pourrait utiliser pour le fonctionnement interne de la classe, 
+dans les interfaces IL N'Y A PAS DE DEFINITION DE PRIVATE (logique car on implémente les interfaces donc on a besoin de récupérer les méthodes, et ya pas de code interne dedans car c'est pas des classes) NI PROTECTED !!!!!!
+
+Pour résumer, une interface c'est une classe abstraite qui comprend une liste de méthodes abstraites. Quand on l'implémente dans une classe, on "dit ce qu'on attends de cette classe et donc de ses objets" cad qu'elle possède ces fonctions là (meme si la façon de le réaliser est différentes en fonction de l'objet, cad de la classe qui implémente l'interface, l'important étant qu'elle soit capable de le faire)
+
+Pour implémenter une interface (cad faire comme si une classe héritait de telle interface) on fait en declarant la classe 
+public class maClasse extends classeMere implements monInterface
+{
+}
+
+on peut meme en heriter de plusieures comme ceci
+public class maClasse extends classeMere implements monInterface1, monInterface2, ...
+{
+}
+
+Le premier intérêt d'un interface (et donc d'une classe qui implémente une interface) est qu'on se retrouve avec une classe dont on est sûr qu'elle dispose de méthodes données. 
+Le second intérêt est qu'on peut utiliser le polymorphisme pour se simplifier la vie, 
+genre mettons on a une interface
+public interface Vehicule 
+{
+  public void demarrer();
+  public void arrêter();
+  public void rouler();
+  public void freiner();
+}
+
+et on a des classes genre voiture, moto, tracteur, motobineuse qui implements Vehicule
+ALORS on peut utiliser le polymorphisme et faire
+
+Vehicule tableauVehicules[] = new Vehicule[2]; 
+tableauVehicules[0] = new Voiture();
+tableauVehicules[1] = new Moto();
+
+for(int i=0; i<tableauVehicules.length; i++)
+{
+  tableauVehicules[i].demarrer();
+  tableauVehicules[i].rouler();
+}
+==> on gère pleins de vehicules sans se préoccuper de savoir si c'est des moto ou des voitures.
+
+
+Exemple concret: 
+Imaginons qu'on ai fait une classe Animal et des classes heritées Loup, Cheval, Chien, Chat, Serpent, etc
+Et puis j'aimerais developper une appli pour les chenils et du coup, réutiliser mes classes et en créer de nouvelles avec le meme modele 
+(genre la classe chien, rajouter des méthodes faireLeBeau(), calin(), lechouille(), ...)
+==> on pourrait repartir des memes classes et ajouter ces méthodes dans la classe Chien, 
+==> Problemes, imaginons que ce soit quelqu'un d'autre qui va utiliser mes classes pour faire l'appli pour le chenil, 
+    il faudra mettre en place une convention de nommage entre moi et le programmeur pour les nouvelles méthodes exclusives de la classe chien, c'est chiant
+    En plus, comme ces méthodes seront exclusives à la classe héritée chien et non présentes dans les superclasses et notamment la superclasse Animal, ADIEU LE POLYMORPHISME
+    on ne pourra plus faire Animal monChien = new Chien(); puis chien.lechouille(); (yaura une erreur car la JVM check en premier si la méthode existe dans la classe qui défini la variable, le conteneur)
+    ==> du coup, pour éviter ce probleme, il faudrait definir les nouvelles méthodes de Chien dans la superClasse Animal (OU alors définir un autre supertype pour la classe Chien mais l'héritage multiple est interdit en java)
+
+Donc l'idéal serait de définir un nouveau supertype et s'en servir dans la classe chien ==> c'est ce que permettent les interfaces
+
+
+
+
+
+DEPUIS JAVA 8 
+dans une interface, on peut definir des methodes avec un comportement par defaut, et de definir des methodes statiques
+normalement une interface c'est du 100% abstraite, 
+mais depuis java8, on peut y definir des methodes statiques, 
+et on peut egalement faire des interfaces qui derivent d'autres interfaces (et non pas implement, extends)
+du coup, on concretement on peut faire une interface avec un definition de methode statique
+et 2 interfaces qui extends de cette premiere interface mais avec un comportement different, ou alors le meme comportement
+(on fait super.methode()) et on rajoute des instructions derriere
+
+du coup on peut faire
+I1.methode();
+I2.methode();
+I3.methode();
+
+
+
+On peut egalement definir des comportements par defaut, 
+avec le kw
+default
+genre
+default void	methode()
+{
+	System.out.println("Je fais des trucs!");
+} 
+
+
+
+En gros, une methode default d'une interface, c'est tout simplement une methode d'une interface, mais 
+avant java8, toute methode d'une interface etait abstraite, on devait forcement l'implementer dans une classe
+là, maintenant, on peut l'implementer dans l'interface, et la redefinir si besoin dans la classe
+et si, dans la classe, on veut que la methode aie le comportement par defaut PLUS des instructions, on fait
+public class maClasse implements I1, I2
+{
+	public void	methode()
+	{
+		I1.super.method();
+		I2.super.method();
+	}
+}
+
+
+
+Autres nouveautés de java 8
+----------------------------
+
+les classes anonymes, en gros c'est des classes qu'on ne definit qu'une fois pour une instruction, genre
+genre au lieu de faire
+
+Soins	soins = new Soins();
+
+perso.setSoins(soins)
+
+avec une classe soin définie dans un fichier et tout
+on peut faire
+
+perso.setSoins(new Soins() {
+	public void Soigner()
+	{
+		System.out.println("Je soigne !");
+	}
+});
+
+
+Une classe anonyme ne 
+- peut pas etre declaree abstract 
+- peut pas etre declaree static
+- peut pas definir de constructeur
+- automatiquement final, donc pas d'heritage possible
+
+
+Il y a aussi les interfaces fonctionnelles
+= interface n'ayant qu'une seule methode abstraite
+= pillier de l'utilisation des lambdas
+
+on fait comme ca 
+@FunctionalInterface
+public interface Soin {
+	public void soigne();
+}
+
+
+dU COUP, les lambdas ()
+dans d'autres langages, il existe ce qu'on appelles les closures
+c'est a dire des pointeurs vers une portion de code (en gros un pointeur sur fonction quoi)
+avant, la seule possibilité était de faire une classe anonyme
+Maintenant, on a des closure en java et on les appelle des lambdas
+Une lambda est une REDEFINITION D'UNE METHODE D'UNE INTERFACE FONCTIONNELLE, sans avoir a faire de classe anonyme
+= utilisateut de l'operateur ->
+
+on fait comme ca
+() -> {actions};
+genre
+(a, b) -> { traitement; return (a * b); }
+ou
+() -> 42;
+
+
+Donc concretement on fait comme ca
+1) on definit une interface fonctionnelle dans un fichier a part genre
+@FunctionalInterface
+public interface interf
+{
+	public void maFonction(String message);
+}
+
+
+2) on peut faire a l'ancienne avec une classe anonyme
+quand on a besoin d'une fonction on fait
+interf	i = new Interf() {
+    public void maFonction(String message) {
+        faire de trucs;
+    }
+};
+
+et apres on peut utiliser la fonction en faisant
+i.maFonction(new String("merde"));
+
+3) on peut le faire a la methode moderne, 
+Interf	i = (str) -> System.out.println(str);
+i.maFonction("merde");
+
+
+On a aussi les references de methodes
+elle sert a definir une methode abstraite d'une interface fonctionnelle
+utilisation de l'operateur ::
+nomClasse::nomMethode
+
+
+
+La gestion du temps dans java 8
+ya une nouvelle API bien pratique 
+elle gere les differences de temps avec les fuseaux horaires
+on peut facilement ajouter ou supprimer du temps avec cette api
+https://openclassrooms.com/courses/apprenez-a-programmer-en-java/la-nouvelle-api-de-gestion-des-dates-de-java-8
+
+
+
+NOUVEAUTE avec java 9 = JVM MODULAIRE
+--------------------------------------
+
+Ca securise un peu le truc car reduit les angles d'attaques, 
+ca permet egalement de reduire la taille des programmes, pratique pour de l'embarqué
+il y a un nouveau terme pour la portée, car PUBLIC = accessible que depuis le module
+avant il y avait rt.jar qui contenait tout et pesait 50Mo par exemple
+
+
+Le dossier JRE qui contenant pleins de trucs indispensables a ete remplace par JMODS
+Un module peut compter plusieurs packages
+il faudra specifier si certains objets ou certains packages peuvent etre accessibles a l'exterieur du module
+ceci via le fichier module-infos
+
+
+Genere un executable jar
+------------------------
+Il faut que dans le fichier contenant le main soit à la racine du projet (donc non contenu dans un package)
+ensuite un va dans file -> export -> jar executable
+et voila
+(ps, sous linux, attention aux persmissions)
+
+le probleme des jar, c'est que quand on utilise des fichiers genre des images, il ne les integre pas dans le jar et il ne peut pas utiliser les chemins, genre on pourrait avoir un jar avec les dossiers pictures/ dans le meme dossier mais ca ne fonctionne pas
+
+Du coup il faut faire comme ca 
+au lieu de faire
+Image machin = new Image("./image.png");
+
+on fait 
+
+
+
+
+Le pattern Strategy: 
+-------------------
+C'est en gros ce qui permet d'avoir un code java (ou autre en POO) clair et modulable, de pouvoir réutiliser facilement son code déjà fait, de pouvoir faire évoluer son appli en une nouvelle appli, etc
+. La premiere chose à faire est d'utiliser les classes héritées et notamment les interfaces pour éviter le plus possible les redites, classer ses objets/classes en differentes sous-categories en leur donnant des interfaces à implementer
+. La seconde chose à faire c'est l'ENCAPSULATION c'est à dire isoler les éléments qui ont tendance à varier, genre plutôt que de définir des méthodes dans une classe, 
+  les définir dans une autre classe qui implémente une interface avec la methode en question, et dans la classe de départ, créer et utiliser des variables d'instance
+  du type de l'interface en y mettant des objets de la classe qui implémente et s'en servir pour appeller les méthodes.
+par exemple, créer des interfaces qui définissent une méthode récurrente (ou un ensemble méthodes recurrentes), puis créer des classes qui seraient un type particulier d'une classe connue, qui implémente telle ou telle interface pour 
+implementer telle ou telle méthode, qu'on redefini alors pour qu'elle s'excute en fonction
+==> ça permet de n'avoir a modifier que le contenu de méthodes sans avoir à recourir a la modification des classes et des objets. 
+==> par exemple, au lieu d'avoir plusieurs classes dérivées qui contiennent la definition d'une méthode et d'autres classes dérivées qui on la meme méthode definie différemment
+    on crée une interface avec le nom de la méthode dedans
+    on crée 2 classes qui implémentent cette interface, dans la premiere on defini la méthode de la premiere façon, dans la 2e on la defini de la 2e façon
+    on crée une variable d'instance du type de l'interface dans la superclasse (qui peut etre abstraite), qu'on pourra définir
+    Dans la classe dérivée, on redefinie les méthodes avec, au lieu de mettre le code, on met objetInterface.méthode(); comme ça ça appelle la méthode contenu dans la sous-classe  
+    ==> du coup si on doit modifier la méthode, on ne modifie qu'un fichier
+
+Concrètement, ça donne un truc comme ça: 
+=========================================================================================================
+//superclasse de tous les personnages
+public abstract class Personnage
+{
+  public abstract combattre();
+}
+
+//interface pour définir differents types de combats
+public interface TypeCombat
+{
+  public void combattre();
+}
+
+//classe implementant l'interface et définissant un type particulier de la méthode combattre()
+public class CombatParticulier implements TypeCombat
+{
+  public CombatParticulier() { }
+
+  public void combattre()
+  {
+    System.out.println("Je fais un combat particulier");
+  }
+}
+
+
+public class Guerrier
+{
+  //on défini le type de combat et donc la méthode combat qu'on veut, ici. On pourrait aussi le définir par l'instanciation.
+  TypeCombat pTypeCombat = new CombatParticulier();  
+
+  //redefinition de la méthode combattre
+  public void combattre()
+  {
+    //appel de la méthode combattre définie dans la CombatParticulier.
+    pTypeCombat.combattre();
+  } 
+}
+
+=========================================================================================================
+
+Gérer les exceptions
+---------------------    
+Les exceptions c'est une ERREUR du programme qui conduit le plus souvent à l'arrêt de celui-ci
+Quand on fait un programme et qu'eclipse nous sort une erreur en rouge, c'est une EXCEPTION QUI N'A PAS ETE CAPTUREE
+
+Le fait de gérer les exceptions s'appelle la CAPTURE DES EXCEPTIONS, ça consiste à reperer un morceau de code qui pourrait générer une exception (genre division par 0)
+puis de capturer l'exception et de la traiter (genre afficher un message personnalisé puis continuer a faire tourner le programme comme si de rien n'était)
+    
+Java dispose d'une classe spéciale qui répertorie les erreurs, elle s'appelle Exception
+Par exemple, une division par zero induit une ArithmeticException
+On peut se baser sur les exceptions déjà existante ou créer les notres propres
+
+Pour capturer une exception, il faut utiliser un bloc try {code à tester} catch(<type d'exception à capturer si elle est générée par le code tester> variable dans laquelle on la stocke) {code à executer si le type d'exception en question est capturé}
+genre 
+try 
+{
+  int i=10, j=0;
+  float k = i/j;
+}
+catch(ArithmeticException e)    
+{
+
+}
+finally
+{
+  code à effectuer que l'exception soit levée ou non. Cette partie est optionnelle
+  cette partie sert surtout quand on veut s'assurer d'avoir clos un truc, genre une connexion a une BDD, à une socket, fermé un fichier, ...
+}
+==> On peut récupérer le message d'une exception avec e.getMessage()
+
+Il y a 2 mots clés importants pour tout cela
+. throw = au singulier = lève (= génère) une exception manuellement en instanciant un objet de type Exception (ou dérivé). La syntaxe est la suivante:
+throw new Exception();
+ou 
+throw new MachinTrucException() 
+
+. throws = indique à la JVM qu'un morceau de code est "dangereux" et nécessite l'utilise d'un bloc try catch. La syntaxe est la suivante: 
+throws <nom de l'exception, genre ArithmeticException>
+{
+  //condition de la génération de l'exception
+  if(condition)
+  {
+    //generation de l'exception
+    throw new ArithmeticException();
+  }
+  else
+  {
+    instructions faisant l'objet du bloc try catch
+  }
+}
+
+Pour citer quelques exceptions définies dans la classe Exception, on a 
+java.lang.ArrayIndexOutOfBoundsException = si dans un tableau on essaye de remplir une case qui n'existe pas
+ArithmeticException = si on essaye de faire une division par 0
+NullPointerException = si on essaye de faire un truc avec un objet alors que c'est un null
+
+
+
+Pour créer nos propres exceptions (genre pour un objet Ville, générer une exception si un nombre négatif d'habitant est entré lors de l'instanciation), il faut
+1 - créer une classe dérivée de la classe Exception (par convention, ces classes ont un nom qui se termine par Exception, genre HabNegException)
+2 - y mettre une méthode constructeur par défaut avec dedans les instructions à faire en cas d'instanciation de cette exception, on peut également surcharger le constructeur pour faire des truc plus poussés genre afficher la donnée qui pose probleme en ayant la possibilité de la passer en parametre, etc
+3 - dans un code risquant de générer notre exception à catcher et donc nécessitant un bloc try catch, on met un throws avec l'exception pouvant être générée et la condition de sa levée, comme ça
+    public maMethode() 
+    throws monException (, monException2, ...)
+    {
+      if(condition)
+      {
+        throw new monException();
+        //ou new monException(parametres, ...)
+        //eventuellement d'autres instructions
+      }
+      (if (condition2) {throw new monException2(); //+memes remarques} )
+      else
+      {
+        instructions de la méthode
+      }
+    }
+
+4 - dès lors, quand on utilisera la méthode en question, il faudra utiliser un bloc try catch sinon le compilateur n'aimera pas, il faudra faire 
+    try { maMethode() } 
+    catch(monException e) { instructions si levée de l'exception }
+    (catch(monException2 e2) { /* idem */} )
+    //Dans l'ordre d'enchainement des catch, on recommande de les ordonner du plus pertinent au moins pertinent
+ 
+    remarque, depuis java7 il existe le multi-catch, cad faire skon a fait plus haut mais au lieu d'enchainer plusieurs catch, on fait un seul catch(monException e | monException2 e2) {}
+
+On peut aussi le faire tout simplement, comme ca
+try
+{
+	//faire des trucs
+	if (condition)
+	{
+		throw (new Exception());
+	}
+}
+catch (Exception e)
+{
+	//agir en consequence
+}
+
+Remarque: si vous avez des classes héritées qui utilisent des méthodes contructeur super(...) avec des throws dedans, pour hériter du throws vous devez remettre 
+apres le nom de la methode constructeur de votre classe, un 
+throws LaMemeException
+sinon yaura une erreur de la JVM
+
+Enfin, depuis java7, il existe une syntaxe speciale de multi-catch qui permet de mettre toutes les exceptions dans un seul catch
+genre 
+catch(IOException | FileNotFoundException e){e.printStackTrace();}
+
+Les enums
+---------
+
+C'est une nouvelle notion depuis java 5
+Une énumération est une classe dérivée de la classe <> ils heritent de la classe java.lang.Enum
+c'est un type de donnée particulier qui permet de faire en sorte qu'une variable ne puisse prendre qu'un nombre restreint de valeurs, valeurs qui sont des constantes nommées (genre MADAME, MADEMOISELLE, MONSIEUR), donc en MAJUSCULES
+D'apres OPenclassroom, on peut dire que c'est une classe qui defini une liste de sous-objets (au meme titre que une interface définie une liste de méthodes)
+C'est aussi comme si l'enum constituait une classe comprenant tous les objets listés dedans, avec des variables d'instances et des méthodes communes que l'on peut déclarer, affecter et développer à l'intérieur.
+ils heritent de la classe java.lang.Enum
+
+De même qu'une Interface se déclare comme une classe (avec un fichier à part, une majuscule, toussa)
+un enum se déclare comme les classes et les interfaces et dans leurs corps on met la liste des objets possible, juste avec leur nom, rien d'autre, pas besoin de portée etc, genre
+public enum MonEnum 
+{
+  //liste des objets
+  Objet1, 
+  Objet2,
+  Objet3, 
+  Objet4;
+}
+
+remarque, les objets en question n'ont même pas besoin d'exister en plus
+on peut les definir ici en définissant des variables d'instance communes, des getters et des setters
+
+De plus, chaque objet à l'intérieur de l'enum est accessible en statique, genre 
+System.out.println(MonEnum.Objet1); qui affiche le nom de l'objet en question, cad Objet1
+
+Exemple concret, on veut une variable String civilité qui ne puisse prendre que 3 valeurs: MONSIEUR, MADAME et MADEMOISELLE. On fait
+enum Civilite
+{
+  MONSIEUR, 
+  MADAME, 
+  MADEMOISELLE;
+}
+Puis dans un autre document du package, on fait 
+Civilite personne = Civilite.MONSIEUR; 
+
+Dans la variable civilité, il ne pourra y avoir que ces 3 valeurs possibles, et ici on lui donne MONSIEUR. Si on fait Civilite test = 3; ça ne fonctionne pas
+
+. Cette classe dispose d'une méthode statique qui s'appelle values(), et qui renvoit un tableau MonEnum[] contenant tous les objets de l'enum
+Du coup pour lister un enum MonEnum, on fait 
+
+for(MonEnum variableContenant : MonEnum.values())
+  System.out.println(variableContenant);
+
+ou alors tout simplement
+
+for(int i=0; i<MonEnum.values().length; i++)
+  System.out.println(MonEnum.values[i]);
+
+
+. De plus, il existe une méthode toString surchargée à chaque objet de l'enum qui retourne une String avec le nom de l'objet, donc on aurait le meme resultat en faisant 
+System.out.println(MonEnum.Objet1.toString()); 
+qu'en faisant 
+System.out.println(MonEnum.Objet1); 
+
+. Il y a une fonction valueOf(String nomObjet) qui prend en parametre en chaine de caractere le nom de l'objet et retourne une String avec le nom de l'objet
+
+. Il existe aussi une fonction ordinal() qui renvoie la position de l'objet dans la liste (de 0 à n-1), genre 
+Civilite.Monsieur.ordinal(); renvoie 0
+Civilite.Madame.ordinal(); renvoie  1
+Civilite.Mademoiselle.ordinal(); renvoie 2
+
+
+On peut quand même foutre du code dedans (déclaration de variables, variables d'instance, méthodes, ...)
+Mais par défaut et de manière définitive, toute méthode constructeur a une portée private (qu'on précise private ou non), pour préserver les valeurs définies dans l'enum
+
+Enfin, Comme un enum est une classe comme une autre, on peut y mettre des constructeurs privés pour chaque objet de l'enum, ça donne un truc comme ça 
+
+public enum Civilite 
+{
+  //Liste des objets 
+  MONSIEUR("Mr."),
+  MADAME("Mme."),
+  MADEMOISELLE("Mlle.");
+  //Variables d'instance
+  String abreviation; 
+
+  //Methodes constructeur
+  private Civilite(String pAbreviation)
+  {
+    this.abreviation = pAbreviation;
+  }
+  private Civilite(String pAbreviation, String p2)
+  {
+    this.abreviation = pAbreviation;
+    System.out.println(p2);
+  }
+
+  //getters et setters
+  public getAbreviation() { return this.abreviation; }
+}
+ 
+Remarque, si du coup dans la méthode constructeur de MONSIEUR je met un print(coucou), bah quand je vais déclarer une variable Civilite et l'affecter avec un Civilite.MONSIEUR,
+ça va appeller la méthode constructeur de MONSIEUR et donc afficher coucou. 
+Ça peut etre utile. 
+
+Les collections d'objet:
+-----------------------
+C'est une alternative dynamique aux tableaux
+En gros c'est des interfaces qui s'implementent entre elles selon l'ordre suivant: 
+Pour les utiliser il faut les inclure depuis java.util (genre import java.util.List; ou import java.util.LinkedList;)
+Ya 2 grands types 
+les collections = stockent des objets ==> index
+les maps = stockent des couples clés-valeurs ==> cle valeur
+
+Collection <-- List
+           <-- Set <-- Sorted Set
+
+Map <-- Sorted Map
+    <-- HashTable
+
+Les objets List = liste chainées = stockage d'objets sans conditions particulieres
+Les objets Set = Idem mais n'autorise pas 2 fois la meme valeur
+Les objets Map = fonctionne avec un systeme CLE-VALEUR pour ranger et retrouver les objets qu'elle conditionne
+
+Pour vider une collection, on fait maListe.clear();
+
+1) Les objets list = listes chainées = en gros c'est des tableax extensibles a volonté
+   La classe List est ABSTRAITE, on ne peut utiliser que genre LinkedList etc
+   C'est le meme principe, on récupere l'élément du tableau avec son indice
+   
+   L'objet LinkedList en est un sous-type, chaque élément est lié aux éléments adjacents par une référence à ces derniers
+   Le premier élément a son objet précédent qui est null 
+   Le dernier élément a son objet suivant qui est null.
+
+   Utiliser une LinkedList c'est tout con, ça s'utilise comme ça: 
+
+   
+   //Creation de ma liste chainée
+   import java.util.List;
+   import java.util.LinkedList;
+   LinkedList maListe = new LinkedList();
+   
+   //mettre des trucs dedans, les trucs s'ajoutent au fur et a mesure
+   maListe.add("Coucou");
+   maListe.add(12.3f);
+   maListe.add(maVille);
+
+   //connaitre la taille de la liste
+   System.out.println(maListe.size());
+
+   //Recuperer l'élément à la position 3
+   System.out.println(maListe.get(3));   
+
+   //Lister les éléments de la liste chainée, tout simplement:
+   for(int i = 0; i < maListe.size(); i++)
+   {
+      System.out.println("Element à la position " + i + ": " + maListe.get(i));
+   }
+
+REMARQUE: 
+en vrai j'ai l'impression que ca ne fonctionne pas quand on fait fi de la généricité, le compilateur ne me laisse pas faire
+du coup, le mieux c'est de faire comme en C++, c'est a dire
+LinkedList<type>  liste = new LinkedList<type>();
+liste.add(variable du bon type);
+etc
+
+
+   //Sinon on peut la lister avec un itérateur de liste, qui est un objet java qui est spécialisé dans le parcourt de liste. 
+   import java.util.ListIterator;   
+   ListIterator iterateur = maListe.listIterator();
+   while(iterateur.hasNext()) 
+     System.out.println(iterateur.next());
+
+   ==> c'est beaucoup plus simple que les tableaux mais ça demande plus de ressources
+   ==> c'est intéressant quand on doit manipuler souvent une collection dont la taille doit varier
+   ==> LinkedList = ++ utile pour insérer fréquemment des objets en milieu de liste
+
+   Tous les objets List et dérivés fonctionnement de la meme maniere, ya les memes méthodes pour faire les memes trucs
+   maListe.add(le truc a ajouter)
+   maListe.remove(index du truc a virer) ==> ça vire le truc et ressere le bordel, le size() s'adapte également
+   maListe.size() ==> retourne le int taille du tableau 
+   maListe.get(index du truc a recuperer)
+   maListe.isEmpty() ==> retourne true si ya rien dans la liste, false sinon
+   maListe.removeAll() ==> vide entierement la liste 
+   maListe.contains(variable à vérifier si elle est dans la liste) ==> retourne true si la variable est présente dans la liste, false sinon
+
+   On a parlé des LinkedList, mais il existe aussi les ArrayList qui sont plus rapide en LECTURE même avec beaucoup d'objets dedans. 
+   mais qui seront plus lente à l'ECRITURE
+
+2) Les objets set ==> n'accepte pas les doublons
+   ++ adapté pour pour manipuler une grande quantité de données 
+   le hashSet est optimisé pour l'acces/lecture et le treeSet est optimisé pour l'insertion/modification
+   On fait comme ça
+   hashSet hs = new hashSet();
+   hs.add(variable)
+   hs.contains(variable)
+   hs.isEmpty()
+   hs.iterator()
+   hs.remove(objet)
+   hs.toArray() ==> retourne un tableau contenant tous les objets   
+
+   ==> surtout indiqué quand on a une grande quantité de données à traiter
+
+3) Les objets Map ==> c'est une table de hashage, on la parcourt grace aux clés qu'il contient en recourant a la classe Enumération. 
+   un sous-type de Map c'est HashTable
+   On fait comme ça
+   Hashtable maTable = new Hashtable(); ==> creation de la table
+   maTable.put(1, printemps);    ==> on met un truc dans la table en liant la clé et la value
+   maTable.isEmpty() ==> tu sais 
+   maTable.contains(variable) ==> tu sais aussi 
+   maTable.containsKey(clé); ==> retourne true si la clé en paramsetre est présente dans la hastable
+   maTable.elements() ==> retourne une énumeration des éléments (values) de l'objet.
+   maTable.keys() ==> retourne une énumération des clés de l'objet.
+   
+   ==> remarque: un objet hastable n'accepte pas la valeur null,
+                 et il est thread safe (il est utilisable dans plusieurs threads donc que plusieurs éléments du progranmme peuvent l'utiliser simultanément)
+   
+       on peut utiliser l'objet hashMap qui est pareil sauf qu'il accepte la valeur null et qu'il est pas thread safe. 
+
+   ==> surtout indiqué quand on veut accéder à une valeur à partir de sa clé de recherche.
+
+
+La généricité en java
+---------------------
+ça existe depuis java 1.5
+C'est créer des classes dont le type de certaines variables est déterminé dynamiquement
+
+On fait comme ça: 
+public class nomClasse<type1, type2, ...>
+{
+  //variables d'instance
+  protected type1 var1; 
+  
+  //Constructeurs
+  public nomClasse()
+  {
+    this.var1 = null;
+  }
+
+  public nomClasse(type1 pVariable)
+  {
+    this.var1 = pVariable;
+  }
+
+  //getters
+  public type1 getVar1() { return this.var1; } 
+  
+  //setters
+  public void setVar1(type1 pVariable) { this.var1 = pVariable; }
+}
+
+Et quand on créra un objet en utilisant la classe en question, on fera genre
+nomClasse<integer, Float, ...> monObjet = new nomClasse<int, float, ...>(int variable);  
+Et Si on fait juste
+nomClasse monObjet = new nomClasse(int variable);
+les types non définis sont considérés comme Object;  
+
+
+ATTENTION, ici on n'utilise pas les types primitifs mais les CLASSES DE CES TYPES PRIMITIFS (WRAPPER)
+en effet, tous les types primitifs ont des CLASSES ENVELOPPES (on parle de WRAPPER) qui intègrent les méthodes et instances de la classe objet (logique) 
+et qui ont en plus des méthodes pour faire des trucs genre caster des valeurs etc.
+Du coup c'est pareil de faire
+int nombre = 3; 
+et 
+Integer nombre = new Integer(3);
+et 
+Integer nombre = 3; //comme c'est pareil de faire String chaine = new String("coucou"); et String chaine = "coucou";
+
+
+
+Généricité et collections
+-------------------------
+Une collection c'est comme un tableau mais qui peut contenir n'importe quels types de données, pour rappel on fait comme ça
+LinkedList maListe = new LinkedList();
+maListe.add("coucou"); 
+maListe.add(32); 
+maListe.add(3.7f);
+maListe.add(maVille);
+//affichage de la liste
+for(int i=0; i<maListe.size(); i++) { System.out.println(maListe.get(i)); }
+
+Mais si on veut une collection qui ne contienne ou ne puisse contenir qu'un seul type de variable, on utilise la généricité comme ceci
+LinkedList<Integer> maListe = new LinkedList<Integer>();
+maListe.add(3);
+maListe.add(7);
+maListe.add(56);
+maListe.add(32);
+
+ATTENTION A LA COVARIANCE DES VARIABLES DANS LA GÉNÉRÉCITÉ ! 
+Pour rappel, la covariance des variables c'est de pouvoir stocker dans une variable d'un type, une donnée de ce même type OU d'un type dérivé de ce premier type. 
+genre 
+Ville maVille = new Capitale();
+ou 
+Ville maVille; 
+Capitale maCapitale = new Capitale();
+maVille = maCapitale;
+
+MAIS avec la généricité ça se fait pas pareil, genre ça ça compile pas
+LinkedList<Ville> listeVille = new LinkedList<Ville>();
+LinkedList<Capitale> listeCapitale = new LinkedList<Capitale>();
+listeVille = listeCapitale; //BUG
+Tout simplement parce que si on rajoute une Ville dans listeVille qui est supposée contenir que des Capitales, ça complique un peu les choses lorsqu'on voudra extraire les données, donc java l'interdit. 
+
+==> Donc pour utiliser la covariance des variables avec la généricité et les collections, on utilise le WILDCAR : ?, comme ça, lors de la déclaration de ma liste
+LinkedList<?> maListe;
+= notre collection accepte n'importe quel type d'objet QU'IL STOCKE EN TANT QUE TEL ET PAS EN TANT QU'objet OBJECT, pas besoin de caster lors de l'affectation donc, MAIS LA LISTE EST ALORS EN LECTURE SEULE
+LinkedList<? extends Ville> maListe;
+= notre collection accepte les objets de type Ville et de type dérivé de Ville, QU'IL STOCKE EN TANT QUE TEL ET PAS EN TANT QU'objet OBJECT, pas besoin de caster lors de l'affectation donc, MAIS LA LISTE EST ALORS EN LECTURE SEULE
+LinkedList<? super Ville> maListe; 
+= notre collection accepte les objets de type Ville et de type mère de Ville, QU'IL STOCKE EN TANT QUE TEL ET PAS EN TANT QU'objet OBJECT, pas besoin de caster lors de l'affectation donc, MAIS LA LISTE EST ALORS EN LECTURE SEULE
+==> Pour l'instanciation on fait
+LinkedList<? super Ville> maListe = new LinkedList<type défini>();
+ON NE PEUT PAS FAIRE
+LinkedList<? super Ville> maListe = new LinkedList<? super Ville>();
+
+
+L'utilisation de ça, c'est de pouvoir développer des méthodes qui prennent en parametre une liste pouvant contenir des objets d'un meme type comme des objets de type hérité de ce même type, genre 
+public void afficher(LinkedList<? extends Ville> pListe)
+{
+  for(int i=0; i<pListe.size(); i++) { System.out.println(pListe.get(i)); } 
+}
+parce que ca ne marcherait pas avec public void afficher(LinkedList<Ville> pListe)
+
+Enfin, de même qu'il est possible d'étendre les types d'objets dans une collection pour pouvoir la lire, 
+il est possible de les restreindre 
+
+
+L'autoBoxing 
+-------------
+c'est depuis java 5
+Le BOXING c'est transformer un type primitif en objet de classe enveloppe
+L'UNBOXING c'est transformer une classe enveloppe en type primitif
+L'unboxing et le boxing c'est l'AUTOBOXING
+du coup on peut faire des trucs du genre 
+int i = new Integer(3);
+Integer i = 3; 
+etc
+
+
+Les flux d'entrée et sortie
+---------------------------
+Toutes les classes des flux dérivent des classes InputStream et OutputStream (ça peut être utile pour utiliser le polymorphisme.
+
+C'est le fait que le programme échange des données avec une autre source (la ram, le programme lui meme, un fichier, ...)
+ceci s'effectue par l'intermédiaire d'un flux = stream = médiateur entre la source et ce lui qui reçoit
+Java a pleins d'objets pour faire ce genre de trucs
+Il faut importer leur classe pouvoir les utiliser, c'est dans java.io.nomClasse
+ATTENTION, on se positionne toujours du cote du programme, du coup l'input c'est la lecture car le programme reçoit des infos, l'output c'est l'écriture car le programme envoit des informations
+
+Toute opération mettant en jeu un flux a 3 étapes
+1 - ouverture
+2 - lecture
+3 - fermeture
+
+ya 2 catégories d'objets utilisant les flux
+. les objets qui bossent avec des flux d'entrée = in = lecture
+. les objets qui bossent avec des flux de sortie = out = ecriture
+
+1 - Cas de l'objet File = situation où ya un fichier situé dans la racine du répertoire du projet java
+on fait genre File fichier = new File("nomFichier");
+fichier.getAbsolutePath() = retourne le chemin du fichier
+ficher.getName() = retourne le nom du fichier
+fichier.exists() = retourne true si le fichier existe, false sinon. 
+fichier.isDirectory() = retourne true si le fichier est un répertoire, false sinon
+fichier.isFile() = retourne true si le fichier est un fichier, false sinon
+
+ATTENTION, pour lister le contenu d'un fichier, on DOIT utiliser un bloc try catch genre 
+try
+{
+  //listing
+}
+catch(NullPointerException e)
+{
+}
+comme ça quand ca tombe sur le null, ya pas de soucis il ne se passe rien. 
+
+Une fonction statique pratique est la fonction File.listRoots() qui renvoit un File[] avec tous les lecteurs de l'ordi
+Avec chaque lecteur, qui est un repertoire, on peut lister son contenu avec File.listRoots()[i].listFiles() qui renvoit un tableau de Files
+et pour chaque File[i] on peut choper des infos et si c'est un répertoire, afficher son contenu avec .listFiles etc à l'infini
+genre 
+//listing des lecteurs
+for(int i=0; i<File.listRoots().length; i++)
+{
+  //Affichage du nom du lecteur: 
+  System.out.println(File.listRoots()[i].getAbsolutePath());
+
+  //Affichage du contenu du lecteur
+  try
+  {
+    System.out.println(File.listRoots()[i].getName());
+  }
+  catch(NullPointerException e) { }  
+}
+
+
+2 - cas des objets FileInputStream et FileOutputStream
+ça permet de lire et d'écrire dans un fichier, RESPECTIVEMENT
+Leur méthode contructeur prend en paramètre un objet File
+Ces class héritent des classes InputStream et OutputStream de java.io
+si on essaye de lire dans un fichier qui n'existe pas, ça leve une exception 
+si on essaye d'écrire dans un fichier qui n'existe pas, CA LE CREE ! COOL !
+Pour les initialiser on fait
+fis = new FileInputStream(new File("nom_Fichier"));
+fos = new FileOutputStream(new File("nomFichier"));
+
+
+
+L'idéal c'est de définir les objets fis et fos et de les initialiser à null
+puis, dans un block try catch(FileNotFoundException e) {} catch(IOException e) {e.printStackTrace();} , de les instancier (genre fis=new FileOpenStream(new File("mon fichier")));
+fermé avec un finally qui ferme tous les stream initialisés avec des blocks try catch a chaque fois genre
+finally {
+  try {
+    if(fis!=null) //cad si le stream a été ouvert
+      fis.close();
+  } catch(IOException e) {e.printStackTrace(); } 
+
+-----
+(Remarque, depuis java7, il y a une syntaxe pour dire a java de fermer tous les flux ouverts dans le bloc try, c'est ça
+try(FileInputStream flux1 = new FileInputStream("test.txt"); Stream flux2 = new Stream(test2.txt); etc; ) // on fait plus Stream(new File("test.txt")) mais Stream("test.txt");
+{
+  //exploitation des flux
+} // et du coup ça se ferme tout seul. 
+Les classes qui ont droit à cette syntaxe sont celles qui IMPLEMENTENT L'INTERFACE CLOSEABLE
+)
+-----
+
+Et dans le block try catch où on a initialisé les stream, on peut les lires ou écrire dedans selon skon veut. 
+Pour ça, on crée un BUFFER, cad un tableau de byte[] (genre par exemple 8 octets) qui, dans un boucle, va récupérer les données pour les traiter, genre
+byte[] buf = new int[8]; //buffer qui stocke le contenu du fichier lu à chaque tour de boucle, ça va stocker des nombres mais si ce sont des caractères, il suffit de les caster lors de leur affichage pour les voir en caractere et non en nombres
+
+int retLecture = 0; //variable qui stocke le retour de la lecture du FIS a chaque tour de boucle 
+while(lec = fis.read(buf) >= 0) // fis.read(buffer) stocke dans la variable buffer[] le contenu du fichier en remplissant le tableau au max de ce qu'il peut, et renvoie le dernier byte, Si celui-ci est =-1, c'est que la fin du fichier a eté atteinte
+{
+   //on lit le buffer dans lequel les données du fichier on été stockées pour le tour de boucle
+   for(int i=0; i<buf.length; i++)
+   {
+     System.out.print((char)buf[i]);
+   }
+
+   // on vide le buffer pour que si le prochain tour de boucle est le dernier et contient moins de 8 Byte, le reste du tableau soit vide pour pas que ça contienne des données du tour de boucle précédent
+   // ya pas de \0 comme en C
+   buf = new byte[8];
+}
+// si le fichier de lecture n'est pas trouvé
+catch(FileNotFoundException e) { System.out.println("Fichier non trouvé"); }
+// si ya un soucis IO, on print l'erreur pour savoir ce qui cause probleme
+catch(IOException e) { e.printStackTrace(); }
+// on ferme les stream qui ont été ouverts AVEC UN BLOC TRY CATCH
+finally
+{
+  try
+  {
+    //si le stream été ouvert, le fermer
+    if(fis!=null)
+      fis.close();
+  }
+  // si ya un soucis IO, on print l'erreur pour savoir ce qui cause probleme
+  catch(IOException e) {e.printStacktrace(); }
+}
+
+pour la lecture on fait tout simplement 
+fos.write(buffer);
+avec genre
+byte[] buffer = {( byte)'c',(byte)'o',(byte)'u',(byte)'c',(byte)'o', (byte)'u'}; 
+
+Remarque: pour utiliser tout ça il faut import des trucs genre 
+java.io.FileInputStream
+(java.io.FileOutputStream)
+java.io.FileNotFoundException
+java.io.IOException
+
+Remarque2: ces objets sont tres rudimentaires car il utilisent ASCII unicode 1, cad qu'il n'y a pas de caracteres speciaux (qui ont une valeur int <0). Si on tente de les afficher, ça fera des ? 
+les caracteres invisibles ont les valeurs suivantes 
+espace = 32 = SP (Space)
+saut de ligne = 13 = LF (Line Feed)
+Retour chariot = 10 = CR (Carriage Return)
+==> IL EXISTE DES OBJETS PLUS ÉLABORÉS UTILISANT CES OBJETS RUDIMENTAIRES, C'EST CE QU'ON VA VOIR DANS LA PARTIE SUIVANTE.
+
+
+3 - cas des objets FilterInputStream et FilterOutputStream, qui sont en fait des CLASSES ABSTRAITES (On ne peut donc pas les instancier, ça sert de modèle pour les classes dérivées)
+cette classe sert de patron aux classes:
+DataInputStream / DataOutputStream = offre la possibilité de lire directement des types primitifs (int, double char, etc) grâce aux méthodes readInt(), readDouble(), etc
+BufferedInputStream / BufferOutputStream = permet d'avoir un tampon à dispositions dans la classe lors de la lecture du flux, en gros les données remplissent le tampon, puis le programme accede aux données
+PushBackInputStream / PushBackOutputStream = permet de remettre un octet lu dans un flux entrant input 
+LineNumberInputStream / LineNumberOutputStream = permet de récupérer le numéro de la ligne lue à un instant t 
+
+Chacune de ces classe prennent en argument dans leur méthode constructeur, une instance de leur superclasse
+donc on peut faire
+
+BufferedInputStream  bis = new BufferedInputStream(new FileInputStream(new File("toto.txt")));
+comme 
+BufferedInputStream  bis = new BufferredInputStream(
+                             new DataInputStream(
+                               new FileInputStream(
+                                 new File("toto.txt"))));
+
+Normalement, avec l'encapsulation ci-dessus, c'est là que c'est le plus optimisé et le plus rapide ++++++++++
+
+De même que pour les types de collection, Chaque classe a ses avantages et ses inconvenients en fonction de ce qu'on veut faire, par exemple
+BufferedInputStream est BEAUCOUP PLUS PERFORMANT POUR LA LECTURE ET POUR L'ECRITURE que FileInputStream (741 vs 19) et (1667 VS 34)
+
+Concernant DataInputStream et DataInputStream, quand on utilise la méthode dos.writeType(valeur), ça écrit la donnée sur une ligne suivie d'un "caractere retour chariot"
+du coup quand on utilise une fois la méthode writeType, ça décale la tête de lecture d'un cran 
+De même que quand on utilise la méthode dis.readType(valeur), à chaque fois ça décale la tête de lecture d'un, du coup il faut être sûr d'utiliser le bon type de méthode pour lire le bon type de variable en fonction de la position
+Avec DataInputStream on peut donc input et output des des types primitifs dans un fichier, il est également possible d'input des objet (carrement!) dans un fichier avec un classe analogue, 
+la classe Object(Input/Output)Stream
+
+
+
+4 - cas des objets ObjectInputStream / ObjectOutputStream, qui permettent d'écrire non plus des types primitifs dans des fichiers mais carrement des objets ! 
+Ecrire des objets dans des fichiers c'est ce qu'on appelle la SERIALISATION 
+Pour cela, on utilise l'interface Serializable qu'on va implementer dans les classes de nos objets à sauvegarder. 
+Cette interface ne dispose d'aucune méthode à redefinir, c'est juste ce qu'on appelle une "INTERFACE MARQUEUR", le fait d'implementer cette interface dans une classe fait que JAVA sait que l'objet peut être serializé. 
+Et donc en toute logique, si une superclasse implemente l'interface Serializable, toutes ses classes dérivées pourront également être serializées
+On procède comme ceci: 
+
+deja il faut 
+import	java.io.Serializable;
+
+On a une classe qu'on veut sauvegarder, genre Game implements Serializable(nom, style, prix)
+puis genre
+public class ClassMain
+{
+    public static void main(String[] args) 
+    {
+        //definition des jeux
+        Game G1 = new Game("Zelda", "aventure", 50);
+        Game G2 = new Game("Halo", "FPS", 60);
+        loadGame();
+    }
+
+    //SAVE
+    public static void saveGame(Game jeu)
+    {
+        //creation du stream output
+        ObjectOutputStream oos = null;
+        //initialisation et exploitation du stream
+        try
+        {
+            //initialisation du stream
+            oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File("savedGame.txt"))));
+            //ecriture dans le fichier
+            oos.writeObject(jeu);
+        }
+
+        catch(IOException e) {e.printStackTrace();}
+        //fermeture du stream 
+        finally
+        {
+            try
+            {
+                if(oos!=null)
+                oos.close();
+            }
+            catch(IOException e) 
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    //LOAD
+    public static void loadGame()
+    {
+        //retour erreur
+        Game Retour = new Game("0", "0", 0);
+        //creation du stream input
+        ObjectInputStream ois = null;
+        //initialisation et exploitation du stream 
+
+        try
+        { 
+            //initialisation du stream 
+            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File("savedGame.txt"))));
+            //lecture du stream
+            try 
+            {
+                System.out.println(ois.readObject().toString());
+            }
+            catch(ClassNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        catch(FileNotFoundException e) {e.printStackTrace();}
+        catch(IOException e) {e.printStackTrace();}
+        catch(NullPointerException e) {e.printStackTrace();}
+        //fermeture du stream
+        finally
+        {
+            try
+            {
+                if(ois!=null)
+                ois.close();
+            }
+            catch(IOException e) {e.printStackTrace();}
+        }
+    }
+}
+
+
+REMARQUE IMPORTANTE, si dans la classe game on avait une variable qu'on ne voulait pas sérialiser (genre un objet Loot qui n'implemente volontairement pas Serializable), 
+il faut la déclarer avec le mot clé transient, genre 
+private transient Loot = new Loot();
+ET 
+ne pas l'appeller au moment du chargement, sinon (ou qu'elle soit dans toString()), parce que sinon on aura un NullPointerException;
+
+Pour lire la liste des objects, il suffit de lire le fichier jusqu'à ce qu'on arrive a la fin de la ligne, soit 
+try
+{ 
+
+    try 
+    {
+	while(true)
+	    System.out.println(ois.readObject().toString());
+    }
+    catch(EOFException e) {}
+  }
+}
+catch(ClassNotFoundException e) {e.printStackTrace();}
+ 
+
+5 - Cas des classes FileWriter / FileReader pour écrire simplement dans des fichiers textes
+on faire genre comme ça 
+//Ecriture
+FileWriter fw = null; 
+try 
+{
+  //on crée un flux du programme vers test.txt
+  fw = new FileWriter(new File("test.txt"))
+ 
+  //écriture d'une chaine de caractère dans le fichier test.txt
+  fw.write("coucou bande de nazes"); 
+}
+catch(FileNotFoundException e) {e.printStackTrace();} 
+catch(IOException e) {e.printStackTrace();} 
+finally
+{
+  try
+  {
+    if(fw!=null)
+      fw.close();
+  }
+  catch(IOException e) {e.printStackTrace();} 
+}
+
+REMARQUE: 
+fw.write() ==> ca ecrase / remplace le texte pre-existant
+
+
+//lecture
+FileReader fr = null; 
+try
+{
+  //on cree le flux du fichier texte vers le programme
+  fr = new FileReader("test.txt");
+  //compteur pour la lecture
+  int i=0; 
+  //chaine de stockage
+  String chaine = "";
+
+  //lecture du fichier texte, là c'est classique
+  while((i = fr.read())!=-1)
+  {
+    chaine += (char)i
+  }
+}
+catch(FileNotFoundException e) {e.printStackTrace();} 
+catch(IOException e) {e.printStackTrace();} 
+finally
+{
+  try
+  {
+    if(fr!=null)
+      fr.close();
+  }
+  catch(IOException e) {e.printStackTrace();} 
+}
+
+
+6 - java.nio = nouvelle bibli depuis java 7, beaucoup plus efficace pour le traitement des fichiers, des reseaux et des buffers ! 
+le package java.io lit les données du flux par octet, tandis que dans java.nio c'est un traitement par BLOC DE DONNÉES donc BEAUCOUP PLUS RAPIDE
+tout repose sur 2 objets
+- les channels = stream comme avant, avec un buffer dont on défini la taille
+- les buffers = qui allouent pile l'espace suffisant pour le contenu du flux 
+le détail ici
+https://openclassrooms.com/courses/apprenez-a-programmer-en-java/les-flux-d-entree-sortie#/id/r-2182407
+
+En gros, quand on ouvre un flux vers un fichier avec FileInputStream, 
+on peut recuperer un channel vers ce fichier.
+ce channel, combiné avec un buffer, permet de lire le fichier plus vite qu'avec les algorithme de .io
+
+
+En gros on fait comme ca
+FileInputStream		fis = null;
+FileChanel		fc = null;
+int			fcSize = 0;
+ByteBuffer		bb = null;
+byte[]			bufArray = null;
+
+try
+{
+	fis = new FileInputStream(new File("./fichier.txt"));
+	fc = new FileChannel(fis);
+	//on prend la taille du chanel, en gros, ya combien d'octets a recuperer
+	fcSize = fc.size();
+	//on cree un buffer de la taille du fichier, comme ca on est pas emmerdé, mais on pourrait faire autrement
+	//avec la methode statique allocate;
+	bb = ByteBuffer.allocate(fcSize);
+	
+	//on copie le contenu du fichier dans le buffer
+	fc.read(bb);
+	//on recupere le resultat dans un array, il est probablement possible de faire autrement
+	bufArray = bb.array();
+
+}
+catch (FileNotFoundException e)	{ e.printStackTrace(); }
+catch (IOException e)			{ e.printStackTrace(); }
+finally
+{
+	try
+	{
+		if (fis != null)
+			fis.close();
+	}
+	catch (IOException e)	{ e.printStackTrace(); }
+}
+
+
+==> c'est beaucoup plus efficace et tres utilisé pour gerer les flux reseau
+il existe des types de buffer pour differents types de données
+intBuffer
+charBuffer
+shortBuffer
+ByteBuffer
+DoubleBuffer
+FloatBuffer
+LongBuffer
+
+
+le try with ressources
+----------------------
+c'est depuis java 7
+en gros, dans java, il y a le gc
+mais certaines ressources doivent etre free manuellement (c'est pourquoi on close un stream)
+
+Du coup la methode pour les stream c'est de le declarer et l'initialiser à null en dehors du bloc try
+puis de l'initialiser dans le try et de le close dans le finally
+
+Une autre facon de faire, depuis java7, c'est la syntaxe suivante
+try (fileInputStream fis = new FileInputStream();
+     fileOutputStream fos = new FileOutputStream(); etc)
+{
+
+}
+
+Tous les stream initialisés dans le bloc try sont close à la fin
+
+==> c'est plus clair, 
+==> par contre faut faire gaffe car si une exception est levee sur le premier stream, le second ne sera pas fermé
+genre
+try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("test.txt"))) {
+  //…
+}
+
+pour pallier a ca il faut faire
+try (FileInputStream fis = new FileInputStream("test.txt");
+  ObjectInputStream ois = new ObjectInputStream(fis)) {
+    //…
+}
+
+
+Le pattern decorator
+---------------------
+C'est le fait d'instancier un objet en passant dans la methode constructeur un objet de classe mère (lui-même instancié avec en parametre un objet de classe mere ou de même niveau, etc etc)
+genre quand on fait 
+DataInputStream flux = new DataInputStream(new BufferedInputStream(new FileInputStream(new File("fichier.txt"))));
+du coup le flux transit par chaque objet. 
+==> CA PERMER D'AJOUTER DES FONCTIONNALITES A UN OBJET SANS EN MODIFIER SON CODE SOURCE
+(genre on crée une classe dérivée de l'objet et on ajoute des trucs dedans et quand on l'instancie, on l'instancie avec un objet de classe supérieure qu'on va exploiter)
+
+Exemple: on pourrait faire
+public class Main{
+  public static void main(String[] args)
+{
+    Patisserie pat = new CoucheChocolat(
+                       new CoucheCaramel(
+                         new CoucheBiscuit(
+                           new CoucheChocolat(
+                             new Gateau())))); //Il faut que celui qui est le plus imbriqué soit le Gateau
+    System.out.println(pat.preparer());
+  }
+}
+qui afficherait
+"Je suis un gâteau et j'ai: 
+- une couche de chocolat
+- une couche de biscuit
+- une couche de caramel
+- un couche de chocolat"
+
+avec
+//classe abstraite Patisserie, superclasse des classes Gateau, Couche (et donc CoucheBiscuit, CoucheCaramel, CoucheCaramel)
+public abstract class Patisserie 
+{
+  //on y met juste la méthode préparer pour imposer le fait que toutes les classes dérivées aient forcément une méthode preparer();
+  public abstract String preparer(); 
+}
+
+//classe Gateau, dérivée de Patisserie
+public class Gateau extends Patisserie
+{
+  //Definition de la méthode preparer() caractéristique de la classe Gateau
+  public String preparer() 
+  {
+    //juste retourner une chaine de caractere qui dit "jsuis 1 gato"
+    return "Je suis un gâteau et je suis constitué des éléments suivants. \n";
+  }
+}
+
+//classe mère abstraite Couche, dérivée de Patisserie
+public abstract class Couche extends Patisserie
+{
+  //variable d'instance Patisserie, qui est la Patisserie à laquelle elle se rattache (celle en bas de chaîne, qui est donc instanciée avant elle)
+  protected Patisserie pat;
+  //Variable d'instance String nom, qui est une chaîne qui caracterise la couche
+  protected String nom;
+
+  public Couche(Patisserie p)
+  {
+    pat = p; // on copie l'objet patisserie a laquelle la couche se rattache, DANS la variable d'instance
+  }
+
+  //Definition de la méthode preparer() qui, comme dans Gateau, raconte sa vie en retournant une String
+  public String preparer() 
+  {
+    String str = pat.preparer(); //dans retour, on appelle la méthode préparer de l'objet qui suit qui va raconter sa vie et on rajoute à la fin la description de l'objet en cours 
+    return str + nom;
+  }
+}
+
+public class CoucheChocolat extends Couche
+{
+  public CoucheChocolat(Patisserie p) 
+  {
+    super(p); //méthode constructeur de la classe Couche donc on copie juste l'objet Patisserie qui suit dans la chaîne, dans la variable d'instance.
+    this.nom = "\t- Une couche de chocolat.\n"; // on lui donne un nom caractéristique qui sera donc retourné dans la méthode preparer
+  }
+}
+
+public class CoucheCaramel extends Couche
+{
+  public CoucheCaramel(Patisserie p) 
+  {
+    super(p);  //idem
+    this.nom = "\t- Une couche de caramel.\n";
+  }
+}
+
+public class CoucheBiscuit extends Couche 
+{
+  public CoucheBiscuit(Patisserie p) 
+  {
+    super(p); //idem
+    this.nom = "\t- Une couche de biscuit.\n";
+  }
+}
+
+Du coup si on résume, on a une classe abstraite Patisserie de laquelle dérive 2 classes 
+- une classe Gateau dont l'objet est originel (il doit être le plus encastré dans la chaine de declaration, c'est à dire en bout de chaine) et donc la méthode preparer() retour la présentation Gateau
+- une classe Couche, dont l'objet s'instancie avec un parametre Patisserie (soit Gateau, du coup il retourne la description du gateau + sa description, soit Couche, il retourne la description de la couche  (qui comprend elle meme une description du gateau et d'elle-meme ) et sa description
+
+du coup avec le code suivant: 
+    Patisserie pat = new CoucheChocolat(
+                       new CoucheCaramel(
+                         new CoucheBiscuit(
+                           new CoucheChocolat(
+                             new Gateau())))); //Il faut que celui qui est le plus imbriqué soit le Gateau
+
+    System.out.println(pat.preparer());
+
+voilà ce qui se passe: 
+1) ça instancie un Gateau qui sert de parametre pour instancier une couche choco qui sert de parametre pour instancier une couche biscuit qui sert de parametre pour instancier une couche caramel qui sert de parametre pour instancier une couche chocolat
+2) Ca appelle la fonction préparer() de la couche chocolat qui retourne la description de la couche chocolat et la description de la couche caramel (qui elle-même est constituée de la description de la couche caramel et de la couche biscuit, elle même constituée de la description de la couche biscuit et de la couche chocolat, elle meme constituée de la description de la couche chocolat et de Gateau.
+
+==> ça peut être tres utile pour rajouter des fonctionalités à des objets qui gerent des flux sans avoir a modifier le code source des classes de ces objets
+    
+
+Le pattern MVC = pattern Model, vue Controleur
+===============================================
+
+C'est le pattern le plus utilisé, et celui que de loin je trouve le plus pratique
+
+- vue = GUI = IHM (ou la page web, le teminal, l'interface graphique quoi), dont les données sont fonction des infos du modele
+- modele = Observable, coeur du programme, c'est la "couche metier", c'est toute les instructions genre communiquer avec les bdd, les changement d'états en modifiant des variables membres, notifie que la vue doit être modifiée avec un pattern observer.
+- Contrôleur = lien entre la view et le modele, en gros c'est la gestion des event, genre ca recupere les données, les traite, les securise, les formate et envoit ca au modele, il peut egalement eventuellement demander à la vue de changer
+
+Dans le cas de la calculatrice, on s'y prendrait comme suit: 
+1) on cree un package observer où on cree 
+	- une interface Observable avec
+	public void		addObserver(Observer p_observer);
+	public void		removeObservers();
+	public void		notifyObervers(String str);
+	- une interface Observer avec
+	public void		update(String str);
+
+
+2) on cree un package model dans lequel on definit notre classe AbstractModel qui implements Observable
+   ainsi que d'autres methodes dont on a besoin pour le fonctionnement interne (genre pour la calculette, calculer, setter les operateurs et les operandes, et bien sûr définir les methodes de l'interface, etc).
+
+3) on cree une classe concrete qui derive de AbstractModel, genre CalculatorModel, qui implemente les methodes du model,
+   ==> l'interet de se baser sur une classe abstraite c'est de pouvoir utiliser le polymorphisme
+
+4) On cree une classe abstraite AbstractControler pour les memes raisons, Il doit disposer parmis ses variables membres d'un
+   objet modele, et donner la possibilité de communiquer avec le model pour acceder à ses methodes et sa demande de mise à jour
+   En gros, ca recupere les donnees de la View (par des EventListeners codés dans le View), les verifie puis les envoit au modele
+   afin de les modifier, et par la meme occasion, lui dit de notify tous les observers
+
+5) Pareil pour le view, une classe abstraite et une concrete. on met tous les composants et on met des EventListeners qui vont
+   appeller des methodes du controler.
+
+DU COUP, pour resumer, à chaque fois on crée une classe abstraite de chaque partie du truc, et une classe concrete pour rendre le truc plus scalable.
+
+Ensuite, dans le main, on cree un Objet Model, un Objet Controler qui prend en parametre constructeur l'objet model, 
+et un objet View qui prend en parametre constructeur l'objet Controler,
+Et enfin, on add un Observer (l'objet View) au modele, comme ca tout est lié
+==> L'objet View a des eventListeners qui envoient leurs infos au control,
+==> le controller check les infos si c'est bon, les transmet au model
+==> le model fait des trucs et notify le View de l'update    
+
+
+
+
+La REFLEXIVITÉ (les objets de type Class)
+---------------
+aussi appelée introspection
+c'est le moyen d'avoir des infos sur des classes données 
+ça permet notamment de créer des instances de classes dynamiquement 
+genre tout objet crée est doté par défaut d'un objet Class en instance et c'est une classe final
+On peut récuperer ces infos comme ça, genre mettons pour String on fait: 
+Class InfosString = String.class; 
+
+Du coup on peut avoir des infos genre la class en question = InfosString.getName();
+on peut savoir la superclasse InfosString.getSuperClass(); (remarque: InfosString.class ça retourne la meme chose que InfosString.getClass())
+on peut savoir comment la classe est constituée (interfaces, variables d'instance, etc) genre 
+Class.getInterfaces() retourne un tableau de Class qui correspond aux interfaces implementées dans la classe en question 
+pour connaitre les méthodes de la classe, on utilise MaClasse.class.getMethods(); qui retourne un tableau de Method cad de toutes les méthodes de la classe
+On peut utiliser le même principe pour connaitre les variables de classe ou d'instance (= objet Field), MaClasse.class.getDeclaredFields(); qui retourne un tableau de Fields
+meme chose pour la liste des constructeurs de la classe: MaClasse.class.getConstructors(); qui renvoit un tableau de Constructor
+
+
+pour l'instanciation dynamique, en gros ça consiste à instancier un objet sans utiliser le kw "new"
+en gros on fait comme ça (DANS UN BLOC TRY CATCH)
+try
+{
+   //on crée un objet Class dont la classe a pour nom "MaClasse"
+   // (ou le nom d'une autre classe qu'on obtient avec LaClasse.class.getName();
+   Class cl = Class.forName("MaClasse");
+
+   //on crée un objet = on utilise la méthode newInstance() de la classe Class
+   //qui retourne un objet instancié de la classe en question
+   Object o = cl.newInstance();
+
+   //on crée un objet avec des parametres constructeurs definis
+   //d'abord on récupère le bon constructeur, celui avec les bons types a mettre dedans, en l'occurence 2 String
+   Class[] types = new Class[]{String.class, String.class};
+
+   Constructor ct = cl.getConstructor(types);
+   //++ important, la fonction getConstructor(type) prend en paramètre un tableau de class (qui est en 
+   //gros tous les types que prend le constructeur qu'on cherche) et retourne genre un pointeur vers la méthode en question
+   //ensuite on instancie notre objet comme précédemment mais avec les bons parmetres, cad qu'on fait pas cl.newInstance() mais
+   ct.newInstance(new String[]{"Valeur 1", "Valeur2"}); ou meme
+   ct.newInstance(new Object[]{"Valeur 1", "Valeur2"});
+}
+catch (SecurityException e) {e.printStackTrace();} 
+catch (IllegalArgumentException e) {e.printStackTrace();} 
+catch (ClassNotFoundException e) {e.printStackTrace();}
+catch (InstantiationException e) {e.printStackTrace();} 
+catch (IllegalAccessException e) {e.printStackTrace();} 
+catch (NoSuchMethodException e) {e.printStackTrace();}      // quand on utilise getConstructor(Class[])
+catch (InvocationTargetException e) {e.printStackTrace();}  // quand on utilise ct.newInstance();
+
+et du coup, on pourrait carrément récupérer une méthode de la classe en question, genre comme ça 
+Method m = cl.getMethod("toString", null)
+et l'exploiter avec des objets avec la méthode invoquer = invoke(objet, null) des objets Method, genre comme ça 
+Object MonObjet = cl.newInstance();
+Method m = cl.getMethod("toString", null)
+m.invoke(MonObjet, null)
+
+ça peut paraitre lourd mais c'est utile car certains framework (= ensemble d'objets offrant des fonctionnalités pour développer)
+utilisent la réflexivité pour instancier leurs objets (genre les framework basés des fichiers xml)
+
+ça peut être utile aussi pour instancier un objet à partir du nom de la classe qui est généré dynamiquement #potentiel2Ouf
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////
+////PROGRAMMATION GRAPHIQUE//////////////////////////////
+/////////////////////////////////////////////////////////
+
+
+
+
+presentation de la programmation avec IHM sous java
+---------------------------------------------------
+il existe pleins de biblis en java qui font ça, nous on va que parler des packages javax.swing et java.awt
+l'objet de base c'est JFrame, presente dans le package javax.swing
+Au départ, dans la version 1.0 de java, yavait que awt, yavait pas swing
+Swing c'est apparu avec la version 1.2 de java (appellé java2)
+
+Les composants awt sont lourds car ils sont fortement liés à l'OS, c'est lui qui les gere
+Les composants Swing sont plus legers, ce sont comme des conteneurs, c'est plus l'OS qui les gère mais du coup ils n'ont plus la meme gueule (ça sera intéressant de faire la comparaison)
+
+En general, il est tres fortement conseillé de NE PAS MÉLANGER LES COMPOSANTS SWING ET AWT DANS UNE MEME FENETRE car il y a risque de conflit
+
+Pour instancier un objet JFrame , on fait comme ça: 
+JFrame fenetre = new JFrame();
+puis on la rend visible comme ça 
+fenetre.setVisible(true);
+
+pour définir la taille, on fait
+fenetre.setSize(int x, int y);
+pour définit un titre, on fait
+fenetre.setTitle("titre");
+pour définir sa position à l'ouverture
+fenetre.setLocation(int x, int y);
+pour la mettre au centre a l'ouverture
+fenetre.setLocationRelativeTo(null);
+pour que le programme s'arrete apres avoir cliqué sur la croix
+fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+Pour empecher de redimensionner l'écran on fait 
+fenetre.setResizable(false) (true ça l'autorise)
+pour garder la fenetre au premier plan, on fait 
+fenetre.setAlwaysOnTop(true);
+pour enlever les contours et les boutons de controle
+fenetre.setUndecorated(true);
+
+une JFrame est constituée de différentes couches superposées, il y a dans l'ordre 
+1 - la fenêtre 
+2 - le rootPane = le conteneur principal qui contient tous les éléments de la fenêtre (sauf a croix, le carré et le moins)
+3 - le leyerdPane = c'est juste un panneau qui contient le menuBar et le contentPane
+4 - la menuBar = c'est la barre de menu, quand yen a une
+4bis - le contentPane = c'est là qu'on place les composants contenus dans la fenetre, les boutons, toussa = se récupère avec fenetre.getContentPane();
+5 - le glassPane = couche transparente qui sert à intercepter les actions de l'utilisateur avant qu'elles ne parviennent aux composants.
+
+remarque, il existe d'autres types de fenetres comme la JWindow = une JFrame sans bordure et non draggable, 
+                                                   ou la JDialog = fenetre non redimensionnable
+
+remarque, on peut également utiliser des objets JPanel plutot que directement le contentPane pour y mettre les éléments de la fenetre. 
+genre on va faire des JPanel avec des trucs dedans et on les fait s'afficher dans le contentPane comme ça
+JPanel monPan = new JPanel();
+fen.setContentPane(monPan);
+//il faudra actualiser l'affichage à l'écran, donc refaire ça
+fen.setVisible(true);
+
+pour changer la couleur de fond d'un JPanel, on fait 
+monJPanel.setBackgroundColor(Color.RED);
+Pour la couleur de devant c'est 
+monJPanel.setForegroundColor(Color.RED);
+remarque importante, à chaque fois qu'on charge un JPanel, qu'on le réduit puis qu'on le réaffiche, etc, on appelle sa fonction JPanel.PaintComponent (que du coup il est possible de surcharger) 
+ATTENTION C'EST PAINTCOMPONENT AU SINGULIER !!!! IL EXISTE AUSSI UNE METHODE A SURCHARGER DU NOM DE PAINTCOMPONENTS AU PLURIEL MAIS C'EST PAS PAREIL !!!
+
+Les objets Graphics et Graphics2D:
+---------------------------------
+Il est possible de dessiner et peindre sur un JPanel, avec les objets Graphics et Graphics2D
+
+1 - l'objet Graphics
+on ne peut l'utiliser QUE si systeme nous l'a donné via la méthode getGraphics() d'un composant Swing. 
+Pour rappel, tout objet JPanel, quand il se charge, appelle la méthode JPanel.paintComponent(Graphics g); cad a chaque fois qu'on réduit puis réaffiche le truc ou qu'on le redimensionne.
+du coup, si on crée une classe Panneau extends JPanel et qu'on surcharge la méthode paintComponent(Graphics g) pour afficher des formes dessus (g.fillOval(x, y, width, height) où x et y sont les coordonnées de l'extrémité gauche et haute de l'ellipse) et afficher sur la sortie standard "éxécuté" pour monitorer
+du coup, si on réduit et réaffiche la fenetre du programme, on verra que la méthode paintcomponent() a été éxécutée a chaque fois qu'on réaffiche le truc
+c'est un exemple utile qu'on peut généraliser à d'autres cas car ça permet de définir une classe héritée d'un CONTENEUR ou d'un COMPOSANT afin de rédéfinir la façon dont est peint ce composant sur la fenêtre par exemple. ++ utile
+genre faire en sorte d'adapter la position des composants du panel quand on redimensionne le panel.
+
+Donc en gros, pour dessiner des truc dans un pannel, il faut visiblement créer une classe extends JPanel et surcharger la méthode paintComponent(Graphics g) pour y mettre les instructions de dessin dedans.
+
+
+Graphics.fillOval(int xExtremitéGauche, int yExtremitéHaut, int width, int height); = dessine un ovale rempli (défaut noir)
+Graphics.drawOval(int xExtremitéGauche, int yExtremitéHaut, int width, int height) = dessine une rond vide. 
+Graphics.drawRect(int xExtremitéGauche, int yExtremitéHaut, int width, int height); = dessine une rectangle vide
+Graphics.fillRect(int xExtremitéGauche, int yExtremitéHaut, int width, int height); = dessine une rectangle vide
+Graphics.drawRoundRect(int xExtremitéGauche, int yExtremitéHaut, int width, int height); = dessine une rectangle vide
+Graphics.fillRoundRect(int xExtremitéGauche, int yExtremitéHaut, int width, int height, int xArrondi, int yArrondi); = dessine une rectangle vide
+Graphics.drawLine(int xDep, int yArr, int xArr, int yArr); = dessine une rectangle vide
+La méthode fillLine() n'existe pas.
+Graphics.drawPolygon(int[] x, int[] y, int nombrePoints); = dessine une polygone vide
+Graphics.fillPolygon(int[] x, int[] y, int nombrePoints); = dessine un polygone rempli
+Graphics.drawPolyLine(int[] x, int[] y, int nombrePoints); = comme drawPolygon mais ne trace pas de ligne finale entre le dernier point et le premier pour constituer un polygon, en gros ça trace un polygon ouvert. 
+Graphics.drawString(String texte, int xBasDuTexte, int yBasDuTexte); = dessine une chaine de caractère
+Graphics.drawImage(Image img, int xCoinHautGauche, int yCoinHautGauche, [int width, int height,]Observer Obs); = dessine une image (Observer Obs c'est le JPanel)
+
+Pour toutes ces méthodes, on peut modifier la couleur de la figure en faisant
+Graphics.setColor(Color.couleurEnAnglais);
+avant de dessiner la figure (la couleur restera celle-ci tant qu'on la redéfiniera pas).
+
+pour la méthode drawString, on peut modifier la font en faisant
+Graphics.setFont(new Font("nom de la police", Font.nomStyle genre BOLD, int taille en px));
+
+Pour utiliser la méthode Graphics.drawImage(Image img, int x, int y, Observer Obs); on a besoin des objets Image, ImageIO et File
+Pour récupérer une image, on fait 
+Image monImage = ImageIO.read(new File("cheminDeMonImage/image.jpg"));  (la classe ImageIO a une méthode static read).
+sauf que bien évidemment comme on utilise un File, on doit le faire dans un bloc try catch(IOException)
+
+
+2 - l'objet Graphics2D
+c'est une amélioration de la classe Graphics car elle permet de peindre des objets avec des dégradés de couleur
+il suffit juste de caster l'objet Graphics du JPanel qu'on récupère (Graphics2D g = (Graphics2D)this.getGraphics() ou bien Graphics2D g2 = (Graphics2D)g)
+ça fait tout ce que fait un objet Graphics mais en plus, 
+
+Pour peindre avec des dégradés, on a besoin d'un ojet GradientPaint, qu'on crée comme ça 
+GradientPaint gp = new GradientPaint(int xDebutPremiereCouleur, int yDebutPremiereCouleur, Color.premierecouleur, int xDebutSecondeCouleur, int yDebutSecondeCouleur, Color.secondecouleur, bool siLeDegradéDoitSeRepeter);
+
+
+Prog Graphique et animation sous java
+--------------------------------------
+Il peut être interessant de pouvoir faire des déplacements des formes géométriques qu'on a vu précédemment
+en gros, on redéfini les coordonnées de notre forme géométrique et on recharge l'affichage du panneau.
+
+remarque importante, pour actualiser l'affichage du contenu d'un panel, on fait JPanel.repaint();
+pour actualiser l'affichage du contenu d'une JFrame , on fait JFrame.setVisible(true);
+
+ATTENTION ! JPanel.repaint() affiche à nouveau le panneau SANS EFFACER l'affichage de sa version précédente 
+par exemple, si j'affiche un rond à (30,30) puis que je modifie la position du rond à (60,30) et que je fais JPanel.repaint()
+j'aurai 2 ronds, 1 a (30,30) et un a (60,30)
+
+pour effacer le précédent panel avant de le repeindre, sauf que c'est pas possible...
+donc l'astuce c'est de peindre à chaque fois, avant le rond, un carré de la couleur du background qui effacera les traces precédentes. 
+
+Tout ça est bien rigolo, mais c'est encore un peu brouillon et compliqué, il faudrait créer un objet spécifique Forme que l'on puisse déplacer sur un panneau donné: 
+
+
+Les Thread
+-----------
+l'objet Thread permet de creer et gérer un nouveau processus dans un programme ou gérer le processus principal 
+tout programme a au moins un processus 
+il peut être intéressant de diviser une tâche en differents processus afin de ne pas perdre de temps et de performance
+
+
+Ajouter des boutons dans une GUI: 
+--------------------------------
+pour ça on utilise la classe JButton du package javax.swing
+pour créer un objet JButton on fait comme ça 
+JButton monBouton = new JButton("titre bouton");
+on peut bien sûr modifier le texte de mon bouton comme suit: 
+monBouton.setText("nouveau titre bouton");
+enfin, pour afficher/intégrer le bouton à un JPanel, on fait monJPanel.add(monBouton);
+Par défaut, un bouton est au centre droite-gauche de la fenetre. 
+
+REMARQUE IMPORTANT SUR LES TAILLES DANS LES GUI: 
+la taille d'une fenêtre est rarement la taille de son CONTENEUR !!!!
+si on veut déterminer les bords de l'intérieur de notre fenetre pour y mettre des trucs, il faut absolument utiliser
+fenetre.getContentPane().getWidth();
+on peut avoir par exemple une fenetre qui fait 400x500 
+mais l'intérieur où on affiche les trucs ça sera 384x461
+
+
+pour rendre un bouton non clicable on fait 
+monBouton.setEnabled(false);
+
+Si on voulait faire des boutons spécialisés, genre avec un style spécial, il suffit de créeer une classe dérivée de JButton, 
+et de surcharger sa méthode paintComponent(Graphics g) genre 
+public void paintComponent(Graphics g)
+{
+   //on dessine un rectangle noir
+   g.fillRect(0, 0, this.getWidth(), this.getHeight());
+   //on définit la couleur blanche pour écrire
+   g.setColor(Color.white);
+   // on écrit le nom
+   g.drawString(this.name, this.getWidth() / 2 - (this.getWidth()/ 2 /4), (this.getHeight() / 2) + 5);
+}
+
+Si on voulait mettre une image de fond sur le bouton, on ferait: 
+private String name;
+  private Image img;
+
+  public Bouton(String str){
+    super(str);
+    this.name = str;
+    try {
+      img = ImageIO.read(new File("fondBouton.png"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void paintComponent(Graphics g){
+    
+    Graphics2D g2d = (Graphics2D)g;
+    //au lieu de dessiner un rectangle on dessine l'image
+    g2d.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+    g2d.setColor(Color.black);
+    g2d.drawString(this.name, this.getWidth() / 2 - (this.getWidth() / 2 /4), (this.getHeight() / 2) + 5);
+  }
+
+Ajouter du texte et des images dans un panel: 
+---------------------------------------------
+c'est avec l'objet JLabel
+on fait comme ça 
+JLabel lb = new JLabel("mon texte");
+//ou bien 
+JLabel lb = new JLabel();
+lb.setText("mon texte");
+
+//pour définir la couleur du texte on fait
+lb.setForeGround(Color.Red);
+//pour définir la couleur du fond on fait
+lb.setBackground(Color.Red);
+//pour définir la police du texte on fait
+lb.setFont(new Font("nomPolice", Font.monStyle, int taillePx));
+//pour gérer son alignement vertical et horizontal on fait
+lb.setHorizontalAlignment(JLabel.CENTER);
+lb.setVerticalAlignment(JLABEL.TRUC);
+
+
+
+
+Les Layout:
+----------
+
+remarque, il existe des objets java qui servent a agencer les composants d'un JPanel.
+JPanel en instancie un pour l'agancement par défaut des composants. 
+Pareil pour JFrame qui agence la position de ses panels. du coup si on faisait, avant de setcontentpane(panel), 
+un truc commme JFrame.getContentPane().add(button), ça nous met un bouton de la taille de la fenetre !
+(parce que le layout par défaut d'une JFrame c'est un BorderLayout.CENTER)
+
+ON PEUT ADD N'IMPORTE QUOI, MÊME D'AUTRES CONTENT PANE, ON PEUT AVOIR UN CONTENTPANE QUI CONTIENT D'AUTRES CONTENTPANEs
+
+
+Ces objets en question sont les Layout Managers.
+ces objets sont dans le package java.awt.
+Pour définir un Layout autre que celui par défaut d'un objet (JFrame ou JPanel ou autre), on fait 
+monObjet.setLayout(Mon Objet Layout);
+Puis on utilise les propriétés de l'objet Layout lors de l'ajout d'un composant dasn le conteneur, genre 
+monPanel.add(monObjet, monLayout.position)
+
+REMARQUE, plutot que de creer un jpanel qu'on va remplir d'autres jpanel, il est plus intéressant de remplir le conteneur par défaut 
+qu'on obtient avec JFrame.getContentPane();
+
+1 - objet borderLayout
+c'est le layout manager par défaut des JFrame
+ça permet de placer genre 5 objets en position cardinale, genre un en haut, un en bas, un a gauche, un a droite, un au centre.
+cad que les composants au nord et sud ont une height fixe (celle par defaut) et une width 100%
+et les composants Est et Ouest une Width fixe et une heigh 100% de ce qui reste (100%-la hauteur des nord et sud)
+le center prend la place qui reste
+REMARQUE, du coup si on veut placer un truc avec des trucs autours, il vaut mieux placer ce truc au centre et placer les autres genre autour.
+
+Pour ça, on fait comme ça 
+//on definit le layout du JPanel par exemple: 
+monJPanel.setLayout(new BorderLayout());
+//on positionne nos composant en haut, bas, gauche, droite,
+monJPanel.add(Objet1, BorderLayout.NORTH);
+monJPanel.add(Objet2, BorderLayout.SOUTH);
+monJPanel.add(Objet3, BorderLayout.EAST);
+monJPanel.add(Objet4, BorderLayout.WEST);
+monJPanel.add(Objet5, BorderLayout.CENTER);
+
+2 - objet GridLayout
+ca dispose les objets en grille, genre comme un pad numérique, sur la base d'un nombre de lignes et de colonnes. 
+la disposition commence a partir de la case en haut a gauche,
+ca se rempli de gauche a droite et de haut en bas
+
+Pour ça on fait comme ça
+//on definit le layout
+JPanel.setLayout(new GridLayout(int nbLignes, int nbColonnes));
+//on a juste à ajouter les objets les uns apres les autres, et ça rempli comme il faut 
+JPanel.add(Objet1);
+JPanel.add(Objet2);
+JPanel.add(Objet3);
+JPanel.add(Objet4);
+JPanel.add(Objet5);
+JPanel.add(Objet6);
+Remarque, on peut (re)definir le nombre de ligne et de colonne avec GridLayout.setColomns() et GridLayout.setRows()
+On peut également définir une marge entre les lignes 
+GridLayout.setVgap(int nbPixels)
+et une marge entre les colonnes
+GridLayout.setHgap(int nbPixels)
+
+
+3 - l'objet BoxLayout
+ça permet d'agencer les composants les uns a la suite des autres sur une ligne ou une colonne
+On fait comme ça 
+//on definit le layout
+JPanel.setLayout(new BoxLayout(Jpanel, BoxLineOut.PROPRIÉTÉ));
+//et apres yapuka ajouter les boutons
+JPanel.add(Objet1);
+JPanel.add(Objet2);
+JPanel.add(Objet3);
+JPanel.add(Objet4);
+JPanel.add(Objet5);
+JPanel.add(Objet6);
+
+Concernant la PROPRIETE: ça peut être
+X_AXIS = alignement horizontale de gauche à droite mais CENTRÉ
+Y_AXIS = alignement vertical de haut en bas mais CALÉ EN HAUT
+LINE_AXIS = alignement horizontal, dans le sens de la propriété ComponentOrientation du conteneur
+PAGE_AXIS = alignement vertical ,  dans le sens de la propriété ComponentOrientation du conteneur
+
+
+4 - l'objet CardLayout
+permet d'agencer les objers les uns sur les autres.
+tres utile pour basculer d'un contenu à l'autre en quelques clics.
+le principe c'est d'assigner les differents objets au layout en leur donnant un nom pour plus facilement les retrouver.
+//en gros, on crée un objet CardLayout,
+CardLayout cl = new CardLayout();
+//ensuite, on attribue le layout au panel de notre fenetre
+panel.setLayout(cl);
+//ensuite on ajoute chaque objet au conteneur en précisant son nom en chaine de caractere
+panel.add(Objet1, "Objet1")
+panel.add(Objet2, "Objet2")
+panel.add(Objet3, "Objet3")
+panel.add(Objet4, "Objet4")
+panel.add(Objet5, "Objet5")
+REMARQUE: ça peut être des panels !
+
+et ensuite, 
+ça affiche le premier objet1 qui a été add, les autres sont derrière, comme dans un jeu de cartes. 
+pour mettre l'objet suivant devant et le premier tout derrier, comme dans un jeu de carte, on fait: 
+cl.next(jPanel qui a été setté avec le cl);
+pour le précédent, c'est 
+cl.previous(JPanel)
+pour celui un qu'on veut en particulier on fait 
+cl.show(JPanel, "chaine genre Objet1");
+
+
+5 - L'objet GridBagLayout
+c'est le plus galere a comprendre
+il se présente sous la forme d'un tableau (le nombre de lignes et de colonnes est défini à la création du layout), on dispose ses objets en utilisant les coordonnées de la cellule
+on définit egalement les marges et la façon dont les composants se répliquent dans la cellule.
+On peut avoir des composants qui occupent plusieurs cellules.
+
+Pour obtenir un rendu correct, il faut
+. préciser qu'un objet qu'on place est le dernier de la ligne
+. préciser qu'un objet qu'on place au début d'une nouvelle ligne suit le dernier objet de la précédente. 
+
+alors attention c'est UUUUUULTRA RELOU: 
+//D'abord on définit notre layout, comme ça 
+monPanel.setLayout(new GridBagLayout());
+//ensuite on crée un objet GridBagConstraints qui va permettre de se déplacer dans la grille pour disposer nos objets
+GridBagConstraints gbc = new GridBagConstraints();
+//ensuite on se positionne sur la cellule à laquelle on veut commencer, mettons la premiere, 0,0
+gbc.gridx = 0;
+gbc.gridy = 0;
+//on défini la taille de l'objet qu'on dessine, cad sur combien de cellules ça s'étale en vertical et horizontal
+gbc.gridwidth = 1;
+gbc.gridheight = 1;
+//et ensuite on ajoute le composant
+monPanel.add(monObjet, gbc);
+
+SI ON VEUT ÉTENDRE notre composant sur plusieurs cellules, on fait comme ça
+//comme d'hab on se place au niveau de notre cellule où on commence a remplir
+gbc.gridx = 2;
+gbc.gridy = 0;
+//on défini notre largeur et hauteur, cas 1, on étale sur plusieurs cellules horizontales, cas2, on étale sur plusieurs cellules verticales, si on veut un etalement vertical et horizontal on combine les 2.
+gbc.gridwidth = 2;   //ou cas 2, gbc.gridwidth = 1;
+gbc.gridheight = 1;  //ou cas 2, gbc.gridheight = 2;
+//on précise que ça s'étend sur plusieurs cellules, oui c'est de la merde
+gbc.fill = GridBagConstraints.HORIZONTAL; //ou cas 2, gbc.fill = GridBagConstraints.VERTICAL; 
+
+ENFIN, quand on est à la fin de la ligne, avant d'ajouter le dernier objet, on fait
+gbc.gridwidth = GridBagConstraints.REMAINDER
+et on passe à la ligne suivante.
+
+Remarque, une fois qu'une variable est définie (genre gridx), on a pas besoin de la redefinir si on est toujours sur le meme x.
+
+THEGALERE. pour l'objet
+gridx : position en x dans la grille.
+gridy : position en y dans la grille.
+gridwidth : nombre de colonnes occupées.
+gridheight : nombre de lignes occupées.
+weightx : si la grille est plus large que l'espace demandé, l'espace est redistribué proportionnellement aux valeurs de weightx des différentes colonnes.
+weighty : si la grille est plus haute que l'espace demandé, l'espace est redistribué proportionnellement aux valeurs de weighty des différentes lignes.
+anchor : ancrage du composant dans la cellule, c'est-à-dire son alignement dans la cellule (en bas à droite, en haut à gauche…). Voici les différentes valeurs utilisables :
+FIRST_LINE_START : en haut à gauche ;
+PAGE_START : en haut au centre ;
+FIRST_LINE_END : en haut à droite ;
+LINE_START : au milieu à gauche ;
+CENTER : au milieu et centré ;
+LINE_END : au milieu à droite ;
+LAST_LINE_START : en bas à gauche ;
+PAGE_END : en bas au centre ;
+LAST_LINE_END : en bas à droite.
+fill : remplissage si la cellule est plus grande que le composant. Valeurs possibles : NONE, HORIZONTAL, VERTICAL et BOTH.
+insets : espace autour du composant. S'ajoute aux espacements définis par les propriétés ipadx et ipady ci-dessous.
+ipadx : espacement à gauche et à droite du composant.
+ipady : espacement au-dessus et au-dessous du composant.
+
+
+pour utiliser des pourcentages avec les gridbaglayout, on fait
+setLayout(new GridBagLayout());// set LayoutManager
+GridBagConstraints gbc = new GridBagConstraints();
+
+
+
+
+6 - l'objet FlowLayout
+c'est le plus simple a utiliser
+il se contente de centrer le composant dans le conteneur.
+c'est le layout manager par défaut des JPanel.
+il les enchaîne à la suite en ligne et quand il n'y a plus de place, il passe à la ligne suivante.
+Par defaut, le flowLayout aligne tout en center
+pour le faire aligner ailleurs, dans sa methode constructeur on peut definir
+FlowLayout.LEFT, ou right etc
+
+
+7 - placer ses composants comme on le veut 
+//Il suffit de set le layout du panel à null 
+Panel.SetLayout(null);
+//Puis d'utiliser la méthode setBounds(x,y,width,height) des objets à placer.
+MonObjet.setBounds(x,y,width, height);
+//puis de l'add tout simplement
+Panel.add(MonObjet);
+//on peut biensûr récupérer les infos de placement de l'objet avec des méthodes getX, getY, getWidth, etc
+
+
+interaction avec des boutons et la souris
+------------------------------------------
+Pour chopper les évenement en java, ya skon appelle le 
+design pattern observer
+
+REMARQUE IMPORTANTE quand un evenement est capturé, la méthode repaint de notre conteneur est appellée.
+
+
+
+1 - l'interface MouseListener pour interagir avec la souris
+ça se fait avec l'objet MouseListener.
+On fait comme ça 
+//on crée un objet MouseListener
+MouseListener ms = new MouseListener();
+//on ajoute le mouselistener à l'IHM 
+addMouseListener(ms);
+
+Si on voulait que notre classe écoute les mouvements de souris, on ferait
+//Il faut que notre classe implemente l'interface MouseListener
+class maclasse implements mouseListener
+//puis ajouter un MouseListener qui soit elle-même.
+this.addMouseListener(this);
+//puis ensuite il faudrait surcharger les méthodes qui sont appellées lors des évenements genre click, 
+  //Méthode appelée lors du clic de souris
+  public void mouseClicked(MouseEvent event) { }
+  //Méthode appelée lors du survol de la souris
+  public void mouseEntered(MouseEvent event) { }
+  //Méthode appelée lorsque la souris sort de la zone du bouton
+  public void mouseExited(MouseEvent event) { }
+  //Méthode appelée lorsque l'on presse le bouton gauche de la souris
+  public void mousePressed(MouseEvent event) { }
+  //Méthode appelée lorsque l'on relâche le clic de souris
+  public void mouseReleased(MouseEvent event) { }  
+
+plus simplement, on peut créer une classe spéciale qui gèrera les évenements dans une autre classe, genre 
+//Il faut que notre classe implemente l'interface MouseListener
+class maclasse implements mouseListener
+//puis ensuite il faudrait surcharger les méthodes qui sont appellées lors des évenements genre click, 
+  //Méthode appelée lors du clic de souris sur l'objet listened
+  public void mouseClicked(MouseEvent event) { }
+  //Méthode appelée lorsque l'on presse le bouton gauche de la souris sur l'objet listened
+  public void mousePressed(MouseEvent event) { }
+  //Méthode appelée lorsque l'on relâche le clic gauche de souris sur l'objet listened
+  public void mouseReleased(MouseEvent event) { }
+  //Méthode appelée lors de l'entrée (survol) de la souris sur la surface de l'objet dans l'IHM
+  public void mouseEntered(MouseEvent event) { }
+  //Méthode appelée lors de la sortie (stop survol) de la souris sur la surface de l'objet dans l'IHM
+  public void mouseExited(MouseEvent event) { }  
+//et enfin dans une autre classe dont on voudra observer les évenements clicks, on fera
+this.addMouseListener(new maClasseMouseListener());
+
+Enfin, pour chacune de ces méthodes, il y a en parametre un MouseEvent event passé en parametre
+Cet objet MouseEvent nous permet d'avoir beaucoup d'infos sur le curseur et notamment pour connaître les coordonnées x et y du curseur relativement à l'objet listened, on fait
+event.getX(); // pour connaitre le X. Si on est à gauche de l'objet, X<0, si on est à droite, x>objet.getWidth()
+event.getY(); // pour connaitre le Y. Si on est en haut de l'objet, Y<0, si on est en bas de l'objet, y>Objet.getHeight();
+
+
+2 - l'interface ActionListener pour interagir avec un bouton
+A la difference de MouseListener, ici il n'y a qu'une seule méthode, c'est 
+public void actionPerformed(ActionEvent arg0){}
+
+Pour écouter un composant de notre objet, il faut 
+//1: que notre objet implemente l'interface ActionListener
+public class maClass implements ActionListener
+//2: ajouter un listener à notre composant, genre 
+this.monObjet.addActionListener(this);
+
+remarque, on peut bien sûr utiliser un listener externe, genre 
+this.monObjet.addActionListener(monActionListener);
+
+Par contre, si on a 2 objets qu'on veut écouter avec le même ActionListener, on peut faire la distinction avec l'arg0 ActionEvent.
+En utilisant la méthode getSource() de l'objet ActionEvent
+on fait comme ça 
+if(arg0.getSource() == Objet 1){
+  //instructions 1
+}
+if(arg0.getSource() == Objet 2){
+  //instructions 2
+}
+
+Le problème, c'est que si on n'a pas accès aux objets en question, c'est la merde. 
+Une solution est d'associer une chaîne de caractere au bouton, comme ça 
+monBouton.setActionCommand("Bouton1");
+puis après, dans notre fonction actionPerformed, discriminer avec un 
+if(e.getActionCommand=="Bouton1") //instructions
+TRES UTILE !!!!
+
+
+Il existe aussi une interface MouseMotionListener qui implemente 3 methodes
+mouseMoved(MouseEvent e) = si la souris bouge
+mouseDragged(MouseEvent e) = si la souris bouge tandis qu'un bouton est appuyé
+
+
+------  
+Une autre façon de faire est de créer une classe interne implements ActionListener avec une définition de la méthode ActionPerformed(ActionEvent arg0)
+genre 
+
+private class Bouton1Listener implements ActionListener
+{
+  public void actionPerformed(ActionEvent arg0){}
+}
+//pour pouvoir faire 
+this.monBouton.addActionListener(new Bouton1Listener());
+-----
+Une derniere façon de faire est de définir la classe directement dans le AddListener, comme ça 
+this.monObjet.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e){/*instructions*/}});
+On pourrait y mettre une méthode par exemple
+C'est l'utilisation des CLASSES ANONYMES
+
+Les classes anonymes sont AUTOMATIQUEMENT DÉCLARÉES FINAL (l'héritage est donc impossible) et ne PEUVENT PAS
+- être déclarées abstract 
+- être déclarées static
+- définir de constructeur
+
+REMARQUE IMPORTANTE !!! 
+on peut mettre plusieurs ActionListener pour un même objet, genre 
+monObjet.add(ActionListener1)
+monObjet.add(ActionListener2)
+monObjet.add(ActionListener3)
+
+et à chaque click, yaura les 3 méthodes executées
+
+REMARQUE IMPORTANTE: imaginons qu'on ai une méthode dans notre classe avec une boucle infinie (genre while var==true)
+et qu'on modifie la var en true dans un objet ActionListener1, et en false dans un autre objet ActionListener2.
+et que dans ce dernier objet, on relance notre fonction de classe avec la boucle infinie, genre 
+
+public void maFonction(){
+  while(var==true) {}
+}
+
+public void f1(){
+  var=false;
+}
+
+public void f2(){
+  var==true;
+  maFonction();
+}
+
+==> ET BIEN ça va planter ! car la méthode maFonction() est lancée dans la fonction f1() qui est dans l'objet ActionListener, donc 
+ON EST ENCORE DANS l'ACTIONLISTENER, on en est pas sorti, et du coup, il n'écoute plus. 
+java gère les méthodes avec une pile. genre chaque ordre est empilé à la suite des ordres, si on fait 
+
+methode1() {
+print("debut methode1")
+methode2();
+print("fin methode1")
+}
+methode2() {
+print("debut methode2")
+methode3();
+print("fin methode2")
+}
+methode3() {
+print("debut methode3")
+print("fin methode3")
+}
+
+on aura
+debut methode 1
+debut methode 2
+debut methode 3
+fin methode 3
+fin methode 2
+fin methode 1
+
+CAD que java empile les instructions avant de les dépiler
+TANT QUE LA METHODE AU SOMMET DE LA PILE N'EST PAS TERMINÉE, LA PILE N'EST PAS DEPILÉE !!! on reste bloqué
+Pour pallier à ça, on peut lancer notre méthode infinie dans un nouveau Thread, cad dans une PILE A PART. 
+cf le chapitre sur les threads !
+
+
+Le design pattern observer
+---------------------------
+ça sert a gerer les interactions dans les IHM 
+C'est par ça que les composants fond des trucs quand on les tripotte
+
+Quand on rend 2 objets dépendants l'un de l'autre (parce qu'on place un composant d'une fenetre dans une classe horloge par exemple)
+on dit qu'on COUPLE ces 2 objets.
+
+Pour faire communiquer 2 objets de façon indépendante, on utilise le pattern observer. 
+En gros, on a un objet qui peut dire des trucs
+et on peut définir d'autres objets comme étant Observer de ce premier objet, c'est à dire d'être au courant de quand le premier dit des trucs ET savoir ce qu'il dit.
+
+Pour ce faire, on utilise des interfaces. 
+L'interface Observable dispose de 3 méthodes
+- une ajoutant un observateur de la classe observable 
+- une en supprimant un (pour libérer de la ressource par exemple)
+- une en notifiant les observers, cad en les avertissant que l'objet dit un truc ET ce qu'il dit. 
+
+genre 
+public interface Observable {
+  public void addObservateur(Observateur obs);  //ajouter un observateur de l'objet
+  public void updateObservateur();              //mettre à jour tous les observateurs de l'objet cad appeller leur fonction update.
+  public void delObservateurs();                //supprimer tous les observateurs de l'objet
+}
+
+l'interface observateur dispose d'une méthode: 
+- une faisant une demande de mise à jour de l'objet observé.
+
+genre 
+public interface Observateur {
+  public void update(TypeDonnéeARecuperer variable);
+}
+
+Pour que 2 classes communiquent et échangent, il faut que chacune observe l'autre , cad que 
+A soit observeur et observe  B 
+B soit observable et observé par A
+B soit observeur et observe  A
+A soit observable et observé par B
+
+
+Concrêtement,
+1- on crée 2 interfaces, une Observable avec les 3 méthodes, une Observateur avec la méthode update
+2- Si on veut que notre objet A puisse récupérer des données de notre objet B, on implemente Observable sur B (en rajoutant les méthodes même vides pour chacuns) ET on rajoute une variable d'instance de type list<Observateur> dans laquelle on stocke l'ensemble des observateurs de B
+3- On défini les méthodes comme suit: 
+   public void addObservateur(Observateur Obs){
+     this.listObservateur.add(Obs);
+   }
+
+   public void delObservateurs(){
+     this.listObservateur = new ArrayList();
+   }
+
+   public void updateObservateurs(){
+     for(Observateur tempObs : this.listObservateur)
+       tempObs.update(variable à récupérer);
+   }
+4- dans notre objet A, au moment dans le code où on veut envoyer l'infos à tous les observateurs, on fait
+   this.updateObservateurs(la donnée à leur transmettre);
+   ça aura pour conséquence d'appeller la méthode update de chaque observateurs en leur communiquant la donnée de l'objet B
+
+
+5- dans notre Objet A, une fois notre objet B instancité qu'on veut écouter, on lui ajoute un observeur, comme ça 
+   B.addObservateur(new Observateur(){public void update(Type_donnée_a_récupérer var){//instructions}});
+   on peut bien entendu définir une méthode spéciale de la classe à mettre dedans, comme dans les ActionListener
+
+
+Remarque, il existe une classe abstraite Observable et une interface Observer qui fonctionnent pareil a quelques details pres
+mais il s'agit d'une classe abstraite de laquelle on doit hériter et non d'une interface, et comme java ne gère pas l'héritage multiple, c'est relou. 
+
+Une façon plus simple d'écouter un composant, genre un bouton, c'est simplement de faire 
+monOBJET.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e){//mes instructions;}});
+
+
+Les Threads
+-----------
+
+Un Thread c'est un fil d'execution du programme. 
+Yen a un de base, c'est celui de Main, c'est le Thread par défaut qui est lancé
+si on en crée et lance d'autres, on pourra en avoir plusieurs qui s'executent en meme temps. 
+En gros, ça crée une nouvelle pile.
+
+En gros, si ya un Thread, ça execute le Thread. 
+Si yen a plusieurs, ça va alterner aléatoirement entre l'éxecution de l'un et celui de l'autre,
+genre chaque instruction constitue un coup, et ça alterne aleatoirement entre une instruction et de l'un, une instruction de l'autre, etc...
+Cet aleatoire est déterminé par un ordonnanceur. 
+
+sauf que du coup, les 2 ne sont pas executés en continue mais de façon alternée, meme si a notre chelle on ne voit pas la
+difference, parce que ça va tres vite. 
+Sauf que s'il y a trop de Thread qui executent trop de trucs, là on verra que ça alterne, c'est les fameux ralentissements qu'on a quand un programme est trop gourmand ou que l'ordi galere. 
+
+Quand l'ordonnanceur passe d'un Thread à l'autre, celui qui tournait avant est mis en SOMMEIL, l'autre est mis en EVEIL.
+REMARQUE, Maintenant avec les ordi multicoeurs il est possible d'executer 2 threads en meme temps.
+
+Pour connaitre le Thread qui est en train d'être executé on fait
+Thread.currentThread().getName();
+
+Un Thread est un objet qui contient un ensemble d'instructions, qui doit être instancié, 
+puis lancé avec sa méthode start(), il executera alors sa methode run() qui contient toutes les instructions à effectuer.
+
+Voici ses differents etats possibles: 
+NEW = lors de sa création
+RUNNABLE = quand on a appellé start()
+TERMINATED = quand il a effectué toutes ses tâches, c'est à dire que run() a été executée jusko bout, cad que run() est ôté de sa pile d'execution, la pile en question est alors détruite.
+             ==> on ne peut plus alors invoquer la méthode start(), c'est fini.
+
+BLOCKED = lorsque l'ordonnanceur place un Thread en sommeil pour en executer un autre.
+TIMED_WAITING = quand le Thread est en pause ou qu'il y a une méthode sleep() dedans.
+WAITING = quand le thread est en attente indéfinie (en attente d'un evenement par exemple) 
+
+Pour connaitre l'état de notre Thread, on fait
+monThreadInstancié.getState();
+
+Il existe 2 façons de créer un nouveau Thread: 
+-soit on cree une classe héritée de la classe Thread et on met nos instructions dedans
+-soit creer une classe implementant l'interface Runnable, on défini la methode run() et instancier et on instancie notre objet et voila !
+
+remarque: la classe Thread et l'interface Runnable sont dans le package java.lang. Point besoin de faire d'import pour les exploiter tough
+
+1) Soit on crée une classe héritée de la classe Thread et on redefini sa méthode run() en mettant nos instructions à nous. 
+genre
+public class TestThread extends Thread {
+  public TestThread(String name){
+    //on passe en parametre le nom qu'on veut donner au thread
+    super(name);
+  }
+  //redefinition de la methode run
+  public void run(){
+    //on affiche 10 fois le nom du thread dans la console
+    for(int i = 0; i < 10; i++)
+      System.out.println(this.getName());
+  }       
+}
+
+il ne nous reste plus qu'à utiliser notre Thread dans la méthode main par exemple
+public static void main(String[] args)
+{
+  TestThread t = new TestThread("voila");
+  //on lance le Thread
+  t.start();
+}
+
+2) on implemente l'interface Runnable
+En gros on crée une classe quelconque et on lui implements Runnable
+on redéfinie une méthode run() dans laquelel ya les instructions
+et ensuite, on instancie notre Thread comme suit: 
+Thread t = new Thread(new maClasseImplementRunnable());
+et après c'est pareil. 
+
+REMARQUE IMPORTANTE: un thread est une suite d'instructions, parfois quand il y a plusieurs, l'ordonnanceur peut s'arreter en plein milieu d'un truc qu'on aimerait bien que ça se fasse d'un bloc 
+(genre afficher une suite d'infos)
+Une solution a ca est de SYNCHRONISER SES THREADS, cad d'informer un thread qu'il utilise des données suceptible d'être altéré par un autre thread. 
+Pour ça, il suffit de rajouter le kw "synchronized" devant une méthode pour que celle-ci ne soit pas empilée si elle a été empilée mais non dépilée par un autre thread. IZI !W
+La synchronisation des threads est ultra importante quand on modifie des données accessibles par les differents thread, genre les BDD !
+
+Le pattern Fork Join
+--------------------
+
+Ça consiste à diviser une tâche en sous-tâches qui s'executent en parallele  et récupérer le résultat uen fois le tout terminé. 
+C'est possible qu'avec des processeurs MULTICOEURS
+Il faut faire attention et s'assurer qu'il y ai un gain de temps (parfois, le découpage induit un temps d'execution plus long)
+
+Pour pouvoir utiliser le pattern fork join dans une classe, elle doit hériter d'une classe permettant ce découpage  (cad dérivant de ForkJoinTask<V>)
+- RecursiveAction = permet de découper une tâche qui ne renvoit aucune valeur, héritant de ForkJoinTask<void>
+- RecursiveTask<V> = identique a la classe précédente mais retourne une valeur de type <V> en fin de traitement. 
+
+==> ces classes qui découpent, disposent de 3 méthodes pour la gestion de cela: 
+- compute() = méthode abstraite a redefinire dans la classe dérivée afin de definir le traitement a effectuer
+- fork() = méthode qui crée un nouveau thread dans le pool de threads ForkJoinPool (ça crée un sous-thread quoi) 
+- join() = permet de récupérer le résultat de la méthode compute()
+
+
+on doit également utiliser un second objet qui supervisera l'execution des taches en sous taches pour pouvoir fusionner les thread en fin de traitement. 
+c'est l'objet 
+- ForkJoinPool
+
+Concretement on fait comme ça: 
+si on a un thread qui est lancé, et qui exploite un objet qui extends RecursiveAction ou RecursiveTask<V> 
+(qui peut par exemple, etre recursif, cad que dans les instructions de cet objet A, si on rencontre une condition, on cree un objet A, etc)
+quand la condition est rencontrée et qu'on crée un nouvel objet, plutot que de le laisser s'executer dans le meme thread (qui peut être le thread main)
+on décide qu'il s'executera dans un nouveau thread en faisant,
+apres avoir instancié notre nouvel objet A récursif
+A a = new A(); 
+puis avoir gardé des pointeurs vers chaque nouvel objet A instancié récursivement dans une collection 
+liste.add(a);
+l'instruction
+a.fork();
+
+Ensuite, quand on veut que les instructions reviennent dans le meme thread, 
+on liste les objets de la liste et pour chaque objet on fait
+f.join();
+qui retourne le retour de la methode compute(); si on extends RecusiveTask<V> ou void si on extends RecursiveAction
+
+
+après, pour lancer le bordel, on fait
+//instanciation d'un objet ForkJoinPool en lui passant en parametre le nombre de processeurs de la machine
+ForkJoinPool pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors())
+//Puis, après avoir instancié notre objet A de départ, 
+A a = new A();
+//on l'invoke avec la méthode pool, qui va appeller la méthode compute() de notre classe A
+pool.invoke(a);
+
+
+Remarque: le pattern fork join est avantageux quand il y a un certain nombre de sous-tache, sinon il peut etre plus lent qu'un pattern sequentiel, en plus d'être plus couteux en CPU dans tous les cas. 
+Il peut donc etre intéressant de définir un seuil a partir duquel il est interessant de fork();
+
+L'objet JComboBox
+-----------------
+un comboBox c'est un menu deroulant
+On initialise notre comboBox comme ça 
+JComboBox combo = new JComboBox();
+
+puis on ajoute des items dans la liste comme ça
+combo.addItem("choix 1");
+etc
+
+On peut bien sur initialiser le JComboBox comme ceci
+JComboBox combo = new JComboBox(tab); ou tab est un String[] tab; 
+
+On peut assigner un choix par defaut avec combo.setSelectedIndex(int index) (index situé entre 0 et n-1)
+On peut egalement, pour chaque choix, modifier la police, la couleur de forme, de fond, etc comme pour un jlabel
+
+Remarque, depuis java7, on peut utiliser la genericité sur les combobox pour passer en parametres des objets, genre 
+JComboBox<String> combo = new JComboBox(tab);
+
+Il existe un objet proche, qui s'appelle JList<type> qui fait a peu pres la meme chose
+
+Pour communiquer avec cet objet on utilise l'interface ItemListener
+cette interface a une méthode qu'on doit redefinir, méthode qui est appellee lorsqu'on change d'élement dans le comboBox
+on fait genre 
+combo.addItemListener(new MonListener());
+
+en ayant au préalable défini une classe MonListener implements ItemListener
+qui redefini la méthode
+itemStateChanged(ItemEvent e) 
+{
+  e.getItem(); //qui recuperere celui qui a été selectionné
+}
+
+
+
+L'objet JCheckBox
+-----------------
+
+En gros on fait
+JCheckBox cb = new JCheckbox();
+ou
+JCheckBox cb = new JCheckbox(new String("texte"));
+
+on a plein de methode dont 
+cb.isSelected()
+
+L'objet JRadioButton
+---------------------
+on le definit comme ca
+JRadioButton jrb = new JRadioButton();
+ou 
+JRadioButton jrb = new JRadioButton("texte");
+
+
+Si on veut des groupes de radioButtons pour ne pouvoir en selectionner qu'un seul, on fait 
+ButtonGroup	bg = new ButtonGroup();
+bg.add(radioButton);
+
+pour savoir si un bouton est selected on fait 
+bouton.isSelected();
+
+
+L'objet JTextField
+------------------
+input texte
+
+on fait 
+JTextField jtf = new JTextField("Contenu du textField");
+
+on doit ensuite lui definir sa taille en faisant
+jtf.setPreferredSize(new Dimension(int width, int height));
+
+et optionnellement on a
+jtf.setFont(new Font("arial", Font.BOLD, 14));
+jtf.setForeground(Color.BLUE);	//couleur du texte
+
+
+
+on a aussi le JFormattedTextField
+ca permet d'éviter beaucoup de controles et de casts sur les entrées
+Cet objet retourne une valeur uniquement si ce qu'on y a entré correspond au pattern qu'on veut 
+==> la verification se fait lorsqu'on quitte le focus sur l'objet
+==> si ca correspond au pattern, gettext renvoit le truc, sinon il renvoit vide
+
+genre si on veut un champs texte qui ne contient que des int, on fait 
+JFormattedTextField jftf = new JFormattedTextField(NumberFormat.getIntegerInstance());
+==> en gros ca fait un atoi
+==> ca fait des espaces tous les 3 nombres, faudra le prendre en compte dans le traitement
+
+pour les time on fait 
+JFormattedTextField jftf = new JFormattedTextField(NumberFormat.getTimeInstance());
+
+pour les dates c'est JFormattedTextField jftf = new JFormattedTextField(NumberFormat.getDateInstance());
+
+
+Pour pousser le pattern plus loin, on peut utiliser un MaskFormatter
+lors de son instanciation, on decrit le pattern avec des metacaracteres
+# = chiffre
+' = caractere d'echappement
+U = une lettre (les minuscules sont automatiquements changées en majuscules)
+L = une lettre (les majuscules sont automatiquements changées en minuscules)
+A = un chiffre ou une lettre
+? = une lettre
+* = n'importe quel caractere
+H = caractere hexadecimal (0-9 et A à F)
+
+==> ca leve une parseException, faudra donc instancier le MaskFormatter dans un bloc try catch
+
+genre
+try
+{
+  MaskFormatter tel = new MaskFormatter("## ## ## ## ##");
+  //Ou encore
+  MaskFormatter tel2 = new MaskFormatter("##-##-##-##-##");
+  //Vous pouvez ensuite le passer à votre zone de texte
+  JFormattedTextField jtf = new JFormattedTextField(tel2);
+}
+catch(ParseException e)
+{
+  e.printStackTrace();
+}
+
+
+
+
+l'objet KeyListener
+-------------------
+on a 3 events
+keyTyped
+keyRelease
+keypressed
+avec l'event
+KeyEvent e
+
+pour get la key pressed, on fait
+e.getkeyCode()
+ou 
+e.getKeyChar()
+
+REMARQUE: quand on tape un truc dans un champs (ou n'importe ou ailleurs), les methodes s'appellent dans cet ordre
+keyTyped()
+keyPressed()
+keyReleased()
+
+
+Les boites de dialogue
+--------------------------------
+
+C'est l'objet JOptionPane
+
+On fait
+JOptionPane	msg = new JOptionPane
+
+msg.showMessageDialog(parent ou null, "message", "Titre", JOptionPane.INFORMATION_MESSAGE);
+---------------------
+on a 
+JOptionPane.INFORMATION_MESSAGE
+JOptionPane.QUESTION_MESSAGE
+JOptionPane.ERROR_MESSAGE
+JOptionPane.WARNING_MESSAGE
+
+On peut utiliser ses propres images d'icones en faisant
+ImageIcon img = new ImageIcon("./image.png");
+msg.showMessageDialog(parent ou null, "message", "Titre", JOptionPane.INFORMATION_MESSAGE, img);
+
+
+On a aussi des boites de confirmation (avec oui / non)
+cette fois on utilise
+showConfirmDialog()
+-------------------
+ca retourne un int: 
+ces int sont typedef avec des constantes
+JOptionPane.OK_OPTION
+JOptionPane.NO_OPTION
+JOptionPane.CANCEL_OPTION
+JOptionPane.CLOSED_OPTION
+
+
+int machin = msg.showConfirmDialog(parent ou null, "Titre", "message", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+JOptionPane.YES_OPTION
+JOptionPane.YES_NO_OPTION
+JOptionPane.YES_NO_CANCEL_OPTION
+
+Enfin, pour input des trucs rapido on a
+showInputDialog()
+-----------------
+
+String input = msg.showInputDialog(Component parent ou null, String message, String title, int messageType)
+
+
+on peut aussi utiliser showInputDialog() pour selectionner un texte parmis plusieurs proposés dans une liste deroulante
+genre
+string[]	choices = new String[] {"choix1", "choix2", "choix3"};
+String 		choice = new String("");
+choice = JOptionPane.showInputDialog(null, "message", "titre", JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]).toString();
+
+en gros on met null, puis l'array, puis le choix pré-set
+ATTENTION, cette methode renvoit un Object, donc il faut toString() pour obtenir la String correspondante
+
+
+On a aussi 
+showOptionDialog()
+------------------
+c'est comme showInputDialog avec un combo, mais au lieu de return la String, ca return l'index de l'array passé en arg 
+
+int rang = jop.showOptionDialog(null, 
+      "Veuillez indiquer votre sexe !",
+      "Gendarmerie nationale !",
+      JOptionPane.YES_NO_CANCEL_OPTION,
+      JOptionPane.QUESTION_MESSAGE,
+      null,
+      sexe,
+      sexe[2]);
+
+
+
+
+Les menus - l'objet MenuBar
+---------------------------
+
+Il existe un objet MenuBar appartenant à java.awt
+Mais awt c'est bof et c'est également bof de mélanger les lib quand on fait des gui
+du coup on va utiliser
+JMenuBar, son homologue de javax.swing
+
+un JMenuBar est constitué de JMenu (genre fichier et tout, titre de la liste déroulante) et de JMenuItem, objets contenus dans le menu deroulant
+
+D'abord on cree une JMenuBar
+JMenuBar menuBar = new JMenuBar();
+
+ensuite on crée les JMenu a mettre dans le JMenuBar
+JMenu menu1 = new JMenu("Menu 1");
+JMenu menu2 = new JMenu("Menu 2");
+JMenu menu3 = new JMenu("Menu 3");
+
+on crée nos items
+genre
+JMenuItem item1 = new JMenuItem("Item 1");
+JMenuItem item2 = new JMenuItem("Item 2");
+JMenuItem item3 = new JMenuItem("Item 3");
+JMenuItem item4 = new JMenuItem("Item 4");
+
+Et enfin on ajoute les JMenuItems aux menus pour faire la liste des options clickables
+menu1.add(item1);
+
+puis on set la menuBar à la frame
+window.setJMenuBar(menuBar);
+==> ATTENTION, il existe aussi une methode setMenuBar(); mais qui prend une menuBar (awt) et non une JMenuBar, attention.
+
+Pour definir une icone pour un menu ou un menuItem, 
+soit on utilise le constructeur (String nom, imageIcon icon);
+ou bien on utilise la methode 
+monMenu.setIcon(imageIcon icon);
+
+
+On peut egalement ajouter des Menu dans un Menu, pour faire des sous-menus et donc des sous-sous items
+On peut egalement mettre des separateurs dans les menus en faisant
+monMenu.addSeparator();
+
+Enfin, il existe bon nombre d'objets d'input a mettre dans des JMenu en tant qu'items, genre 
+JRadioButtonMenuItem();
+ou
+JCheckBoxMenuItem();
+
+Pour ajouter des raccourcis claviers à un MENU, on fait
+monMenu.setMnemonic('A');
+==> on aura l'équivalent d'un click sur notre menu en faisant alt+A
+
+pour faire des raccourcis claviers sur des items, il faut utiler l'objet 
+KeyStroke (qui détermine des touches de clavier sur lesquelles il faut appuyer ou alors sur lesquelles on a appuyé)
+on fait
+monItem.setAccelerator(KeyStroke.getKeyStroke('c'));
+==> ATTENTION c'est CASE SENSITIVE (et du coup on n'a un accelerator que pour une touche)
+
+==> Si on veut faire un accelerator avec une combinaison de touches genre ctrl + C,
+Pour ca il faudra utiliser un objet KeyEvent
+monItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
+ou alors, pour ctrl+shift+C
+monItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
+
+
+Les menus contextuels = JPopupMenu
+-----------------------------------
+C'est le menu qui apparait quand on fait un click droit quelque part de défini
+Il vaut mieux, pour des raisons d'ergonomie, utiliser l'event MouseReleased plutot que MouseClicked();
+(comme ca le menu contextuel n'apparait qu'au relachement de la souris)
+
+on instancie notre JPopupMenu comme ca
+JPopupMenu jpm = new JPopupMenu();
+
+Ensuite on rajoute des JMenuItem et/ou des JMenu dedans
+genre
+jpm.add(menu1);
+jpm.add(menu2);
+etc
+
+Puis
+on show notre menu comme ca
+jpm.show(JFrame conteneur, coordX, coordY);
+==> Dès qu'on clicke sur un choix OU qu'on clique en dehors de la JPopupMenu, ca ferme (hide) la JPopupMenu
+
+DU COUP, si on voulait avoir un JPopupMenu qui apparait lors d'un click droit sur notre JFrame
+on crée notre JPopupMenu()
+puis sur notre JFrame on fait
+maFrame.addMouseListener(new MouseAdapter() {
+	public void MouseReleased(MouseEvent e)
+	{
+		if (e.isPopupTrigger()) // si c'est un click droit
+			jpm.show(maFrame, e.getX(), e.getY);
+	}
+});
+
+Mais bon, pour une raison que j'ignore, ca ne fonctionne pas
+
+Et enfin, pour définir un JPopupMenu sur notre JPanel, beaucoup plus pertinent et utile
+on fait pareil mais on définit comme source notre jpanel.
+
+on cree notre JPopupMenu()
+final ContextMenu	cm = new ContextMenu();
+		this.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e)
+			{
+				if (e.getButton() == MouseEvent.BUTTON3)
+				{
+					// comme getSource() renvoit un Object, on caste le retour en Component
+					cm.show((Component)e.getSource(), e.getX(), e.getY());
+				}
+			}
+		});
+
+On peut bien-sûr, et c'est recommandé, utiliser un Objet vraiment défini LaunchContextMenuListener()
+public class LaunchContextMenuListener extends MouseAdapter
+{
+	public void		mouseReleased(MouseEvent e)
+	{
+		if (e.getButton() == MouseEvent.BUTTON3)
+		{
+			MainPanel	component = (MainPanel)(e.getSource());
+			component.getContextMenu().show(component, e.getX(), e.getY());
+		}
+	}
+}
+
+
+La barre d'outils = JToolBar
+=============================
+
+C'est comme une MenuBar, sauf que
+- ca utilise des JBoutons et pas des MenuItem
+- il n'y a pas d'endroit specifique ou mettre sa JToolBar comme pour le MenuBar
+
+Une toolBar c'est une barre d'outils qui contient des boutons permettant de faire ce qui est proposé dans le MenuBar, 
+mais sans avoir à passer par les méandres du menuBar
+
+on crée des boutons et on les add à notre JToolBar.
+
+du coup, le plus simple, vu que tout JButton dispose, du fait de son heritage de JAbstractButton, d'une methode
+doClick() qui simule un clic sur le bouton, ca pourrait d'etre que lorsqu'on clique sur un menuItem, on envoit un doClick sur un bouton qui fait la même chose
+Moi je trouve ca bof mais ca peut etre une solution
+
+IL NE FAUT PAS OUBLIER DE 
+maBarreDoutils.setVisible(true);
+
+
+
+
+Les actions abstraites
+=======================
+
+Elles sont tres utiles pour gerer les events de composants ne gerant qu'une seule action, genre checkbox ou bouton
+(mais pas ComboBox du coup par exemple)
+
+En gros on cree une classe qui extends AbstractAction
+
+class RougeAction extends AbstractAction
+{
+    //Constructeur avec le nom uniquement
+    public RougeAction(String name){super(name);}
+
+    //Le constructeur prend le nom et une icône en paramètre
+    public RougeAction(String name, ImageIcon){super(name, img);}
+
+    public void actionPerformed(ActionEvent){
+    //Vous connaissez la marche à suivre
+}
+
+Ca peut etre utile pour creer un bouton directement avec une action
+==> genre JButton bouton = new JButton(new RougeAction("ActionRouge", new ImageIcon("./monIcone.png")));
+
+
+
+L'objet JSplitPane
+==================
+
+c'est un JPanel qui contient un ensemble de JPanel separes par des barres ajustables, en gros c'est comme des frames en html
+JSplitPane    split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pan, pan2);
+
+Dans l'exemple ci-dessus, on a ajouté des JPanel mais on pourrait ajouter n'importe quel JComponent, genre des boutons, checkbox, etc
+
+Pour faire apparaitre des boutons sur le split pour reduire totalement dans un sens ou dans l'autre on fait
+split.setOneTouchExpandable(true);
+
+Pour definir la taille de notre barre on fait
+split.setDividerSize(int size)
+
+pour definir sa localisation par defaut (qui est au milieu par defaut), on fait
+split.setDividerLocation(arg0);
+
+Pour la foutre au milieu on fait
+split.setResizeWeight(0.5d);
+
+Remarque, on peut egalement mettre des jsplitpane dans un jsplitPane
+
+
+l'objet JScrollPane
+=====================
+
+Quand on a un objet dont la quantité de contenu peut augmenter, si on augmente cette quantité, le conteneur va grandir
+(Genre en JTextArea)
+Si on veut qu'il garde sa taille et qu'il y ai une scrollbar, on fait
+JScrollPane sp = new JScrollPane(new JTextArea());
+
+On peut preciser le comportement du scroll si on deborde a droite ou en bas, genre
+scroll.setHorizontalScrollBarPolicy(int policy)
+scroll.setVerticalScrollBarPolicy(int policy)
+
+avec Policy:
+JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
+JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
+JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+
+
+
+
+L'objet JTabbedPane
+====================
+
+C'est pour faire des ongles (beaucoup plus simple que CardLayout);
+
+on fait
+JTabbedPane	tp = new JTabbedPane();
+
+puis on ajoute chaque panel en faisant
+tp.add("titre onglet", panel);
+ou alors
+tp.addTab("titre onglet", panel);
+ou
+tp.addTab("titre onglet", ImageIcon icon, panel);
+
+
+puis enfin
+window.getContentPane().add(tp);
+
+On peut definir des icones dans les onglets en faisant
+tp.setIconAt(int index, ImageIcon icon);
+
+
+Enfin, on peut definir la disposition des ongles en faisant comme suit: 
+JTabbedPane onglet = new JTabbedPane(JTabbedPane.BOTTOM);
+JTabbedPane onglet = new JTabbedPane(JTabbedPane.LEFT);
+JTabbedPane onglet = new JTabbedPane(JTabbedPane.RIGHT);
+
+ou alors
+onglet.setTabPlacement(JTabbedPane.BOTTOM);
+
+
+On peut egalement retirer un onglet en faisant
+tp.remove(int index);
+
+
+L'objet JDeskopPane
+====================
+
+on le combine avec JInternalFrame
+
+ca existait aussi dans Qt je me souviens
+ca permet de faire des applications multifenetres, genre ya une JFrame et dedans ya des div qui ressemblent a des fenetres
+
+L'objet JWindow
+================
+
+C'est une JFrame sans contours et sans bouton reduire fermer etc
+utilisé pour faire des splash screens (genre le truc au lancement d'eclipse)
+
+Remarque, une solution evidente pour afficher cette fenetre pendant genre 5s serait
+JWindow	win = new JWindow();
+		win.setSize(300, 300);
+		win.setVisible(true);
+		
+		try 
+		{
+			Thread.sleep(5000);
+		} 
+		catch(InterruptedException event) 
+		{
+			event.printStackTrace();
+		}
+		
+		win.dispose();
+
+Ca fonctionnerait si on affichait une JFrame, mais ca ne fonctionne pas pour une JWindow car
+
+
+
+
+//Create a worker that whill close itself after 5 seconds. The main thread
+        //is notified and will dispose itself when worker finishes
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+           @Override
+           protected Void doInBackground() throws Exception {
+                 Thread.sleep(5000);
+                 return null;
+           }
+
+           protected void done() {
+               window.dispose();
+           }
+      };
+
+      worker.execute();
+
+
+==> Sauf que ca ne fonctionne pas, je ne sais pas comment resoudre le probleme et en soi c'est pas grave mais si 
+j'en ai besoin un jour il faudra que je me penche sur le sujet
+
+
+L'objet JEditorPane
+===================
+
+ca permet d'afficher du texte mis en forme en convertissant du html
+ca peut permet de faire un editeur de texte rudimentaire
+
+C'est comme un jtextArea(), mais qui a quelques particularités d'éditeur de texte (retour a la ligne automatique si un mot deborde, etc)
+
+Un truc ultra puissant c'est les editorKit, on fait
+monEditorPane.setEditorKit(new HTMLEditorKit());
+==> ca affiche de l'HTML
+
+
+Le JSlider
+===========
+
+JSlider	slider = new JSlider();
+			slider.setMaximum(100);
+			slider.setMinimum(0);
+			slider.setValue(50);		//si non précisé, ca le met en milieu de barre
+			slider.setPaintTicks(true);	//pour afficher des reperes sur l'axe
+			slider.setPaintLabels(true);	//pour afficher les valeurs sur l'axe
+			slider.setMinorTickSpacing(10); //l'espacement entre chaque repere
+			slider.setMajorTickSpacing(20); //l'espacement entre les reperes plus grands (ceux où ya les nombres si on les affiche)
+
+
+La JProgressBar
+===============
+
+c'est une barre de progression
+
+bar  = new JProgressBar();
+    bar.setMaximum(500);
+    bar.setMinimum(0);
+    bar.setStringPainted(true);
+
+Puis pour la faire avancer on fait
+bar.setValue(int valeur);
+
+
+Enjoliver / customiser les elements d'une IHM 
+==============================================
+
+On peut mettre des borders à nos elements en faisant
+monElement.setBorder(Border bord);
+
+où Border on le cree comme ca 
+border = BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.black, Color.red)
+ou alors encore
+BorderFactory.createEtchedBorder(Color.BLUE, Color.GRAY),
+    BorderFactory.createLineBorder(Color.green),
+    BorderFactory.createMatteBorder(5, 2, 5, 2, Color.MAGENTA),
+    BorderFactory.createRaisedBevelBorder(),
+    BorderFactory.createTitledBorder("Titre"), // pour faire comme un group
+    BorderFactory.createCompoundBorder(
+      BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.black, Color.blue), 
+      BorderFactory.createMatteBorder(5, 2, 5, 2, Color.MAGENTA)
+
+
+
+Les JTree
+==========
+
+ca sert a afficher des arbres
+
+Pour creer une racine /noeud on fait
+DefaultMutableTreeNode racine = new DefaultMutableTreeNode("Racine");
+
+Pour linker un noeud comme enfant d'un autre on fait
+racine.add(monAutreNoeud);
+
+Ensuite, pour creer un arbre on fait
+JTree	tree = new JTree(racine);
+
+Et ensuite, comme l'arbre peut etre grand, on l'ajoute comme ca dans le pane
+this.getContentPane().add(new JScrollPane(arbre));
+
+
+Remarque, on peut decider de ne pas afficher le root dans l'arborescence en faisant 
+monTree.setRootVisible(false);
+
+On a un listener pour reagir si on clique sur un noeud final, c'est 
+addTreeSelectionListener() qui est une interface qui a la methode
+public void valueChanged(TreeSelectionEvent e) {}
+et pour afficher le String du noeud on fait
+System.out.println(((JTree)e.getSource()).getLastSelectedPathComponent().toString());
+
+
+Pour avoir le chemin complet du noeud, on a
+TreeSelectionEvent qui a une methode getPath et qui renvoit un TreePath.
+Cet objet TreePath a une methode getPath() qui renvoit un Object[] avec une methode toString qui contient la string du noeud
+on peut lister tout ca avec une boucle genre
+public void valueChanged(TreeSelectionEvent e) {
+					System.out.println(formatPath(e.getPath().getPath()));
+				}
+				
+				private String	formatPath(Object[] p_JTreePath)
+				{
+					String	ret = "";
+					
+					for (Object tempObj : p_JTreePath)
+					{
+						ret += "/" + tempObj.toString();
+					}
+					
+					return (ret);
+				}
+}
+
+
+
+Pour modifier l'apparence des noeuds dans l'arbre on a
+monArbre.setCellRenderer(DefaultTreeCellRenderer cellRenderer)
+
+setCellRenderer(DefaultTreeCellRenderer cellRenderer) a des methodes genre
+setClosedIcon(ImageIcon());
+
+
+en fait un jtree est constitué de 5 elements (dont 4 interfaces et une classe concrete)
+
+    TreeModel : c'est lui qui contient les nœuds de votre arbre ;
+    TreeNode : nœuds et structure de votre arbre ;
+    TreeSelectionModel : modèle de sélection de tous vos nœuds ;
+    TreePath : objet qui vous permet de connaître le chemin d'un nœud dans l'arbre. La voilà, notre classe concrète ;
+    TreeCellRenderer : interface permettant de modifier l'apparence d'un nœud ;
+    TreeCellEditor : éditeur utilisé lorsqu'un nœud est éditable.
+
+
+
+pour retirer un noeud, on fait 
+model.removeNodeFromParent(node);
+
+
+
+Donner un lookAndFeel du system sur lequel on est
+==================================================
+
+ca peut etre pratique pour que les gens aient un repere de design quoi 
+mais au niveau de l'agencement des composants ca peut parfois etre perturbant
+on fait comme ca
+
+try {
+  //On force à utiliser le « look and feel » du système
+  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+  //Ici on force tous les composants de notre fenêtre (this) à se redessiner avec le « look and feel » du système
+  SwingUtilities.updateComponentTreeUI(this);
+}
+catch (InstantiationException e) {}
+catch (ClassNotFoundException e) {}
+catch (UnsupportedLookAndFeelException e) {}
+catch (IllegalAccessException e) {}
+
+les gui de tableaux  JTable
+==============================
+
+C'est un objet pratique pour afficher des arrays
+en gros c'est 
+JTable(Object[][] datas, Object[] titles);
+
+et apres on l'add dans un Jpanel, idealement avec un JScrollPane
+En fait, quand on le met dans un JScrollPane, la gestion de l'affichage se fait automatiquement 
+sinon faut definir les trucs a la main genre
+//On indique que l'en-tête doit être au nord, donc au-dessus
+this.getContentPane().add(tableau.getTableHeader(), BorderLayout.NORTH);
+//Et le corps au centre !
+this.getContentPane().add(tableau, BorderLayout.CENTER);
+
+on peut recuperer le nombre de colonnes en faisant 
+monTableau.getColumnCount();
+
+Pour modifier la taille d'une ligne ou d'une colonne on fait
+TableColumn colModel = monTableau.getColumnModel().getColumn(int index de ma colonne);
+puis
+colModel.setPrefferedWidth(200); // par exemple, cf la doc
+
+Pour creer ses propres models de tableaux, on peut faire une classe derivée de 
+AbstractTableModel
+et de redefinir la methode getColumnClass(), afin de pouvoir afficher des boutons ou des checkbox dans les cases
+genre comme ca
+//Classe modèle personnalisée
+  class ZModel extends AbstractTableModel{
+    private Object[][] data;
+    private String[] title;
+
+    //Constructeur
+    public ZModel(Object[][] data, String[] title){
+      this.data = data;
+      this.title = title;
+    }
+
+    //Retourne le nombre de colonnes
+    public int getColumnCount() {
+      return this.title.length;
+    }
+
+    //Retourne le nombre de lignes
+    public int getRowCount() {
+      return this.data.length;
+    }
+
+    //Retourne la valeur à l'emplacement spécifié
+    public Object getValueAt(int row, int col) {
+      return this.data[row][col];
+    }
+
+    //retourne le nom de la colonne, il faut l'implementer sinon ca n'affichera pas les titres
+    public String getColumnName(int col) {
+      return this.title[col];
+    }
+
+    //Retourne la classe de la donnée de la colonne
+    public Class getColumnClass(int col){
+  	  //On retourne le type de la cellule à la colonne demandée
+	  //On se moque de la ligne puisque les types de données sont les mêmes quelle que soit la ligne
+	  //On choisit donc la première ligne
+	  return this.data[0][col].getClass();
+    }
+}
+
+Puis on cree notre JTable comme ca
+ZModel	monModel = new ZModel(mesDatas, mesTitres);
+JTable table = new JTable(monModel);
+
+
+On peut rendre certains elements du tableau editable en surchargeant la methode
+bool isCellEditable(int row, int col)
+{
+// par defaut, false pour tout le monde quand on extends AbstractTableModel mais true pour tout le monde dans une JTable avec Model par defaut
+}
+
+on peut faire
+public boolean isCellEditable(int row, int col){
+  //On appelle la méthode getValueAt qui retourne la valeur d'une cellule
+  //Et on effectue un traitement spécifique si c'est un JButton
+  if(getValueAt(0, col) instanceof JButton)
+    return false;
+  return true; 
+}
+
+Mais ca ne sauve pas les modifications, des qu'on lache le focus ca redevient comme avant
+
+==> le TableModel fait le lien entre les données et leur gestion dans le tableau
+==> le DefaultTableCellRenderer, s'occupe de l'affichage dans les cellules, genre afficher les boutons
+
+public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+					    //Si la valeur de la cellule est un JButton, on transtype cette valeur
+					    if (value instanceof JButton)
+					    {
+					    	return ((JButton)value);
+					    }
+					    else
+					    {
+					    	return (this);
+					    }
+					      
+				 }
+			});
+
+
+remarque importante sur l'actualisation des données d'un jtable
+genre mettons qu'on a une collection de données qu'on affiche dans un jtable et que lorsqu'on modifie la collection, 
+on veut que ca modifie le jtable
+pour ca, il faut qu'on cree un abstractmodel avec les definitions du tableau genre
+
+public class GarageDatasTableModel extends AbstractTableModel
+{
+	protected String[][]	m_datas;
+	protected String[]		m_titles;
+	
+	public	GarageDatasTableModel()
+	{
+		this.m_datas = new String[][] {};
+		this.m_titles = new String[] {"Name", "Price", "Brand", "Option"}; 
+	}
+	
+	public	GarageDatasTableModel(Garage p_garage)
+	{
+		this.m_datas = p_garage.getArrayDatas();
+		this.m_titles = new String[] {"Name", "Price", "Brand", "Option"};
+	}
+	
+	public void setValueAt(String p_value, int p_row, int p_col)
+	{
+		this.m_datas[p_row][p_col] = p_value;
+		this.fireTableCellUpdated(p_row, p_col);
+	}
+	
+	@Override
+	public int getColumnCount() 
+	{
+		return (this.m_titles.length);
+	}
+
+	@Override
+	public int getRowCount() 
+	{
+		return (this.m_datas.length);
+	}
+
+	@Override
+	public Object getValueAt(int p_row, int p_col) 
+	{
+		return (this.m_datas[p_row][p_col]);
+	}
+	
+	@Override
+    public String getColumnName(int p_col)
+    {
+    	return (this.m_titles[p_col]);
+    }
+	
+    public Class getColumnClass(int p_col)
+    {
+  	  return ((this.m_datas[0][p_col]).getClass());
+    }
+    
+    public void	updateDatas(Garage p_garage)
+    {
+    	this.m_datas = p_garage.getArrayDatas();
+    }
+}
+
+Puis on cree notre JTable(monModele);
+==> si on modifie les datas dans le modele, ca met a jour l'affichage de la jtable, cool !
+
+Le drag n drop
+===============
+
+c'est arrivé dans java 1.2 dans l'awt
+ce systeme est fondu et simplifié avec swing, 
+mais il est plus complet avec awt
+
+On fait
+monObjet.setDragEnabled(true);
+genre 
+JTextField	tf = new JTextFiedl("Wesh wesh les amis");
+tf.setDragEnabled(true);
+==> on pourra drag n drop du texte d'un JTextField vers un autre.
+
+lors d'un drag, on a 2 possibilités 
+- soit ca fait une copie
+- soit ca fait un deplacement
+
+Mais tous les objets n'ont pas la fonction draggable, et 
+certains sont draggables mais pas droppables, d'autres l'inverse, d'autres les deux, d'autres ni l'un ni l'autre.
+
+Dans le drag n drop ya 3 trucs 
+- le composant d'origine
+- le composant de destination 
+- les données transférées.
+
+Le transfert des données se fait via un objet
+
+Dans l'API swing, le mecanisme est encapsulé dans JComponent dont tous les objets graphiques heritent
+
+pour ajouter la fonctionalité de drag n drop sur un composant qui ne le dispose pas, 
+il faut 
+composant.setTransferHandler(TransferHandler newHandler);
+
+Ca lance la procedure de drag n drop reellement lancée lors de l'appel de la methode
+handle.exportAsDrag(lab, e, TransfertHandler.COPY);
+
+Pour avoir le controle du mecanisme de drag n drop, on peut realiser son propre TransfertHandler
+qui dispose d'une classe interne permettant de gerer la communication entr les composants
+= TransfertHandler.TransfertSupport
+pour s'assurer que les données recues sont bien du type attendu
+
+
+
+Mieux gerer les interactions entre les composants
+==================================================
+
+Pour rendre le truc plus efficace, on peut utiliser le EDT
+= Event Dispatch Thread
+= Thread pour gerer toutes les modifications portant sur un composant graphique (redimensionnement, changement de couleur, de valeur, ...)
+
+
+==> permet d'avoir des applications plus sûres et plus performantes
+
+Pour rappel, quand on lance un programme java, ca execute un Thread Main pour empiler les instructions du programme
+Et un second Thread est lancé pour gerer les tâches de fond, genre lancer d'autres Thread !
+Avec les programmes avec des GUI, il y a un 3e Thread lancé, l'EDT
+
+La philosophie de java est de dire que toute modification apportée a un composant se fait obligatoirement dans le EDT
+genre, quand on a un event actionPerformed, c'est executé dans l'EDT
+
+==> Du coup, tout event graphique a lieu dans l'EDT, OR, ces event ne sont pas Thread Safe !
+    donc pour eviter les soucis, tout event graphique ne peut etre traité qu'à partir du moment où les autres sont terminés
+    d'où le fait que cela n'ai lieu que dans un seul Thread, l'EDT
+
+    Mais du coup, si une fonction appelée dans la methode actionPerformed() est trop longue, ca bloque notre GUI !
+    ==> c'est pourquoi il faut alors, une fois le traitement GUI fait, lancer notre fonction dans un nouveau Thread, 
+        comme on l'avait fait avec l'application animation
+
+Il y a des methodes Thread safe dans la GUI, qui sont
+- paint()
+- repaint()
+- validate()
+- invalidate()
+- revalidate()
+
+Pour pouvoir executer une action dans l'EDT
+on a la classe SwingUtilities qui offre des methodes static pour executer des trucs dans l'EDT
+
+invokeLater(Runnable doRun) = execute immediatement le thread passé en parametre dans l'EDT et rend TOUT DE SUITE APRES LE LANCEMENT, la main au thread principal (tandis que doRun s'execute en parallele) 
+
+invokeAndWait(Runnable doRun) = execute immediatement le thread passé en parametre dans l'EDT et attend la fin de celui-ci avant de rendre la main au thread principal
+
+isEventDispatchThread() = retourne true si l'instruction se trouve dans le Thread EDT
+
+
+
+Pour les traitements lourds, on a une nouvelle classe depuis java 6, c'est la classe
+SwingWorker<T, V>
+
+C'est une classe abstraite qui permet de realiser des trucs en tache de fond et de dialoguer avec les composants graphiques via EDT
+En gros, dès qu'on a un traitement prenant du temps et interagissant avec notre GUI, il faut utiliser SwingWorker<T, V>
+
+Cette classe abstraite implemente une methode
+protected Object doInBackGround()
+{
+}
+==> permet de definir ce que doit faire l'objet en tache de fond
+
+On peut egalement redefinir la methode public void done()
+{
+}
+==> qui a pour role d'interagir avec la GUI tout en s'assurant que ce sera fait dans l'EDT
+genre
+
+public static void updateBouton(){
+    //On crée le SwingWorker   
+    SwingWorker sw = new SwingWorker(){
+      protected Object doInBackground() throws Exception {
+        for(int i = 0; i < 5; i++){
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }               
+        }
+        return null;
+      }
+         
+      public void done(){
+        if(SwingUtilities.isEventDispatchThread())
+          System.out.println("Dans l'EDT ! ");
+        bouton.setText("Traitement terminé");
+      }         
+    };
+    //On lance le SwingWorker
+    sw.execute();
+  }
+
+
+Il est possible d'interragir avec l'EDT pendant le traitement 
+pour ca il faut utiliser la methode 
+setProgress(int progress);
+combinée avec l'event 
+PropertyChangeListener, 
+qui sera informé du changement d'état de la propriété progress
+
+en gros, dans sw ya un protected int progress, qui peut etre modifié avec la methode
+monSw.setProgress(int i);
+
+Et la methode addPropertyChangeListener(PropertyChangeListener pcl)
+invoque la methode propertyChange si la variable progress est modifiée
+
+genre
+sw.addPropertyChangeListener(new PropertyChangeListener(){
+      //Méthode de l'interface
+      public void propertyChange(PropertyChangeEvent event) {
+        //On vérifie tout de même le nom de la propriété, cette ligne est cheloue mais c'est comme ca que ca se fait
+        if("progress".equals(event.getPropertyName())){
+          if(SwingUtilities.isEventDispatchThread())
+            System.out.println("Dans le listener donc dans l'EDT ! ");
+          //On récupère sa nouvelle valeur
+          bouton.setText("Pause " + (Integer) event.getNewValue());
+        }            
+      }         
+});
+
+En fait les methodes qu'on a vu jusque là sont issues de la classe SwingWorker, qui implemente l'interface
+java.util.concurrent.Future
+et qui offre les methodes suivantes
+
+get() = permet a la methode doInBackground() de renvoyer son resultat à d'autres Threads
+
+cancel() = essaie d'interrompre le doInBackground() en cours
+
+isCancelled() = retourne vrai si l'action a été interrompue.
+isDone() = retourne vraie si l'action est menée à son terme.
+
+
+Il est donc possible de récuperer le resultat d'un traitement, avec la généricité de SwingWorker<T, V>
+T = type de renvoit de doInBackground() (et donc de get())
+V = type de retour intermediaire de doInBackground()
+
+pour gerer les resultats intermédiaires, on a les methodes suivantes
+publish(V value) = publie le resultat intermediaire et le stocke dans une liste pour la methode progress(List<V> list)
+progress(List<V> list) = permet d'utiliser les resultats intermediaire pour un traitement specifique
+
+genre 
+
+SwingWorker sw = new SwingWorker<Integer, String>() {
+      protected Integer doInBackground() throws Exception {
+        int i;
+        for(i = 0; i < 5; i++){
+          try {
+            //On change la propriété d'état
+            setProgress(i);
+            //On publie un résultat intermédiaire 
+            publish("Tour de boucle N° " + (i+1));
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }               
+        }
+        return i;
+      }
+
+ //On écoute le changement de valeur pour la propriété
+    sw.addPropertyChangeListener(new PropertyChangeListener(){
+      //Méthode de l'interface
+      public void propertyChange(PropertyChangeEvent event) {
+        //On vérifie tout de même le nom de la propriété
+        if("progress".equals(event.getPropertyName())){
+          if(SwingUtilities.isEventDispatchThread())
+            System.out.println("Dans le listener donc dans l'EDT ! ");
+          //On récupère sa nouvelle valeur
+          bouton.setText("Pause " + (Integer) event.getNewValue());
+        }            
+      }         
+    });
+
+Et pour gerer les resultats intermediaires, on fait
+ //La méthode gérant les résultats intermédiaires
+      public void process(List<String> list){
+        for(String str : list)
+          System.out.println(str);
+      }
+    };
+
+
+Donc pour resumer, on peut creer un objet anonyme
+SwingWorker<T, V>
+qui implemente les methodes
+public V doInBackGround() ==> Qui peut monSw.publish(V value) lors de son execution (genre a chaque tour de boucle) et return T value
+public void done() ===>  qui execute ses instructions dans le thread EDT // implementer cette methode est optionnel
+                   ===> pour s'assurer que c'est effectué dans l'EDT,if(SwingUtilities.isEventDispatchThread()) {instructions;} 
+                        ===> peut y utiliser la methode get() qui recupere la valeur T value finale returned par doInBackGround()
+
+
+public void process(List<V> list) ==> qui contient les instructions a faire a chaque publish() de valeur intermediaire
+Au lancement d'un programme Java, trois threads se lancent : le thread principal, celui gérant les tâches de fond et l'EDT.
+Java préconise que toute modification des composants graphiques se fasse dans l'EDT.
+Si vos IHM se figent, c'est peut-être parce que vous avez lancé un traitement long dans l'EDT.
+Afin d'améliorer la réactivité de vos applications, vous devez choisir au mieux dans quel thread vous allez traiter vos données.
+Java offre la classe SwingUtilities, qui permet de lancer des actions dans l'EDT depuis n'importe quel thread.
+Depuis Java 6, la classe SwingWorker(<T, V>) vous offre la possibilité de lancer des traitements dans un thread en vous assurant que les mises à jour des composants se feront dans l'EDT.
+
+
+
+JavaBeans
+---------
+
+un java bean est un objet qui doit repondre à certaines specifications 
+- c'est une classe public
+- avoir un constructeur par defaut sans parametres
+- avoir des getters et des setters pour tous ses atttributs (en gros c'est une struct)
+- tous les getters et les setters ont une convention de nommage getMachin setMachin isMachin
+- est Serialisable
+- n'a PAS DE CHAMPS public
+
+==> ces specifications sont là car souvent ce sont des objets utilisés par l'introspection = 
+    = facilitation de leur utilisation dynamique 
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////
+////PROGRAMMATION GRAPHIQUE JAVAFX///////////////////////
+/////////////////////////////////////////////////////////
+
+
+depuis java8, c'est la lib de reference pour la programmation graphique (on parle javafx 8) 
+On peut simplement les creer et generer le code correspondant en utilisant 
+SceneBuilder 
+
+on peut le mettre en plugin eclipse
+les avantages sont les suivants
+Les  DatePicker  qui permet de récupérer facilement un objet  LocalDate  .
+Les  TreeTableView  qui combine les  TableView  et des  TreeView  , donc des tableaux et des arbres.
+Les  TextFlow  qui supporte du texte riche.
+Des composants 2D et 3D.
+et bien d'autres encore.
+
+On peut le faire à l'ancienne, 
+mais on peut aussi utiliser des fichiers FXML, cad des fichiers xml qui decrivent la GUI 
+on peut meme utiliser des fichiers css, ++pratique
+
+une GUI sous javafx8, c'est 
+un stage qui contient une scene qui contient des composants 
+
+les objets utilisants le principe de java beans dans Javafx8 sont dans 
+javafx.beans.property
+==> c'est des propriétés qu'on peut utiliser et lier à l'ihm 
+
+ya 2 interfaces generiques
+Property<T> = toutes les methodes qu'on peut utiliser sur un objet modifiable (cad avec setter)
+ReadOnlyProperty<T> = idem mais en lecture (cad avec getter)
+
+ces 2 interfaces implementent aussi des mecanismes d'observation sur les objets (changement de valeurs, etc)
+ya une multitude de classes pour gerer les propriétés de classes selon nos besoins, 
+notamment des classes abstraites genre 
+BooleanProperty
+LongProperty
+IntegerProperty
+ObjectProperty
+etc
+
+exemple
+IntegerProperty age = new SimpleIntergerProperty(10);
+ObjectProperty<LocalDate> dateDeNaissance = new SimpleObjectProperty<>(LocalDate.of(1979, 1, 1) ;
+
+IL Y A aussi des objets pour gerer les collections embarquant des mecanismes d'observation, dans 
+javafx.collections
+
+on a 
+ObservableList<E> = trace les modifications apportées aux elements 
+ListChangeListener<E> = recoit les notifications lors d'un changement dans un objet ObservableList<E>
+ObservableMap<K, V> = pareil pour les maps
+MapChangeListener<K, V> = pareil pour les maps
+FXCollections = objet avec pleins de methodes statiques pour obtenir les objets ci-dessus et biens d'autres 
+
+
+un code classique avec javafx8 serait
+package fr.testfx.personnes.model;
+public enum Sexe {
+	MASCULIN("Masculin"),
+	FEMININ("Féminin"),
+	INCONNU("Inconnu");
+	
+	private String name = "";
+	
+	Sexe(String n){name = n;}
+	public String toString() {return name;}
+}
+
+package fr.testfx.personnes.model;
+import java.time.LocalDate;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+public class Personne {
+	private ObjectProperty<LocalDate> dateDeNaissance = new SimpleObjectProperty<>();
+	private ObjectProperty<Sexe> sexe = new SimpleObjectProperty<>();
+	private StringProperty nom = new SimpleStringProperty();
+	private StringProperty prenom = new SimpleStringProperty();
+	public Personne() {
+		sexe.set(Sexe.INCONNU);
+		nom.set("");
+		prenom.set("");
+		dateDeNaissance.set(LocalDate.of(0, 1, 1));
+	}
+
+	public Personne(String n, String p, LocalDate ddn, Sexe s) {
+		nom.set(n);
+		prenom.set(p);
+		dateDeNaissance.set(ddn);
+		sexe.set(s);;
+	}
+	public ObjectProperty<LocalDate> getDateDeNaissance() {return dateDeNaissance;}
+	public void setDateDeNaissance(ObjectProperty<LocalDate> dateDeNaissance) {this.dateDeNaissance = dateDeNaissance;}
+	public ObjectProperty<Sexe> getSexe() {return sexe;}
+	public void setSexe(ObjectProperty<Sexe> sexe) {this.sexe = sexe;}
+	public StringProperty getNom() {return nom;}
+	public void setNom(StringProperty nom) {this.nom = nom;}
+	public StringProperty getPrenom() {return prenom;}
+	public void setPrenom(StringProperty prenom) {this.prenom = prenom;}
+	public String toString() { return "#Nom : " + nom.get() + " - prénom : " + prenom.get() + "#";}
+}
+
+
+donc on a une configuration de code repondant aux spec de javabeans et on utilise des objets javafx8 genre machinProperty
+pour gerer le bordel
+
+
+l'annotation 
+@FXML
+permet de specifier a la jvm à quoi le fichier XML pourra acceder
+
+le lien entre l'ihm et le modele se fait grace a la propriété fx:id des composants de l'ihm
+en gros on donne un id (String) a chaque composant, on met @FXML dans le code source quand on utilise ces composants pour faire le lien 
+et ensuite le lien final se fait dans le controller du fichier fxml en specifiant la classe qui fait le mapping
+
+
+
+
+
+
+
+
+

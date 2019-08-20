@@ -1,0 +1,220 @@
+===[introduction]===
+http = hypertext transfert protocol 
+
+c'est un protocole de communication client-serveur développé pour le World Wide Web. Il est utilisé pour échanger toute sorte de données entre client HTTP et serveur HTTP
+ca va donc par paire
+- 1 requete client 
+- 1 reponse serveur
+
+===[requete client]===
+
+ca a toujours la meme gueule
+
+**************[--PATTERN--]**************
+Ligne de commande (Commande, URL, Version de protocole) //exemple 'GET /repertoire/page.html HTTP/1.1'
+En-têtes de requête, //exemple Host: www.site.com \n Cookie: nom-cookie=valeur cookie
+<nouvelle ligne>
+Corps de requête   //string classique
+**************[--PATTERN--]**************
+
+1) la premiere ligne correspond a la methode utilisée
+GET = les données sont dans l'url = SANS EFFET sur la ressource, peut repeter la requete sans effet sur la ressource 
+POST = methode utilisée lorsqu'une requete modifie la ressource
+HEAD = recuperation que d'informations sur la ressource, sans demander la ressource elle-meme, en gros ca recupere que le header, 
+       interessant pour recuperer des informations sur un fichier ou le serveur
+
+OPTIONS = pour obtenir les options de communication d'une ressource ou du serveur en general
+CONNECT = utilisation d'un proxy comme un tunnel de communication
+TRACE = demande au serveur de retourner ce qu'il a recu, dans le but de tester et effectuer un diagnostic sur la connexion
+PUT = pour ajouter une ressource sur le serveur
+DELETE = pour supprimer une ressource sur le serveur
+
+suivie de l'url = adresse de la page sur le serveur = chemin relatif
+
+suivie de la version du protocole HTTP utilisée
+
+2) la 2e ligne correspond a l'en-tete de la requete (un peu comme les meta en html)
+exemples
+
+Host: www.site.com
+==> Spécifie le nom de domaine du site, par exemple s'il y a plusieurs sites à la même adresse IP.
+
+Cookie: nom-cookie=valeur cookie
+==> Permet d'envoyer au serveur les cookies qui ont été enregistrés. 
+    Un cookie à toujours un nom et une valeur. Pour en envoyer plusieurs, écrivez-les à la suite, séparés par un point-virgule.
+
+Connection: Close|Keep-Alive
+==> Définit le type de connexion :
+    Close : la connexion est fermée après la réponse
+    Keep-Alive : crée une connexion persistante. Avec ce type de connexion, il est même possible d'envoyer une requête sans attendre la réponse à la précédente.
+
+Content-type: application/x-www-form-urlencoded
+==> Spécifie le type MIME du corps de requête, il sera très utile dans le cas d'une requête POST.
+
+Content-Length: 42
+==> Spécifie la longueur du corps de requête (en octets)
+
+
+===[body client]===
+
+contient les données a proprement parler, formatées selon la methode utilisée 
+pour GET et POST par exemple, elle seront formatées comme suit
+v1=p1&v2=p2
+
+
+===[exemples de requetes client]===
+
+HEAD /fichier.ext HTTP/1.1
+Host: www.site.com
+Connection: Close
+<nouvelle ligne>
+<nouvelle ligne>
+
+remarque: dans le cas de HEAD, meme si le corps de requete ne contient rien, on termine le header sur 2 lignes vides
+
+GET /fichier.ext?variable=valeur&variable2=valeur2 HTTP/1.1
+Host: www.site.com
+Connection: Close
+<nouvelle ligne>
+<nouvelle ligne>
+
+ou 
+
+GET /fichier.ext HTTP/1.1
+Host: www.site.com
+Connection: Close
+<nouvelle ligne>
+variable=valeur&variable2=valeur2
+
+
+POST /fichier.ext HTTP/1.1
+Host: www.site.com
+Connection: Close
+Content-type: application/x-www-form-urlencoded
+Content-Length: 33
+<nouvelle ligne>
+variable=valeur&variable2=valeur2
+
+Remarque: on peut transmettre des données en GET via une requete POST en rajoutant les données dans l'url
+
+
+===[reponses serveur]===
+
+**************[--PATTERN--]**************
+Ligne de statut (Version, Code-réponse, Texte-réponse) // exemple 
+En-tête de réponse //exemple 
+<nouvelle ligne>
+Corps de réponse  //une string formatée ou non
+**************[--PATTERN--]**************
+
+1) la 1ere ligne de statut est composée de 
+   - la version http du serveur
+   - code reponse = code erreur retourné (404, 200, 403, 500, etc)
+   - Texte-réponse : le texte associé à l'erreur (respectivement pour les exemples précédents : "OK", "FORBIDDEN", "NOT FOUND", "INTERNAL ERROR")
+
+2) la 2e ligne correspond egalement a des en-tetes genre
+
+Date: Fri, 31 Dec 1999 23:59:59 GMT
+==> Date de génération de la réponse.
+
+Server: Apache/2.2.3
+==> Spécifie le modèle du serveur HTTP.
+
+Content-type: text/plain
+==> Spécifie le type MIME du corps de requête, il sera très utile dans le cas d'une requête POST.
+
+Content-Length: 42
+==> Spécifie la longueur du corps de requête (en octets)
+
+Set-Cookie: variable=valeur; expires=Fri, 31-Dec-2010 23:59:59 GMT; path=/; domain=.site.com
+==> Demande au navigateur d'enregistrer un cookie (voir setcookie()).
+
+
+3) la 3e ligne correspond au corps de la requete, une string classique
+
+
+===[exemples de requetes http reponse serveur]===
+
+HTTP/1.1 200 OK
+Date: Thu, 11 Jan 2007 14:00:36 GMT
+Server: Apache/2.0.54 (Debian GNU/Linux) DAV/2 SVN/1.1.4
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=ISO-8859-1
+<nouvelle ligne>
+178a1
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+<meta http-equiv="pragma" content="no-cache" />
+
+<title>Accueil - Le Site du Zéro</title>
+
+
+
+===[utilisation concrete]===
+
+pour generer des requetes client http, ou des reponses serveur http
+il faut utiliser ce qu'on appelle des sockets
+
+genre en php, generation d'une requete http reponse serveur
+
+<?php
+//pour que la réponse s'affiche comme du texte brut
+header('Content-Type: text/plain');
+ 
+/*partie à modifier*/
+$name = 'www.site.com';//nom du site
+ 
+//pour ne pas devoir calculer à la main la longueur du corps, on le stocke dans une variable et la fonction strlen() nous la donne.
+$data = 'variable=valeur&variable2=valeur2';
+
+//remarque, un saut de ligne ici est \r\n comme sur windows, et non \n comme sous unix ==> POURQUOI ? 
+//la requête
+$envoi  = "POST / HTTP/1.1\r\n";
+$envoi .= "Host: ".$name."\r\n";
+$envoi .= "Connection: Close\r\n";
+$envoi .= "Content-type: application/x-www-form-urlencoded\r\n";
+$envoi .= "Content-Length: ".strlen($data)."\r\n\r\n";
+$envoi .= $data."\r\n";
+/*/partie à modifier*/
+ 
+/*ouverture socket*/
+$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+if($socket < 0){
+        die('FATAL ERROR: socket_create() : " '.socket_strerror($socket).' "');
+}
+ 
+if (socket_connect($socket,gethostbyname($name),80) < 0){
+        die('FATAL ERROR: socket_connect()');
+}
+/*/ouverture socket*/
+ 
+
+/*envoi demande*/
+if(($int = socket_write($socket, $envoi, strlen($envoi))) === false){
+        die('FATAL ERROR: socket_write() failed, '.$int.' characters written');
+}
+/*/envoi demande*/
+ 
+
+
+/*lecture réponse*/
+$reception = '';
+while($buff = socket_read($socket, 2000)){
+   $reception.=$buff;
+}
+
+echo $reception;
+/*/lecture réponse*/
+
+ 
+socket_close($socket);
+?>
+
+
+
+
+

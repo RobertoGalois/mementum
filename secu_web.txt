@@ -1,0 +1,730 @@
+===[introduction]===
+
+ON NE DOIT JAMAIS FAIRE CONFIANCE AUX DONNEES ENVOYÉES PAR UN USER
+fin.
+
+===[utilisation des sessions]===
+
+quand un user est connecté sur notre page, pour connaitre son niveau de droits on peut le stocker dans 
+une bdd du site.
+
+lorsque le user se log sur le site, on stocke son statut dans une variable de session
+genre 
+$_SESSION['statut'] = 'user';
+ou
+$_SESSION['statut'] = 'admin';
+
+remarque: 
+est-ce qu'il est possible de modifier le contenu d'une variable session ?
+a priori les variables sessions sont des variables serializées sur le serveur, 
+dans un tiroir avec un sessid, 
+sessid stocké dans un cookie PHPSESSID sur l'ordi du user
+du coup j'imagine que non, le seul truc qu'on peut faire c'est 
+récupere un autre sessionid existant, en partant du principe que la techno ne dispose pas de failles
+
+ou alors on pourrait tester des ids au hasard et voir si ca fait des trucs
+
+
+concernant les sessions, on a 2 attaques possibles
+- le vol de session 
+- le session poisonning
+
+
+1) Concernant le vol de session, 
+   en gros c'est quelqu'un qui a reussi a avoir le sessid d'un user actuellement connecté
+   et qui le copie dans son cookie phpsessid, ce qui lui permet de recuperer la connexion de sa victime
+
+   ==> solution: on pourrait se baser sur l'ip mais c'est spoofable
+                 on pourrait egalement se baser sur le User-agent mais meme probleme
+
+solution: utilisation d'un ticket = token (meme principe que pour contrer les csrf)
+
+un ticket c'est tout simplement un nombre aleatoire, qu'on peut hasher de facon a l'avoir toujours sous la meme forme
+genre
+$ticket = session_id().microtime().rand(0,9999999999);
+$ticket = hash('sha512', $ticket);
+et qu'on va stocker dans un cookie ET dans $_SESSION['ticket'];
+
+et ensuite on va pouvoir les comparer et voir s'ils concordent
+
+==> ca fait que s'il y a eu un vol de sessionID mais pas du cookie ticket, c'est bon
+==> de plus, ce cookie ticket est changé a chaque changement / rechargement de page, du coup, 
+    si le hacker parvient a volet le PHPSESSID ET le ticket, les 2 users (hacker et victime)
+    ne pourront pas naviguer en meme temps sur le site, ca les tejera tous les 2 (ce qui peut poser probleme d'un point de vue 
+    UX). En revanche, si la victime ne destroy pas sa session et ferme la page, et que le hacker a pu récuperer son dernier sessid et
+    son dernier ticket, il pourra continuer a naviguer en son nom (on pourrait check les ip mais c'est toujours le meme probleme, 
+    c'est la nature humaine, toujours le meme probleme)
+
+remarque, vaut mieux utiliser des noms les moins explicites possibles quand ils sont publiques
+
+l'écoute restant possible, le mieux est de passer en https avec un chiffrement ssl/tls
+
+
+2) le session poisonning
+
+c'est tout simplement le fait que le hacker entre des trucs dans les variables de sessions, d'où l'importance de les securiser avec du 
+htmlspecialchars(), faire gaffe aux buffers overflows, etc 
+
+
+
+
+
+===[la faille xss]===
+
+xss = cross site scripting
+
+c'est le fait qu'un user puisse mettre dans la page web, du code client qui sera executé par toute personne visitant la page
+par exemple en faisant un echo $_GET['param'];
+voire
+echo $nane
+où $name est un nom entré par un user et stocké dans une bdd, 
+si le user a entré comme nom
+<script>console.log(window.document.cookie);</script>
+voire qu'il envoie cette information sur un autre site via methode post
+(c'est pour ca qu'on parle de cross site scripting)
+
+ca peut etre du javascript mais ca peut aussi etre tout type de langage client (vbs, java, flash, html5, ...)
+
+on distingue le xss reflechi, ou non permanent, qui correspond au fait que le code injecté ne soit pas present de base
+genre 
+echo $_GET['name'];
+==> utilisation de social ingeniering pour diriger quelqu'un vers l'url
+
+et le xss stocké, ou permanent
+genre le cas où le code est stocké dans une bdd et reaffiché (genre un message d'un forum)
+
+On distingue egalement les failles xss basées sur le DOM
+= cas ou javascript (ou autre) utilise une variable get, ou un element de l'url, pour generer des elements dans le DOM
+genre
+$("#balise").html(window.location)
+
+
+La solution c'est 
+
+- Retraiter systématiquement le code HTML produit par l'application avant l'envoi au navigateur (htmlspecialchars(), ...)
+- Filtrer les variables affichées ou enregistrées avec des caractères '<' et '>' (en CGI comme en PHP). De façon plus générale, 
+  donner des noms préfixés (avec par exemple le préfixe "us" pour user string) aux variables contenant des chaines venant de l'extérieur
+  pour les distinguer des autres (PAS MAL), et NE JAMAIS EXECUTER aucune des valeurs correspondantes dans une CHAINE EXECUTABLE
+  (en particulier une chaîne SQL, qui peut aussi être ciblée par une injection SQL d'autant plus dangereuse) sans filtrage préalable.
+    En PHP :
+        utiliser la fonction htmlspecialchars()​ qui filtre les '<' et '>' (cf. ci-dessus) ;
+        utiliser la fonction htmlentities()​ qui est identique à htmlspecialchars()​ sauf qu'elle filtre tous les caractères équivalents au codage HTML ou JavaScript.
+        utiliser strip_tags()​ qui supprime les balises.
+    En ColdFusion :
+        utiliser la fonction HTMLEditFormat() qui remplace tous les caractères spéciaux du langage HTML par leur référence d'entité
+        définir l'attribut scriptProtect du tag <cfapplication> pour protéger automatiquement toutes les variables (form et/ou url et/ou cgi et/ou cookies) d'un site
+        activer au niveau du serveur une protection globale (form, url, cgi et cookies) par défaut de toutes les applications en cochant la case "Enable Global Script Protection" du ColdFusion Administrator
+
+Par ailleurs, il est également possible de se protéger des failles de type XSS à l'aide d'équipements réseaux dédiés tels que les pare-feux applicatifs. Ces derniers permettent de filtrer l'ensemble des flux HTTP afin de détecter les requêtes suspectes. 
+
+
+===[la faille include = rfi = remote file inclusion]===
+
+la faille include a distance, la plus rencontree et la plus facilement exploitable, c'est un truc du genre 
+include($_GET['file']);
+==> on peut alors faire include ce qu'on veut, notamment un fichier php qui pourra afficher les sources php du serveur, 
+voire executer des fonctions systemes comme creer un user avec des droits admin, etc
+
+pour securiser on peut faire un truc comme ca 
+<?php
+
+if (empty($page)) {
+ $page = "accueil";
+ // On limite l'inclusion aux fichiers.php en ajoutant dynamiquement l'extension
+ // On supprime également d'éventuels espaces
+ $page = trim($page.".php");
+
+}
+
+// On évite les caractères qui permettent de naviguer dans les répertoires
+$page = str_replace("../","protect",$page);
+$page = str_replace(";","protect",$page);
+$page = str_replace("%","protect",$page);
+
+// On interdit l'inclusion de dossiers protégés par htaccess
+if (preg_match("admin",$page)) {
+ echo "Vous n'avez pas accès à ce répertoire";
+ }
+
+else {
+
+    // On vérifie que la page est bien sur le serveur
+    if (file_exists($page) && $page != 'index.php') {
+       include("./".$page); 
+    }
+
+    else {
+        echo "Page inexistante !";
+    }
+
+?>
+
+===[injection sql = sqli]===
+
+ca arrive quand on a un truc du genre
+$req = $bdd->query("SELECT * FROM utilisateurs WHERE login='$login' AND password='$password'");
+
+du coup, on peut injecter des requetes entre les trucs, genre 
+$password = "'pouet' OR 1=1; TRUNCATE TABLE `utilisateurs`";
+$login = "Louis #"; // ca met toute la suite de la requete en commentaire et de se connecter avec le compte de Louis sans connaitre son pw
+
+genre 
+SELECT * FROM admin WHERE login='' OR '1'='1' AND pass='' OR '1'='1'
+SELECT login, password FROM admin WHERE login='' UNION SELECT login, password from admin # ' and password='$password'
+SELECT login, password FROM admin WHERE login='' OR 'X'='X' INTO OUTFILE '../../www/file.txt' #' AND password='$password'";
+etc
+
+pour pallier a ca, faut prepare ses requetes 
+$req = $bdd->prepare("SELECT * FROM utilisateurs WHERE login= ? AND password= ?");
+$req->execute(array($login, $password));
+
+
+on distingue plusieurs type de sqli
+- la méthode blind based (associée à sa cousine la time based), qui permet de détourner la requête SQL en cours sur
+  le système et d'injecter des morceaux qui vont retourner caractère par caractère ce que l'attaquant cherche à
+  extraire de la base de données. La méthode blind based, ainsi que la time based, se basent sur la réponse du 
+  serveur : si la requête d'origine renvoie bien le même résultat qu'à l'origine (et indique donc que le caractère est valide)
+  ou ne renvoie pas le même résultat (et indique donc que le caractère testé n'est pas le bon). La time based a pour
+  seule différence qu'elle se base sur le temps de réponse du serveur plutôt que sur la réponse en elle-même ;
+
+  ==> 
+
+- la méthode error based, qui permet de détourner la requête SQL en cours sur le système et d'injecter des morceaux qui
+  vont retourner champ par champ ce que l'on cherche à extraire de la base de données. Cette méthode profite d'une faiblesse
+  des systèmes de base de données permettant de détourner un message d'erreur généré par le système de base de données et
+  préalablement volontairement provoquée par l'injection SQL pour lui faire retourner une valeur précise récupérée en base de données ;
+
+- la méthode union based, qui permet de détourner la requête SQL en cours sur le système et d'injecter des morceaux qui vont
+  retourner un ensemble de données directement extraites de la base de données. Cette méthode profite de certaines méthodes afin
+  de détourner entièrement le retour de la requête SQL d'origine afin de lui faire retourner en une seule requête un 
+  important volume de données, directement récupéré en base de données. Dans ses exemples les plus violents, il
+  est possible de récupérer des tables entières de base de données en une ou deux requêtes, même si en général cette 
+  méthode retourne entre 10 et 100 lignes de la base de données par requête SQL détournée ;
+
+- la méthode Stacked queries, la plus dangereuse de toutes. Profitant d'une erreur de configuration du serveur de base de données,
+  cette méthode permet d'exécuter n'importe quelle requête SQL sur le système ciblé, ce qui ne se limite pas seulement à récupérer 
+  des données comme les 3 précédentes. En effet, quand ce type de requête n'est pas désactivé, il suffit d'injecter une autre requête SQL,
+  et elle sera exécutée sans problème, qu'elle aille chercher des données, ou en modifier directement dans la base de données.
+
+
+la solution c'est
+- verifier les données avant de les mettre dans une requete sql (mysqli_real_escape() ou equivalent)
+- utiliser des requetes preparees
+- utiliser des comptes utilisateurs a droits limités (genre lecture seule pour les requetes de lecture, ecriture seule pour les requetes d'ecriture)
+- on peut utiliser des requetes sql parametrees = requetes a trous, envoyées au serveur sql, a qui on envoit ensuite les parametres pour boucher les trous et
+  c'est le serveur qui s'occupe de d'échapper les données en fonction du type de parametre.
+
+
+===[faille d'upload]===
+
+En gros quand on propose d'uploader un fichier sur le serveur 
+(image,  avatar, zip, etc)
+par exemple en utilisant
+<input type="file" name="myFile" accept="des trucs" />
+
+en fait on peut utiliser cote client l'attribut accept pour definir le type de fichier qu'on veut
+(c'est cote client, donc c'est ergonomique et pas securisaire)
+
+on peut utiliser comme valeur
+file_extension 	A file extension starting with the STOP character, e.g: .gif, .jpg, .png, .doc
+audio/* 	All sound files are accepted
+video/* 	All video files are accepted
+image/* 	All image files are accepted
+media_type 	A valid media type, with no parameters. Look at IANA Media Types for a complete list of standard media types
+
+
+faut faire ultra gaffe car un user pourrait uploader un fichier php et la c'est la merde, surtout s'il parvient a le retrouver et donc l'executer
+on pourrait egalement uploader un fichier sh, python, etc 
+
+si on parse le nom du fichier, on pourrait en deduire l'extension du fichier et donc que c'est good
+genre je cherche a ce que le user n'upload aucun fichier autre que du .jpg
+je parse le nom du fichier uploadé, si les caracteres apres le dernier . rencontré ne sont pas jpg ==> refus 
+genre 
+pouet.jpg ==> ok 
+pouet.php.jpg ==> ok
+pouet.php ==> KO
+
+sauf que ca marche pas parce que je peux faire 
+pouet.php\0salut.jpg ==> ca passe car le parseur machine considerera que le nom du fichier s'arrete à \0
+
+
+on pourrait egalement se baser sur le content-type du fichier envoyé
+en effet, lorsqu'on upload un fichier, ca envoit un header avec un content-type avec une str correspondant au type du fichier
+genre pour une image jpeg c'est images/jpeg
+==> falsifiable (plugin navigateur, etc)
+
+
+solution: 8 regles
+Renommez le fichier uploadé, en nom ET extension
+- N'enregistrez pas vos fichiers à la racine de votre site, JAMAIS
+- Vérifiez la taille du fichier ==> ca doit correspondre a ce qu'on attend, et aux limites qu'on impose au user
+- Ne vous fiez pas aux extensions
+- Effectuez un scan anti-malware
+- Gardez le contrôle des permissions (CHMOD)
+- N’autorisez l'upload qu'aux utilisateurs INSCRITS et AUTHENTIFIÉS
+- Limitez le nombre de fichiers qu'un utilisateurs peux mettre en ligne
+
+du coup en php ca donnerait un truc comme ca
+
+
+$path = "/upload"; //repertoire ou on met les fichiers uploadés, repertoire qui doit avoir les droits de lecture et ecriture pour le user qui à qui appartient le fichier php
+			// et un fichier .htaccess qui ne permet pas de voir l'indexOf du repertoire 
+
+// Varibale d'erreur par soucis de lisibilité
+// Evite d'imbriquer trop de if/else, on pourrait aisément s'en passer
+$error = false;
+
+// On définis nos constantes
+$newName = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+$legalExtensions = array("JPG", "PNG", "GIF", "TXT");
+$legalSize = "10000000" // 10000000 Octets = 10 Mo
+
+// On récupères les infos
+$file = $_FILES["MY_FILE"];
+$actualName = $file['tmp_name'];
+$actualSize = $file['size'];
+$extension = pathinfo($file['MY_FILE'], PATHINFO_EXTENSION);
+
+// On s'assure que le fichier n'est pas vide
+if ($actualName == 0 || $actualSize == 0) {
+    $error = true;
+}
+
+// On vérifie qu'un fichier portant le même nom n'est pas présent sur le serveur
+if (file_exists($path.'/'.$newName.'.'.$extension)) {
+    $error = true;
+}
+
+// On effectue nos vérifications réglementaires
+if (!$error) {
+    if ($actualSize < $legalSize) {
+        if (in_array($extension, $legalExtensions)) {
+            move_uploaded_file($actualName, $path.'/'.$newName.'.'.$extension);
+        }
+    }
+}
+
+else {
+    
+    // On supprime le fichier du serveur
+    @unlink($path.'/'.$newName.'.'.$extension);
+    
+    echo "Une erreur s'est produite";
+    
+}
+
+
+
+On pourrait aussi parser le fichier afin de verifier qu'il n'y a pas de trucs qui nous indiquerait qu'il s'agisse de code
+genre
+<?php
+
+// [...]
+
+$handle = fopen($nom, 'r');
+
+if ($handle) {
+
+    while (!feof($handle) AND $erreur == 0) {
+
+        $buffer = fgets($handle);
+
+        switch (true) {
+            case strstr($buffer,'<'):
+            $error = true;
+            break;
+
+            case strstr($buffer,'>'):
+            $erreur += 1;
+             break;
+
+            case strstr($buffer,';'):
+            $erreur += 1;
+            break;
+
+            case strstr($buffer,'&'):
+            $erreur += 1;
+             break;
+
+            case strstr($buffer,'?'):
+            $erreur += 1;
+            break;
+        }
+    }
+
+fclose($handle);
+
+// [...]
+
+?>
+
+enfin, on pourrait rajouter un .htaccess dans le dossier d'upload pour securiser le tout 
+#interdire l'acces direct au repertoire depuis n'importe quelle ip, par contre les scripts du serveur peuvent utiliser les fichiers s'il en a les droits systemes
+deny from all
+
+#restriction d'acces pour tous les fichiers du repertoire, dont le nom comprend 1 ou plusieurs suites de [A-Za-z] suivies de . et d'une des extensions citées
+# en gros c'est permettre l'acces direct aux fichier si ceux-ci sont des images
+<Files ~ “^w+.(gif|jpg|png|txt)$”>
+order deny,allow
+allow from all
+</Files>
+
+
+===[faille CSRF]===
+
+CSRF = Cross site request forgery
+
+en gros c'est faire executer des actions a quelqu'un en lui faisant cliquer sur un lien, ou diriger vers une url particuliere
+genre mettons qu'un site http://www.site.com soit une sorte de facebook, avec des users inscrits
+et ce site dispose d'une partie administration genre http://www.monsite.com/administration.php
+et que le truc est bien securisé (genre ca check user, pw, ip, session, et tout le tintouin)
+et que pour faire des actions par contre, c'est dans le get
+genre 
+http://www.monsite.com/administration.php?userid=47&action=delete
+(pour l'exemple on considere le get mais ca pourrait etre du post)
+quand on va sur cette url, ca check si on a les droits et si on a les droits, ca fait l'action desirée sur le user desiré
+Du coup, si c'est bien securisé, a priori pas de soucis
+sauf que
+si jamais on cree un lien
+http://www.monsite.com/administration.php?userid=47&action=delete
+et qu'on fait diriger l'administrateur sur ce lien, lui, sans le savoir, peut delete un compte a son insu
+(s'il est teubé on lui envoit le lien par mail en lui disant "matte c'est une fille a poil",
+s'il est plus malin on peut faire du SI et lui faire cliquer sur un lien qui redirige vers un site copié, et genre le bouton connexion fait une redirection vers 
+http://www.monsite.com/administration.php?userid=47&action=delete
+
+
+solution: 
+utilisation d'un token = jeton 
+en gros c'est une variable $_SESSION[] qui va contenir un nombre hexa unique généré a chaque chargement de page php du site
+concretement pour valider une action genre delete le membre 47, normalement 
+l'administrateur rempli un formulaire puis valide son action, qui est envoyée a 
+http://www.monsite.com/administration.php?uid=47&action=delete
+ou plus simplement 
+http://www.monsite.com/administration.php, via post
+
+le probleme etant que si jamais je fais envoyer la requete à 
+http://www.monsite.com/administration.php
+par l'administrateur a son insu, c'est la merde
+du coup il faut s'assurer que l'administrateur a bien rentré les infos dans le fomulaire d'administration et que c'est pas 
+une requete qui sort de nulle part,
+pour ca
+
+1) on assigne $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM)); //id unique hexa
+2) on met un champs hidden name="token" value="<?= $_SESSION['token'] ?>"
+
+==> quand ca post vers
+http://www.monsite.com/administration.php
+
+on check si $_SESSION['token'] == $_POST['token'] //avec les isset et tout
+==> si c'est pareil, c'est bon
+==> sinon, c'est que ya douille 
+
+
+maintenant reflechissons 2 minutes: 
+en gros la secu du truc c'est 
+==> je genere un token unique public que je met dans un post hidden
+==> je stocke ce meme token dans une variable de session
+==> si quand l'admin va sur le lien qu'on lui a fait cliquer, le post['token'] que nous on a généré,
+    n'est pas le meme que celui de sa session (lui a donc un cookie avec un sessid, le serveur check 
+    les variables serializées qui correspondent a ce sessid et c'est comme ca qu'il a son token)
+    alors il considere que c'est pas bon
+
+==> question, encore la meme, est-il possible de falsifier une variable de session ?
+    (modification de sessid, etc)
+
+
+en plus du token, on peut rajouter
+- une demande de confirmation (popup, alert, etc) ==> par contre si l'action est repetitive c'est chiant 
+- un captcha ==> pareil 
+
+
+enfin, on pourrait checker le http refferer, genre 
+if($_SERVER['HTTP_REFERER'] == 'http://www.monsite.com/formulaire_suppression.php') {}
+
+mais c'est falsifiable (spoof), on le rajoute pour faire chier mais c'est pas suffisant 
+
+
+===[faille CRLF]===
+
+CRLF = Carriage Return Line Feed
+
+en gros c'est foutre des retours chariots dans des entrées d'input ou autres trucs de texte 
+= surtout utilisé pour recupere le pw de quelqu'un, par exemple dans la fonction mail des pages pw oublies
+
+En gros dans la plupart des sites, ya une option pw oublié
+on met son login et son email et si ca correspond aux entrées de la bdd
+ca envoit au mail le pw oublié ou un moyen de le reinitialiser
+
+Or, si le hacker connait le login et le mail de la personne a hacker
+il peut remplir le champs login et le champs mail 
+mais dans le champs mail, il peut mettre l'email de la victime et un retour chariot (%0A car ca fonctionne avec l'URI) et son email
+la fonction mail() enverra alors le mail aux 2 emails
+ou alors changer dans le code client le input en textarea, puis mettre un saut de ligne directement
+
+
+la solution 
+- on peut replace les \n et \r en ''
+- le best, faire une verif regex qui check que c'est bien un format prout@pouet.ext
+
+
+===[les attaques par brut force]===
+
+solutions
+- ralentir le processus ==> mettre un sleep(1000) a chaque essai, le soucis c'est que 
+  1) il est possible d'utiliser plusieurs machines qui se relayent pour effectuer la requete, ce qui permet de shunter le truc, genre reseau botnet
+  2) ca cree un thread dedié, monopolisé pendant 1sec et en terme de performances ca peut vite poser probleme
+
+- utilisation d'un captcha ==> regle le probleme precedent
+
+- limiter le nombre de tentatives par personne et par unite de temps, mais
+  1) se baser sur quoi ? l'ip ? c'est spoofable, ou alors on bloque l'acces au compte pour la durée ? ca va faire chier les users
+  2) pour la verif temps, on pourrait creer une table qui se vide toutes les 24h par exemple (grace à un cron, ou un programmateur d'evenement sous mysql 5.1.6)
+
+- utilisation d'un programme fail2ban
+  en gros, a chaque tentative échouée, ca stock l'ip dans un log (/var/log/pwdfail ou /var/log/apache/error_log) 
+  et quand l'ip est ajoutée trop de fois, le serveur met a jour iptable et deny l'ip en question
+
+
+
+===[les failles de buffer overflow]===
+
+là ca se joue au niveau binaire, en gros c'est la facon dont a ete codé php
+s'ils n'ont pas pris en compte certains trucs (genre partir du principe que tout char a une taille de 1 octet, 
+le hacker pourra alors entrer de l'unicode et faire un buffer overflow permettant d'injecter du code ailleurs, là on entre
+dans un domaine ultra technique, il faudra que je me documente le moment venu)
+remarque: c'était le cas des fonctions htmlspecialchars() et htmlentities() avant php5.2
+
+
+solutions: 
+
+- garder php et son systeme en general a jour 
+- faire de la veille, se tenir informé sur les systemes et outils qu'on utilise 
+- maitriser le contenu de ses variables, n'autoriser que ce qui est necessaire
+- faire attention a tout ce qui vient de l'exterieur, entrées user, bdd externes, flux rss, etc
+- laisser le MOINS DE LIBERTÉ POSSIBLE au user ==> enums++
+
+
+===[le hashage]===
+
+il faut utiliser des algo de hashage fort, sinon ya moyen de bijecter
+de plus, meme avec des algo de hashage fort, ya encore des gens qui commencent a arriver a les peter avec du brut force
+
+yen a qui hash des hash mais ca augmente la collision ce qui casse tout l'interet du truc
+
+du coup la technique c'est de "saler",
+saler une str c'est rajouter des chars a la str pour la complexifier
+genre
+$password = "MOT_DE_PASSE";
+$password = "Need" . $password . "Coffee";
+$password = hash('sha512', $password);
+
+ici c'est un sel statique, on pourrait rajouter des sels dynamiques
+genre des sels qui varient en fonction de la chaine a saler
+genre en fonction de 
+- la longueur de la chaine (genre $str = strlen($str).$str)
+- le nombre de voyelles, etc
+
+==> on peut meme combiner des sels statiques et dynamiques, etc
+==> on peut creer une fonction de salage assez vener aussi pour bien embrouiller le bordel
+
+
+$mdp = $_POST['texte'];
+$code = strlen($mdp);
+$code = ($code * 4)*($code/3);
+$sel = strlen($mdp);
+$sel2 = strlen($code.$mdp);
+$texte_hash = sha1($sel.$mdp.$sel2);
+$texte_hash_2 = md5($texte_hash.$sel2);
+
+// On assemble tout ça pour obtenir une chaine de 82 caractères
+$final = $texte_hash.$texte_hash_2;
+// On supprime 2 caractère pour brouiller les pistes (ici 7 et 8)
+substr($final , 7, 8);
+// On finit par tout mettre en majuscule
+$final = strtoupper($final);
+
+==> ok mais au niveau du risque de collision ?? (hash de hash c'est pas bof ?) ==> a se renseigner
+
+
+===[concernant le chiffrement]===
+
+ya une proposition de classe de chiffrement, voila 
+
+<?php
+
+class Chiffrement {
+
+// Algorithme utilisé pour le cryptage des blocs
+private static $cipher  = MCRYPT_RIJNDAEL_128;
+
+// Clé de cryptage         
+private static $key = "your_key";
+
+// Mode opératoire (traitement des blocs)
+private static $mode    = 'cbc';
+ 
+public static function crypt($data){
+    $keyHash = md5(self::$key);
+    $key = substr($keyHash, 0, mcrypt_get_key_size(self::$cipher, self::$mode));
+    $iv  = substr($keyHash, 0, mcrypt_get_block_size(self::$cipher, self::$mode));
+ 
+    $data = mcrypt_encrypt(self::$cipher, $key, $data, self::$mode, $iv);
+    
+    return base64_encode($data);
+}
+ 
+public static function decrypt($data){
+    $keyHash = md5(self::$key);
+    $key = substr($keyHash, 0,   mcrypt_get_key_size(self::$cipher, self::$mode) );
+    $iv  = substr($keyHash, 0, mcrypt_get_block_size(self::$cipher, self::$mode) );
+
+    $data = base64_decode($data);
+    $data = mcrypt_decrypt(self::$cipher, $key, $data, self::$mode, $iv);
+
+    return rtrim($data);
+}}
+
+?>
+
+
+===[les captcha]===
+
+un des plus securisés c'est celui de google
+c'est pour verifier que la personne qui entre les information est bien humaine et pas un robot ou un script
+
+pour faire un captcha, on va sur un site qui propose des captcha
+ensuite, on entre son domaine dedans, 
+ca nous genere des trucs 
+- une cle publique 
+- une cle privée
+
+1) on rajoute un script src dans le head avec un lien vers l'api du captcha, specifie sur le site
+2) on fait apparaitre notre captcha dans un div id="bidule", pour google c'est id="g-recaptcha"
+   et on lui specifie la cle publique dans un attribut, pour google c'est data-sitekey="6LeuNQITAAAAAPGRU7dkrCPIrrR64WPvzMc7pn6Z"
+
+3) on integre cote serveur 
+    // Ma clé privée
+    $secret = "6LeuNQITAAAAAHwUcbXbyFCUudJKRAjcgNRwlaoE";
+
+    // Paramètre renvoyé par le recaptcha
+    $response = $_POST['g-recaptcha-response'];
+
+    // On récupère l'IP de l'utilisateur
+    $remoteip = $_SERVER['REMOTE_ADDR'];
+
+    $api_url = "https://www.google.com/recaptcha/api/siteverify?secret=".$secret."&response=".$response."&remoteip=".$remoteip;
+
+    //on recoit la reponse en JSON
+    $decode = json_decode(file_get_contents($api_url), true);
+
+    if ($decode['success'] == true) {
+    // C'est un humain
+    }
+
+    else {
+        // C'est un robot ou le code de vérification est incorrecte
+    }
+
+
+remarque: parfois on veut pouvoir tester le fonctionnement du captcha en local, pour ca il faut enregistrer parmis les domaines
+127.0.0.1 et localhost
+
+EN REVANCHE, il est recommandé d'avoir 2 captchas, un qu'on utilise en local avec les clés publiques et privées specifiques, et un qu'on utilise en prod
+qui n'a les domaines que de la prod
+
+
+===[precautions pour les pw]===
+
+- longueur minimale (6-8chars)
+- -- mettre une longueur max (30 chars par exemple) 
+- utiliser des caracteres speciaux
+- utiliser un dictionnaire d'attaque et verifier que le pw ne correspond pas ==> sinon pw trop faible
+- utiliser une periode de validité (6 mois - 1 an)
+- eviter les prenoms de proches, dates, etc
+- changer immediatement le pw apres un soupcon de vol
+- hasher les pw, obligatoirement
+
+==> checker tout ca avec du regex
+
+
+===[proteger les directories avec du htaccess]===
+
+faut pas utiliser de clause limit, c'est de la daube
+la clause limit genre 
+<Limit GET POST>  
+    require valid-user  
+</Limit>
+
+c'est SI la requete utilise le protocole GET ou POST, require valid user
+sinon osef 
+donc on peut request avec un autre protocole, voire meme un protocole inventé genre PROUT et voila pas de souci (avec curl)
+donc faut mettre le require valid-user en racine
+
+
+remarque pour le curl, pour send des trucs on fait 
+curl -d "data=val1&data2=val2" -X METHOD --url url 
+
+===[pen test]===
+
+on a des programmes pour scanner nos sites et trouver des vulnerabilités
+ca peut nous aider gagner du temps mais c'est pas la panacee 
+= fuzzing
+
+on a vega
+==> detection de protocoles obsoletes 
+==> repertoires non proteges
+==> cookies sans flag httponly
+
+
+on peut tester les injections sql avec sqlmap
+sqlmap -u http://monsite.com/index.php?page=
+
+on a aussi des outils de tests pour des framework ou des cms 
+genre pour wordpress
+WPScan
+
+
+===[conclusion]===
+ya 25 commandements 
+Tu ne feras jamais confiance !
+Tu garderas toujours tes services à jour !
+Tu auras une politique de sécurité stricte et bien définie !
+Tu resteras informé(e) des dernières découvertes de failles !
+Tu chercheras toujours à devenir encore meilleur(e) !
+Tu t'entraîneras sur des sites de challenge (ex : root-me.org, w3challs.com, etc.) pour comprendre comment les hackers fonctionnent !
+Tu protègeras les données de tes utilisateurs au péril de ta vie !
+Tu mettras en place des logs pour absolument tout !
+Tu vérifieras toujours les données, quelle que soit leur provenance !
+Tu protègeras tes répertoires !
+Tu auras un mot de passe de l'espace !
+Tu seras imprévisible !
+Tu ne te croiras jamais en sécurité !
+Tu resteras à l'écoute de tes utilisateurs !
+Tu feras des sauvegardes régulières !
+Tu connaîtras par cœur la configuration de ton serveur !
+Tu ne feras jamais triompher le design sur la sécurité !
+Tu ne noteras jamais tes mots de passe !
+Tu utiliseras toujours tes compétences pour épauler les autres !
+Tu ne diras plus jamais "décrypter" pour un hash !
+Tu n'utiliseras plus ﻿﻿jamais MD5 ou SHA1 !
+Tu passeras en HTTPS dès que possible !
+Tu seras toujours transparent(e) avec tes utilisateurs !
+Tu sauras gérer les erreurs PHP et MySQL !
+Tu utiliseras PDO !
+Tu seras impitoyable avec celles et ceux qui veulent du mal à ton site !
+
+
+Pour l'utilisation de cms, ya d'autres commandements en plus 
+- Vérifiez que vous êtes à jour, et que tous les derniers patchs correctifs sont bien installés.
+- Renseignez-vous avant d'utiliser un plugin/thème. Lisez les avis et si possible inspectez le code.
+- Renseignez-vous régulièrement sur les nouveaux exploits découverts. Cherchez sur Internet des petits outils de scan qui listent une grosse partie des exploits connus et lancez des scans.
+- Changez le préfixe des tables par défaut.
+- Soyez inventifs ! Vous pouvez créer un faux formulaire de connexion à l'espace administrateur et cacher le vrai. Par exemple, créez un index "admin" www.monsite.fr/admin/admin.php avec un formulaire de connexion qui renvoie à chaque fois "Identifiants incorrects". Placez le formulaire réel dans un dossier improbable www.monsite.fr/gmefezk/avefe125/anre.php. Comme ça, le hacker s'acharnera sur le faux formulaire, sans succès.
+
+- Si le captcha par défaut n'est pas ReCaptcha, changez-le.
+- Utilisez un mot de passe très long, quitte à le copier-coller à chaque fois, pour éviter les brute force de votre formulaire.
+- Interdisez à l'aide d'un .htaccess les répertoires sensibles comme ./inc ./install ./{admin dir}./{plugins dir}.
+- Supprimez tous les modules dont vous ne vous servez pas (slideshow, agenda, footer…).
+- Mettez en place une protection anti-DDOS si votre hébergeur le permet (CloudFlare est très bien). Les forums, même les plus petits, sont très souvent victimes d'attaques pour un rien. Il suffit qu'une personne pas très mature (je pèse mes mots) décide de se payer un bon serveur d'attaque, et votre forum est down pendant plusieurs minutes, voire plusieurs heures. Plus votre serveur est petit, plus ça risque de faire mal : protégez-vous.
+
+

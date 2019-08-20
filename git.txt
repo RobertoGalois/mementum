@@ -1,0 +1,282 @@
+===[introduction]===
+
+en gros git c'est un logiciel de versioning
+chaque version de code a un instant t est ce qu'on appelle un commit
+
+ya differents logiciels de gestion de version (svn , cvs, etc)
+ici on utilise git, logiciel cree par linus torvalds le gars qui a fait le noyau de linux (2005)
+tres populaire
+
+ya egalement differents modeles de fonctionnement 
+- modele centralisé = 1 serveur central et pleins de clients qui modifient le code en direct
+- un modele decentralisé = distribué = comme p2p = tout le monde a toutes les infos sur sa machine
+  = tout machine peut faire office de serveur central, tout le monde a toutes les infos partout
+  = moins risqué en terme de backup
+  = oprations plus rapides car effectuées en local 
+  = possibilité de travailler hors connexion 
+  = plus grande communauté
+
+git = modele distribué 
+cvs, svn = centralisé	
+bazaar = distribué
+mercurial = distribué
+
+
+===[utilisation de git]===
+
+deja il faut le parametrer, normalement git est installé par defaut sous linux
+
+donc on fait dans la console
+git config --global user.name "Votre nom ou pseudo"
+git config --global user.email "votre@email.com"
+
+ensuite pour faire en sorte qu'un dossier soit un repository, on se place dans le repertoire et on fait
+git init
+==> git cree alors un index 
+
+sauf que si ya deja des fichiers dedans, ils ne seront pas forcement ajoutés dans le repo
+du coup faut faire 
+git add fichier1.ext
+git add fichier2.ext
+etc
+
+ou alors directement 
+git add .
+
+
+enfin, quand on a modifié des trucs et qu'on veut enregistrer les modifications, on fait 
+git commit
+on peut faire
+git commit -m "remarques et informations sur les modifications effectuées"
+
+du coup, quand on bosse, 
+1) on cree notre repertoire de notre projet
+2) on le considere comme repo en faisant 
+git init
+3) on cree des fichiers et on commence a developper
+4) on les add au repo en faisant git add .
+5) on modifie les fichiers et on a une nouvelle version du programme 
+6) on met en a jour en ajoutant les fichiers modifiés en faisant
+git add fichier1 fichier2 etc
+ou alors si on veut tout mettre, en faisant
+git add . 
+7) on commit en faisant git commit -m "commentaire"
+
+remarque: on peut condenser
+git add fichier
+git commit -m "message"
+en 
+git commit -a -m "message"
+ou
+git commit -am "message"
+
+remarque man sur git commit -a
+==> Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.
+
+pour modifier le message du dernier commit, on fait 
+git commit --amend -m "Votre nouveau message"
+
+ensuite, pour voir l'historique des modifications, on fait 
+git log
+ca liste les commits du plus recent au plus ancien 
+
+chaque commit est repertorié avec
+- son id = hash : son identifiant unique, qui se présente sous forme d'une longue chaîne de caractères et de nombres. Par exemple : "87753191cef0bdb955a4cb4ff841f7c2cce4cb1c".
+- son auteur : qui a fait le commit (utile lorsque vous travaillez à plusieurs sur un projet !)
+- sa date
+- sa description : le -m
+
+une fois qu'on a commit, on ne peut pas supprimer mais on peut faire un commit qui fait l'inverse du dernier commit 
+en gros ca genere un comit qui correspond a l'état précédant le dernier commit (genre le dernier c'est n et l'avant dernier n-1,
+apres la commande on aura n-1, n, n-1)
+
+on fait
+git revert [hash]
+
+
+===[se positionner sur un commit donné]===
+
+on fait git checkout [hash du commit]
+genre
+git checkout 893fca30b9a7009b5752a173b54370b088411ec5
+ou 
+git checkout [nom_branche]
+==> en faisant git checkout \t c'est comme pour vi ou cd ou autres commandes, ca affiche toutes les branches qu'on peut selectionner, avec de l'autocompletion et tout 
+
+===[annuler tous les changements depuis le dernier commit]===
+
+on fait 
+git reset --hard
+
+
+===[les remotes]===
+
+on a vu comment faire en local 
+mais faut pouvoir backup quelque part au ca ou tout crame 
+et aussi pour pouvoir bosser a plusieurs 
+
+un remote c'est un autre ordi (serveur externe)
+genre github ou bitbucket c'est des remotes
+ou un serveur chez moi aussi c'est un remote
+je peux faire aussi en sorte que l'ordi sur lequel je code soit un remote (pas recommandé mais c'est possible)
+
+du coup ya des remotes internes (genre chez soi si on aime bidouiller ou en entreprise)
+et des remotes externes genre github ou gitlab
+
+du coup le workflow c'est pareil que tout a l'heure
+1) on cree notre repertoire de notre projet
+2) on le considere comme repo en faisant 
+git init
+3) on cree des fichiers et on commence a developper
+4) on les add au repo en faisant git add . (alors git add fichier1 fichier2 etc)
+5) on modifie les fichiers et on a une nouvelle version du programme 
+6) on met en a jour en ajoutant les fichiers modifiés en faisant
+git add fichier1 fichier2 etc
+ou alors si on veut tout mettre, en faisant
+git add . 
+7) on commit a chaque fois en faisant git commit -m "commentaire"
+8) on peut voir nos commits avec git log et remvenir a differentes versions en faisant git checkout hash
+
+9) NEW, on sauvegarde tout ca en remote en faisant ce qu'on appelle un push
+= git push
+on peut recuperer ce qu'il y a sur le remote en faisant ce qu'on appelle un pull avec 
+git pull
+
+
+
+===[utilisation de github comme remote]===
+
+c'est un site qui permet l'hebergement gratuit de code open source (et ya une partie premium pour avoir une partie privée)
+
+
+===[gists]===
+
+c'est un moyen de partager simplement du code en ligne 
+plutot que de copier coller, envoyer par mail ou par mp d'un SN, 
+on peut utiliser les gists 
+==> conservation de la mise en page et de la coloration syntaxique, ...
+
+pour les utiliser il suffit d'aller sur
+https://gist.github.com/
+et d'entrer la description du gist et le code, ainsi que de preciser si on le veut public ou privé
+et ca nous retourne un lien avec un hash et ya plus qu'a le partager
+https://gist.github.com/RobertoGalois/3c3dbdad97d2bb0f797edf3002f02400
+
+c'est une facon de partager du code en ligne 
+
+===[cloning de repo]===
+
+pour recuperer un repo sur sa machine et bosser dessus, on a differentes facons de faire
+- on peut dl le tout sous forme de zip et se demerder avec ca
+- on peut clone via https (en gros c'est un lien https pour recuperer le tout)
+- on peut clone via ssh
+
+pour clone via https, il suffit de recuperer l'url https du repo sur le site de github  (proposé dans la partie "clone via https")
+et dans la console de faire 
+git clone URLHTTPS
+==> ca crera un dossier du nom du repo avec tout dedans
+
+genre
+git clone https://github.com/facebook/react.git
+
+remarque: si c'est la premiere fois qu'on le fait, ca nous demandera notre login et pw github 
+
+
+===[creation de repo sur github en utilisant git]===
+
+si on cree un repo sur le site de github, il faut l'initialiser avec un readme
+si on en cree un pour cloner un repo local dedans, il ne faut pas cocher cette option
+
+ensuite pour envoyer son code sur github on fait 
+git push [nom du remote] [nom de branche]
+souvent par defaut, si ya un seul remote, il s'appellera origin 
+du coup
+
+git push origin master
+
+en fait, origin c'est de là d'ou vient le commit, 
+en l'occurence, si on a fait git clone
+et qu'ensuite on a modifé / ajouté des trucs et qu'on fait git push origin
+bah ca va push là d'où on a clone en fait
+
+et du coup ca synchro les git log et sur github on peut meme voir les modifications faite sur chaque fichier pour chaque log
+
+
+DONC, situation numéro 1: j'ai un repo git et je veux synchro sur ma machine pour faire des pushs dessus ensuite, je fais
+1) je fais git clone (ref https)
+2) je fais mes modifs
+3) je fais un git add mesNewfichiers
+4) je fais git commit -am "les trucs que j'ai fait"
+5) je fais git push origin master
+6) ca me demande mon login et mon pw github, si j'ai pas les droits de modifier le truc sur github 
+   parce que c'est a quelqu'un d'autre ca ne fonctionnera pas
+
+==> vala
+
+
+Situation numéro 2: je commence a bosser sur un projet et je veux d'emblée synchro avec github
+0) je cree un repo manuellement sur gihub, avec "initialize with readme"
+==> puis je fais la meme demarche que precedemment
+1) je fais git clone (ref https)
+2) je fais mes modifs
+3) je fais un git add mesNewfichiers
+4) je fais git commit -am "les trucs que j'ai fait"
+5) je fais git push origin master
+6) ca me demande mon login et mon pw github, si j'ai pas les droits de modifier le truc sur github 
+   parce que c'est a quelqu'un d'autre ca ne fonctionnera pas
+
+
+Situation numéro 3, j'ai bossé dur sur un projet que je veux mettre sur github et pouvoir synchro ensuite
+1) Je cree manuellement sur github un repo du même nom que celui du dossier
+2) je recupere le https du git cree
+3) dans la console je fais git remote add origin httpsdugit
+4) et voila, c'est synchro, des que je fais un git push c'est dessus
+
+
+===[git pull]===
+
+C'est l'inverse de git push, c'est la meme syntaxe
+on fait comme ca
+
+git pull origin master
+
+
+===[les branches]===
+
+en gros c'est differentes versions du code, des fois qu'on fasse une facon, puis une autre, etc
+ca peut etre genre on se separe de la branche principale pour creer une nouvelle fonctionalité 
+et a la fin quand on est satisfait de la feature, on merge sa branche avec la branche principale (master)
+
+l'interet c'est de pouvoir travailler sur des fonctionnalités complexes sans impacter le master
+qui peut continuer a etre developpee en parallele
+
+pour voir les branches on fait 
+git branch
+
+ca affiche toutes les branches et met une etoile devant celle dans laquelle on est presentement
+
+pour crer une nouvelle branche,on fait
+git branch maBranche
+
+
+et pour se positionner dans une branche en question on fait 
+git checkout maBranche
+
+
+raccourci, plutot que de creer sa branche puis de s'y positionner, genre comme ca
+git branch maBranche 
+git checkout maBranche 
+
+on peut faire directement 
+git checkout -b maBranche
+
+
+Enfin, pour merge 2 branches, on se place dans une branche et on fait 
+git merge maBranche
+
+
+
+
+
+
+

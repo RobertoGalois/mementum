@@ -1,0 +1,757 @@
+====[intro]=====
+
+c'est un langage de balisage, en gros ca sert a stocker des données sous une forme particuliere
+genre du texte organisé en balise 
+D'une certaine maniere c'est meme un meta-langage
+
+les regles de base sont: 
+- ya une balise ouvrante racine qui contient toutes les autres
+- les balises ne peuvent pas se chevaucher
+- si on a une balise qui ne contient rien, on peut noter <balise /> au lieu de <balise></balise>
+- il existe des entités pré-définies (on peut créer les notres), c'est
+  - &lt; = <
+  - &gt; = >
+  - &apos; = '
+  - &quot; = "
+  - &amp; =  &
+  ==> ca permet d'eviter que le parseur confonde le texte <> avec l'instruction <> 
+
+===[historique]====
+
+a la base on voulait faire communiquer des programmes entre eux dans un meme ordi, 
+mais pour ca il fallait un format special des données pour que les programmes puissent se comprendre
+
+Or, comme il n'y avait pas de consensus, c'était le bordel parce qu'il fallait recoder le programme
+pour qu'il comprenne tel format de données, etc
+
+Plus tard, ya eu les reseau et la possibilité de faire parler les ordinateurs entre eux
+ya eu internet avec le protocole http pour la distribution des données 
+
+On a alors créé SGML, un langage de balisage qui donnera lieu à html plus tard
+mais la norme SGML c'était trop compliqué, et alors le W3C inventa le XML 
+
+A partir de la, tout le monde a eu la possibilité de créer son propre langage de balisage sur la
+base du xml vu que xml c'est un meta-langage
+
+
+===[le prologue xml]===
+
+il est generalement place au tout debut du fichier
+c'est genre
+<?bidule?>
+genre
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+
+Nous comme on aime tout faire en utf-8 on va faire
+<?xml version = "1.0" encoding="UTF-8" standalone="yes" ?>
+
+(==> on indique la version de xml utilisée, l'encodage, et on indique si le document xml est suceptible de recevoir une dtd externe, ici non)
+
+
+ya 2 versions de xml
+1.0 et 1.1
+le 1.1 est interessant pour utiliser un plus large panel de chars, genre caracteres chinois, etc
+===[les PI = processing instruction]===
+
+ces instructions sont de type
+<?langage-cible instructions?>
+
+ca sert indiquer à un langage cible se servant des informations fournies pour faire une action
+(ATTENTION, malgré les apparences, <?xml ?> c'est pas une PI)
+
+genre la balise
+<?xml-stylesheet type="text/css" href="print.css" title="Imprimer un couleur" media="print" charset="iso-8859-1" alternate="yes"
+
+qui sert a lier une feuille de style css au document xml
+est une PI
+et donc ici type, href, etc, sont des instruction et pas des attributs
+
+idem pour
+<?php instructions ?>
+c'est une PI
+==> c'est pour ca qu'il faut ecrire <?php ?> et non <? ?>, le cas où on ecrit <? ?>
+c'est qu'on a parametré le serveur pour qu'il fasse une sorte d'alias I guess
+
+
+===[les sections CDATA]====
+
+des fois on veut marquer du texte avec des caracteres speciaux genre <> ou ' ou " et on veut pas
+s'emmerder à mettre les codes des entités pré-définies
+du coup ou fait
+<![CDATA[ mon texte ]]>
+
+==> du coup on peut mettre le texte qu'on veut, sauf ]] bien sur
+
+====[les commentaires]===
+
+on les note comme ca
+<!-- commentaire -->
+
+===[la galaxie xml]===
+
+du coup, les technos organisées autour d'xml yen a pleins, 
+avec des orbites plus ou moins éloignées
+
+au niveau des orbites éloignées ya
+- CML = pour decrire des composés chimiques
+- SVG = pour le dessin vectoriel 2d
+
+au niveau des orbites basses ya 
+- DOM ou SAX = sert a manipuler des documents XML 
+- Xslt = sert a transformer des documents XML
+- DTD ou schémas XML = sert a decrire le contenu des documents xml
+- CSS = pour mettre en forme les documents xml 
+- Xlink = pour établir des liens entre les documents xml
+- etc, c'est ce qui fait le succes d'xml et la plupart des langages de script moderne les gerent
+(php, javascript, asp, ...)
+
+
+par contre il peut y avoir des conflits, genre mettons qu'on utilise un document xml
+pour genere un svg, avec Xslt, comme les 2 langages ont une balise <text>
+les deux langages ne sauront pas quelle balise est destinée a tel ou tel langage
+= COLLISION DE NOMS
+
+==> pour eviter ca on a les namespaces 
+
+on a un attribut reservé xmlns="adresse"
+
+genre on fait
+<html xmlns="http://www.w3.org/1999/xhtml">
+pour que le contenu de la balise html soit considéré comme du html
+
+mais du coup si on veut inclure du MathML dans les balises html, on peut pas car il n'est pas 
+possible d'avoir deux attributs ayant le meme nom
+
+du coup pour pas etre emmerdé on a la technique des prefixes
+
+en gros on fait comme ca
+xmlns:prefixe="adresse-du-namespace"
+(ATTENTION, c'est xmlns:PREFIXE et pas l'inverse comme c'est le cas pour la determination des attributs)
+
+et apres on peut faire
+<prefixe:balise prefixe:attribut="truc pif paf pouf"/>
+
+genre en xhtml on ferait
+<frites:html xmlns:frites="http://www.w3.org/1999/xhtml" frites:lang="en">
+<frites:head>
+<!-- etc etc -->
+</frites:head>
+<frites:body>
+<frites:p>
+<frites:a frites:href="http://www.siteduzero.com">Cours XHtml/css, php et C++</frites:a>
+</frites:p>
+</frites:body>
+</frites:html>
+
+en gros, en prefixe on pourrait mettre le nom de la techno
+remarque: si aucun prefixe n'est associé a un attribut, par defaut il est considéré qu'il 
+appartient au meme namespace que l'element auquel il appartient
+du coup on pourrait simplifier en
+<frites:html xmlns:frites="http://www.w3.org/1999/xhtml" lang="en">
+<frites:head>
+<!-- etc etc -->
+</frites:head>
+<frites:body>
+<frites:p>
+<frites:a href="http://www.siteduzero.com">Cours XHtml/css, php et C++</frites:a>
+</frites:p>
+</frites:body>
+</frites:html>
+
+
+et du coup si on voulait coupler du xhtml avec du mathML, on ferait 
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mathml="http://www.w3.org/1998/Math/MathML" lang="en">
+<xhtml:head>
+<!-- etc etc -->
+</xhtml:head>
+<xhtml:body>
+<xhtml:p>
+<mathml:math>
+  <mathml:msup>
+    <mathml:msqrt>
+      <mathml:mrow>
+        <mathml:mi>a</mathml:mi>
+        <mathml:mo>+</mathml:mo>
+        <mathml:mi>b</mathml:mi>
+      </mathml:mrow>
+    </mathml:msqrt>
+    <mathml:mn>27</mathml:mn>
+  </mathml:msup>
+</mathml:math>
+</xhtml:p>
+</xhtml:body
+</xhtml:html>
+
+Mais bon c'est un peu lourd, 
+sinon pour utiliser le fait que en l'absence de prefixe, c'est le xmlns sans prefixe qui vaut, 
+du coup on peut faire
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:mathml="http://www.w3.org/1998/Math/MathML" lang="en">
+<head>
+<!-- etc etc -->
+</head>
+<body>
+<p>
+<mathml:math>
+  <mathml:msup>
+    <mathml:msqrt>
+      <mathml:mrow>
+        <mathml:mi>a</mathml:mi>
+        <mathml:mo>+</mathml:mo>
+        <mathml:mi>b</mathml:mi>
+      </mathml:mrow>
+    </mathml:msqrt>
+    <mathml:mn>27</mathml:mn>
+  </mathml:msup>
+</mathml:math>
+</p>
+</body>
+</html>
+
+
+====[le style]===
+
+css c'est un langage a part de xml 
+
+xslt c'est un dialecte xml, servant a transformer un document xml source en un autre document (xml ou autre genre plain text)
+genre ca peut permetre de generer un graphique en svg a partir d'un fichier xml de statistiques
+pour se situer dans le document xml, Xslt utilise XPath (langage d'adresse non xml)
+c'est pour ca qu'on parle souvent de couple xslt / xpath 
+
+===[utilisation de xml comme bdd]===
+
+on a un langage pour extraire les données d'un document xml
+c'est 
+xQuery
+avec une syntaxe proche du sql, il utilise XPath pour se reperer dans le document et retirer les données dont on a besoin 
+
+ca permet egalement tous les trucs qu'on peut faire avec sql 
+genre 
+insertion de données, update, suppression de données, etc
+
+Le truc chiant avec xml, c'est que c'est du plain text, que ya pleins de balises et du coup ca prend de la place
+du coup il existe des bdd xml native, où en gros les données sont en binaire mais ca nous ressort du xml
+
+===[dtds et schemas]===
+
+Pour decrire le contenu des fichiers xml
+en gros le but c'est de donner des regles d'ecriture d'un document xml specifque
+cad qu'en plus des regles de syntaxe de base de xml, ca rajoute des contraintes, genre 
+les elements autorisés, les valeurs possibles d'un attribut, leur ordre d'apparition, etc
+
+Par exemple, il est ecrit dans la dtd de XHTML que l'element <ul> ne peut contenir que des <li>
+ou que <title> ne peut se trouver qu'une fois dans <body>
+
+un document est well formed quand il repond aux regles de bases de xml 
+et on dit qu'il est valide s'il respecte sa dtd ou son schema
+
+les regles de base c'est
+- un prologue en debut de document avec la version, l'encodage et le standalone
+- une balise racine
+- noms de balises et d'attributs conforme aux regles de nommage
+- toute valeur d'attribut est entre " ou '
+- tout balise ouverte est fermée
+- pas de chevauchement de balises
+- 
+
+
+a la base on utilisait les dtd mais 
+- elle ne sont pas assez puissantes
+- elles etaient insuffisants, va savoir pourquoi 
+- elles ne geraient pas les namespaces 
+
+==> du coup on a utilisé des schema genre schema xml, le truc promu par le w3c
+
+
+les schemas xml permettent d'utiliser un typage (genre <age> c'est une valeur comprise entre 0 et 123 par exemple)
+
+
+===[le DOM]===
+
+c'est une API normalisée par le W3C qui construit en memoire le document xml sous forme d'arbre
+à partir de là on peut le modifier, ajouter des valeurs, acceder a des valeurs, etc 
+
+l'avantage c'est qu'au lieu de connaitre pleins de technos / libs pour faire des trucs differents
+(libGD pour genere du png en php, extension Ming pour faire du flash, pdfLib pour faire du pdf)
+==> dans un futur proche on pourra faire tout ca avec le DOM, vu que SVG permet de creer des images, 
+SMIL gere l'animation, FO peut etre converti en pdf
+
+Il existe egalement des DOM specifiques a certains langages, genre le DOM SVG, pour connaitre la longueur d'une ligne courbe
+
+
+===[xml et le web]===
+
+xhtml = a l'origine concu pour remplacer html (qui derivait de SGML donc moins clair que xml), en gros c'est un langage ou chaque balise a un sens, et la forme est gérée par des feuilles de style genre css, 
+
+svg = permet de faire du dessin vectoriel 2d, et de faire de l'animation, n'a rien a envier a flash 
+Smil = permet de faire de l'animation, svg utilise smil pour le faire 
+
+xforms = prochaine generation de formulaires web, langage tres puissant, permet la soumission des données en xml, verification
+des données en direct, a voir
+
+xlink = mise a disposition de 6 attributs pour decrire des liens entre divers documents.
+
+===[les balises]===
+
+c'est
+<balise></balie>
+
+c'est case sensitive
+
+- les noms peuvent contenir des lettres, chiffres, specialChars
+- ils ne peuvent pas commencer par un nombre ou un caractere de ponctuation
+- ils ne peuvent pas commencer par XML
+- ils ne peuvent pas contenir d'espaces
+- eviter<> , ; . - 
+
+===[les attributs]===
+
+c'est genre
+
+<balise attribut="valeur">bidule</balise>
+
+genre
+<prix devise="euros">19.0</prix>
+
+ya les memes regles de nommage que pour les balises
+on peut delimiter la valeur de l'attribut avec " ou '
+un attribut ne peut etre present qu'une seule fois dans une balise
+
+===[les commentaires]===
+
+on fait comme ca 
+<!--commentaire -->
+
+
+==[document type]==
+<?xml version = "1.0" encoding="UTF-8" standalone="yes" ?>
+<racine>
+ <personne>Bernard</personne>
+ <personne>Patrick</personne>
+</racine>
+
+
+===[definitions et dtd]===
+
+= Document Type Definition
+
+yen a 2 types
+- DTD externes = ecrites dans un fichier a part .dtd
+- DTD internes = ecrites dans le fichier xml
+
+
+pour les dtd internes, on fait
+<!DOCTYPE nomBaliseRacine
+[
+	<!-- regles -->
+]>
+<racine>
+ <!-- contenu -->
+</racine>
+
+
+pour les externes on fait
+<!DOCTYPE nomBaliseRacine SYSTEM "./monFichier.dtd">
+
+et si on veut utiliser une regle accessible en ligne on fait
+<!DOCTYPE racine PUBLIC "identifiant" "url">
+genre pour du xhtml on fait 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
+
+Pour definir une regle pour une balise, on fait 
+<!ELEMENT nomBalise (valeur)>
+
+valeur peut prendre differentes valeurs
+- le nom d'une balise ==> du coup la balise nomBalise devra contenir une balise
+- #PCDATA = du coup la balise contient une valeur (string, int, float, etc), OU RIEN = chaine vide
+- EMPTY = balise qui ne contient rien genre <!ELEMENT nomBalise EMPTY> ==> pas de parenthese
+- ANY = balise qui peut continir n'importe quoi, ou rien, osef ==> pareil pour les parentheses
+
+==> il faut decrire une regle pour TOUTES LES BALISES POSSIBLES d'UN DOCUMENT
+
+
+La syntaxe
+<!ELEMENT maBalise (nom, prenom, age)>
+impose que la balise maBalise contienne une balise nom, une prenom et une age DANS CET ORDRE
+
+la syntaxe\
+<!ELEMENT maBalise (nom | prenom | age)>
+impose que la balise maBalise contienne l'une des balises nom, prenom ou age
+
+la syntaxe
+<!ELEMENT maBalise (nom, prenom?, age)>
+c'est pareil que le premier cas mais la balise prenom est optionnelle
+
+la syntaxe
+<!ELEMENT maBalise (nom, prenom*, age)>
+c'est pareil que le premier cas mais la balise prenom est present 0, une ou plusieurs fois
+
+la syntaxe
+<!ELEMENT maBalise (nom, prenom+, age)>
+c'est pareil que le premier cas mais la balise prenom est present UNE ou plusieurs fois
+
+
+pour definir les attributs, on fait 
+<!ATTLIST maBalise nomAttribut type mode>
+type: 
+	- CDATA
+	- ID
+	- IDREF
+	- (v1 | v2 | ...) ==> pas de "" pour les valeurs
+
+mode
+	- #REQUIRED = attribut a mentionner obligatoirement 
+	- #IMPLIED = pas obligatoire
+	- #FIXED valeur = si mentionné, devra prendre telle valeur
+	- "valeur par defaut"
+
+type peut prendre un ensemble de valeurs, on note
+(v1 | v2 | v3)
+genre
+<!ATTLIST maBalise nomAttribut (v1 | v2 | v3) mode>
+
+Si on veut que ca puisse etre n'importe quelle valeur, on met
+CDATA
+genre
+<!ATTLIST maBalise nomAttribut CDATA mode>
+
+Si on veut que la valeur de l'attribut soit une valeur unique dans le document, on met ID pour le type
+genre 
+<!ATTLIST maBalise nomAttribut ID mode>
+
+En revanche il peut etre interessant qu'un attribut fasse reference a un autre attribut
+genre un element enfant qui a pour attribut l'ID de l'element parent
+pour ca notre type on le nomme IDREF 
+genre 
+<!ATTLIST father id ID mode >
+<!ATTLIST child id ID mode
+                father IDREF mode>
+
+
+Enfin concernant le mode, il peut prendre differentes valeurs
+on met #REQUIRED si l'attribut doit etre obligatoirement specifié
+ou #IMPLIED s'il est optionnel
+
+pour spécifier une valeur par defaut, on peut l'indiquer, genre
+<!ATTLIST balise id ID "0">
+
+la syntaxe suivant, c'est si l'attribut est optionnel mais que s'il est présent, il faut qu'il ai telle valeur
+<!ATTLIST balise devise CDATA #FIXED "euro">
+mais je pige pas la difference avec
+<!ATTLIST balise devise ("euro") #IMPLIED>
+
+
+ENfin, il y a les entites
+= c'est des define en fait 
+genre
+<!ENTITY nom "valeur">
+
+qui fait que dans le document xml, des qu'on marquera &nom, ca equivaudra a la string "valeur"
+
+Pour avoir des defines utilisables dans le dtd, c'est ce qu'on appelle une ENTITE PARAMETRE, 
+on fait 
+<!ENTITY % nom "valeur">
+et du coup on peut l'appeller en faisan
+%nom
+
+ca permet de faire des trucs du genre
+<!ENTITY % listeMarques "marque (Samsung|Apple) #REQUIRED">
+<!ATTLIST telephone %listeMarques; >
+
+Et enfin il y a les ENTITES EXTERNES
+- analysées ==> 
+- non analysées ==> non vues dans le cours
+
+
+les entités externes analysées ont le même rôle que les entités generales, 
+mais la valeur est stockée dans un fichier
+on fait comme ca 
+<!ENTITY nom SYSTEM "./monFichier.xml">
+et on peut appeller notre valeur comme d'hab 
+&nom;
+
+Le fichier monFichier.xml contient
+valeur
+tout simplement
+
+
+===[les schemas xml]===
+
+le probleme des dtd c'est que
+- c'est pas du xml, c'est un langage a part et du coup il nous faut a chaque fois une api qui pige le dtd
+- on ne peut pas typer les données, c'est juste dire si ya un truc dedans ou pas
+
+les schemas xml apportent le fait que:
+- on peut typer les données
+- des regles beaucoup plus precises
+
+
+les fichiers de schema xml ont par convention l'extension .xsd
+
+pour rappel, on peut utiliser des namespace pour rappeller le fait qu'une balise corresponde aux regles de tel ou tel
+schema
+genre
+<xmlns:nomNameSpace="adresseXSD">
+et apres on fait
+<nomNameSpace:balise attr="pouet">contenu</nomNameSpace:balise>
+
+en fait concretement, un fichier schema xml, c'est un fichier xml respecte les regles de xml et de xmlSchema
+et apres ya un fichier xml qui va respecter ces regles
+du coup, pour que le fichier schema xml il respecte les regles de xmlSchema, on utilise le namespace xsd, et on fait comme ca
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Elément racine -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- des trucs genre definition des regles -->
+</xsd:schema>
+
+et ensuite, pour que notre fichier xml respecte les regles du schema on fait
+<?xml version="1.0" encoding="UTF-8"?>
+<xsi:racine xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="chemin_vers_fichier.xsd">
+</xsi:racine>
+
+ou, plus simplement, 
+<?xml version="1.0" encoding="UTF-8"?>
+<racine xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="chemin_vers_fichier.xsd">
+</racine>
+
+c'est a dire qu'on definie un namespace xsi qui correspond à l'api schema xml qui se trouve la
+http://www.w3.org/2001/XMLSchema-instance
+et on defini l'emplacement du fichier xsd
+
+
+
+en schema xml
+- un element simple = une balise sans attribut qui ne contient pas d'autre balise, juste un #text ou rien
+			on peut dire qu'un attribut d'une balise est un élément simple, chelou mais soit
+
+- un element complexe = une balise qui qui contient un attribut ou  des types complexes
+
+
+===[elements et types simples en xml schema]==
+
+pour declarer un element simple, on fait =
+<xds:element xsd:name="nom_element" xsd:type="xsd:type" default="valeur par defaut du contenu" />
+==> l'attribut default est optionnel
+
+==> on peut rajouer un attribut 
+fixed="valeur obligatoire", impose que la balise ai comme contenu la valeur obligatoire
+
+
+
+genre pour faire
+
+<nom>DUPONT</nom>
+<prenom>Robert</prenom>
+<age>38</age>
+
+on ferait
+<xsd:element xsd:name="nom" xsd:type="xsd:string" />
+<xsd:element xsd:name="prenom" xsd:type="xsd:string" />
+<xsd:element xsd:name="age" xsd:type="xsd:int" />
+
+
+pour declarer un attribut, on fait (malgré le fait que ce soit un element simple)
+<xsd:attribut name="mon_nom" type="xsd:mon_type" />
+- on a aussi les attributs optionnels default et fixed
+- on peut ici, rajouter un attribut use="required" pour dire que l'attribut est obligatoire
+
+du coup, concretement pour definir ca
+<personne age="16">Robert</personne>
+
+on fait
+<xsd:element name="personne" type="xsd:string">
+ <xsd:attribut name="age" type="xsd:int" use="required" />
+</xsd:element>
+
+vala
+
+
+au niveau des types simples, on en a 4 grands
+- String
+	- xsd:string ==> attention aux specialChars, faut les mettres avec leurs code html
+	- xsd:normalizedString ==> chaine de caractere normalizée = basé sur xsd:string = tout sauf tab, \n, \b
+			==> en fait on peut en écrire dedans mais ca les remplace par des spaces
+
+	- xsd:token ==> chaine de caractere normalisée sans space au debut ni a la fin = basé sur xsd:normalizedString
+		==> si ya des whitespaces au debut et a la fin, ils sont supprimés
+
+	- xsd:language ==> represente le code d'une langue = basé sur le type xsd:token
+			= 2 lettres selon la norme ISO 639, on peut faire suivre les 2 chars par un code pays = norme ISO 3166
+
+	- xsd:NMTOKEN ==> chaine de caractere simple, = basé sur le type token et appliquable UNIQUEMENT AUX ATTRIBUTS
+			==> que des lettres, chiffres et [-.:_]
+			==> faut les utiliser que pour les attributs pour garantir une compatibilité entre les schemas xml
+				et les dtd
+
+	- xsd:NMTOKENS ==> liste de nmtoken séparés par un espace, pareil niveau utilisation que attributs 
+	- xsd:Name ==> represente un NOM en xml = basé sur le type token
+		= pareil que nbtoken, contient que alphanum et [-_.:]
+		= en plus, doit commencer par une lettre OU _ OU :
+
+	- xsd:NCName ==> represente un nom en xml sans le char : = basé sur le type xsd:Name
+			==> pareil que Name MAIS ne peut pas contenir :
+
+	- xsd:ID ==> represente une identifiant unique = basé sur le type xsd:NCName et appliquable UNIQUEMENT AUX ATTRIBUTS
+	- xsd:IDREF ==> reference a un identifiant = basé sur le type NCName et appliquable UNIQUEMENT AUX ATTRIBUTS
+	- xsd:IDREFS ==> liste de idref séparés par un espace
+
+	- xsd:ENTITY ==> entité d'un document = basé sur le type xsd:NCNAME et appliquable UNIQUEMENT AUX ATTRIBUTS
+	- xsd:ENTITIES ==> liste d'entités = appliquable uniquement aux attributs
+
+- Numerique
+	- xsd:float = float sur 32 bits conforme a la norme IEEE 754 (entre 3.4x10^-38 et 3.4x10^38.) et -INF, +INF et NaN
+	- xsd:double = float sur 64 bits conforma a la norme IEEE 754 (entre 1.7x10^-308 et 1.7x10^308.)
+	- xsd:decimal = +/-
+	- xsd:integer = int = basé sur xsd:decimal
+	- xsd:long = basé sur xsd:integer (entre -9 223 372 036 854 775 808 et 9 223 372 036 854 775 807)
+	- xsd:int = basé sur xsd:long (entre -2 147 483 648 et 2 147 483 647)
+	- xsd:short = basé sur xsd:int (entre -32 768 et 32 768.)
+	- xsd:byte = basé sur xsd:short (entre -128 et 127)
+	- xsd:nonPositiveInteger = basé sur xsd:integer = <=0
+	- xsd:negativeInteger = basé sur xsd:nonPositiveInteger = <0
+	- xsd:nonNegativeInteger = basé sur xsd:integer = >=0
+	- xsd:positiveInteger = basé sur xsd:nonNegativeInteger = >0
+	- xsd:unsignedLong = basé sur xsd:nonNegativeInteger = (entre 0 et 18 446 744 073 709 551 615)
+	- xsd:unsignedInt = basé sur xsd:unsignedLong (entre 0 et 4 294 967 295)
+	- xsd:unsignedShort = basé sur xsd:unsignedInt (entre 0 et 65 535)
+	- xsd:unsignedByte = basé sur xsd:unsignedShort (entre 0 et 255)
+
+- Dates
+	- xsd:date = date = YYYY-MM-DD
+	- xsd:duration = durée = format PnYnMnDTnHnMnS = (P=debut de l'expression, T=separateur, n entier sauf pour nS=float)
+		==> on peut mettre une valeur négative
+
+	- xsd:time = heure = hh:mm:ss
+	- xsd:dateTime = date et heure = YYYY-MM-DDThh:mm:ss (T=separator)
+	- xsd:gYear = année = YYYY
+	- xsd:gYearMonth = année et un mois = YYYY-MM
+	- xsd:gMonth = un mois = MM
+	- xsd:gMonthYear = mois et jour = --MM-DD
+	- xsd:gDay = jour = --DD
+
+- Autres
+	- xsd:boolean = true/1 ou false/0
+	- xsd:QName = nom qualifié = concept qui s'appuie sur les namespace
+	- xsd:NOTATION = notation = pour identifier et decrire du contenu xml, genre une image
+	- xsd:anyURI = URI = string qui identifie une ressource (genre URL ou URN)
+	- xsd:base64Binary = donnée binaire au format base64
+	- xsd:hexBinary = donnée binaire au format hexadecimal
+
+
+===[elements et types Complexes en xml schema]==
+
+en gros pour declarer un element complexe (un element qui contient un ou plusieurs attributs, ou des elements)
+on fait 
+<xsd:element name="monElement">
+ <xsd:complexType>
+ <!-- description du contenu -->
+ </xsd:complexeType>
+</xsd:element>
+
+ya 3 types de contenus d'un element complexe
+- contenu simple = elements simples (genre un attribut et/ou du texte et/ou une balise sans contenu ni attribut)
+- contenu standard = elements simples et complexes ou que des elements complexes
+- contenu complexe = 
+
+=======
+pour declarer un element complexe qui contient des elements simples, on fait
+<xsd:element name="monElement">
+ <xsd:complexType>
+  <xsd:simpleContent>
+   <!-- on precise que ca contient des elements simples et on les decrit ici -->
+   <xsd:extension base="monType">
+    <xsd:attribute name="nomAttr" type="TypeAttr">
+    </xsd:attribute>
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+</xsd:element>
+
+
+genre par exemple pour definir une regle 
+<prix devise="euro">35</prix>
+
+on fait
+<xsd:element name="prix">
+ <xsd:complexType>
+  <xsd:simpleContent>
+   <xsd:extension base="xsd:positiveInteger">
+    <xsd:attribute name="devise" type="xsd:string" />
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+</xsd:element>
+
+
+
+pour faire un truc du genre
+<voiture marque="Renault" type="essence">Clio</voiture>
+
+on fait
+<xsd:element name="voiture">
+ <xsd:complexType>
+  <xsd:simpleContent>
+   <xsd:extension base="xsd:string">
+    <xsd:attribute name="marque" type="xsd:string" />
+    <xsd:attribute name="type" type="xsd:string" />
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+</xsd:element>
+
+=======
+
+Pour declarer un type complexe qui contient des elements standards, on fait
+<xsd:element name="mon_nom">
+ <xsd:complexType>
+  <xsd:sequence>
+   <!-- liste des éléments -->
+  </xsd:sequence>
+  <!-- listes des attributs si besoin-->
+ </xsd:complexType>
+</xsd:element>
+
+genre 
+pour faire un truc comme 
+<personne sexe="masculin">
+ <nom>Laurent</nom>
+ <prenom>Roger</prenom>
+</personne>
+
+on fait
+<xsd:element name="personne">
+ <xsd:complexType>
+  <xsd:sequence>
+   <xsd:element name="nom" type="xsd:string"></xsd:element>
+   <xsd:element name="prenom" type="xsd:string"></xsd:element>
+  </xsd:sequence>
+  <xsd:attribute name="sexe" type="xsd:string" ></xsd:attribute>
+ </xsd:complexType>
+</xsd:element>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
