@@ -724,4 +724,75 @@ quand on utilise le broadcast
 
 ===[session.socket.io]===
 
+cf github
 
+===[nodejs en prod]===
+
+le probleme avec nodejs, c'est que si ya une erreur, ca arrete le serveur
+==> solutions: utiliser des try catch et utiliser des trucs genre gestionnaires d'applications comme PM2
+
+remarque: pour express, les erreurs qui se declenchent dans les routes sont gerees par express et ne font pas planter le serveur
+mais tout ce qui est en dehors des routes c'est comme d'hab ca fait crash
+
+1) pour les try catch c'est comme ca
+
+try {
+	//code
+} catch(err) {
+	//gerer l'erreur
+}
+
+2) exemple de gestionnaire d'application = process manager, avec PM2
+
+pour l'installer on fait
+npm install -g pm2
+
+ensuite pour lancer une app avec lui, on fait
+pm2 start app.js
+
+et alors PM2 lance un daemon qui va interagir avec nos applications et s'assurer de leur fonctionnement.
+
+pour avoir des infos sur l'appli qui a ete lancée, on fait
+pm2 ls
+le mode fork c'est le mode par defaut
+
+
+pour arreter on fait pm2 stop app
+et pour restart on fait pm2 restart app
+
+pour voir les outputs de l'app, qu'on aurait fait avec console.log(), on fait 
+pm2 logs
+
+ya aussi un mode watch bien pratique qui permet de restart automatiquement l'appli a chaque modification de fichier source
+on fait comme ca
+pm2 start app.js --watch
+
+
+pour voir les perf de l'appli, on fait
+pm2 monit
+et
+pm2 imonit
+
+
+
+a cote du mode fork, il existe le mode cluster qui permet de lancer pleins de process nodeJS
+et donc d'exploiter les capacites multi coeur
+on fait comme ca pour lancer 4 instances (en fait, autant qu'on a de cpu)
+pm2 start app.js -i 4
+
+
+3) exemple de stress test avec artillery
+
+on l'installe comme ca
+npm install artillery -g
+
+ensuite, on fait la commande
+pm2 scale app 1
+pour dire qu'on lance app avec une instance, mais comme on a specifie scale, ca pourra augmenter le nombre d'instances
+
+ensuite on fait
+artillery quick -d 10 -r 100 -n 20 http://127.0.0.1:8080
+= envoit, sur 10 secondes, de 100 connexions dont chaque envoit 20 requetes, sur la socket bidule
+
+et on peut voir le resultat en faisant 
+pm2 imonit
