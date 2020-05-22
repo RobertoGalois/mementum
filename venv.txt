@@ -1,0 +1,89 @@
+intro:
+-----
+
+Les programmes Python utilisent souvent des paquets et modules qui ne font pas partie de la bibliothèque standard. Ils nécessitent aussi, parfois, une version spécifique d'une bibliothèque, par exemple parce qu'un certain bug a été corrigé ou encore que le programme a été implémenté en utilisant une version obsolète de l'interface de cette bibliothèque.
+
+Cela signifie qu'il n'est pas toujours possible, pour une installation unique de Python, de couvrir tous les besoins de toutes les applications. Basiquement, si une application A dépend de la version 1.0 d'un module et qu'une application B dépend de la version 2.0, ces dépendances entrent en conflit et installer la version 1.0 ou 2.0 laisse une des deux applications incapable de fonctionner.
+
+La solution est de créer un environnement virtuel, un dossier auto-suffisant qui contient une installation de Python pour une version particulière de Python ainsi que des paquets additionnels.
+
+un des moyens de creer des environnements virtuels, c'est d'utiliser venv
+
+
+creer un environnement virtuel :
+------------------------------
+
+pour ca ya un module qui s'appelle venv
+pour creer un environnement virtuel, on fait
+
+
+=======================================
+=     python3.X -m venv nom_dossier   =
+=======================================
+
+==> ou X est la version de python
+
+genre
+python3.8 -m venv tutorial-env
+
+
+==> ca creer un dossier tutorial-env contenant des sous-dossiers avec une copie de l'interpreteur de commande, la lib standard et d'autres trucs
+==> ya aussi le dossier caché .venv
+
+ensuite, quand on veut opérer dans l'environnement virtuel (genre que l'ordi considere qu'on est dans tel environnement),
+il faut activer l'environnement virtuel, en faisant
+
+=====================================
+=  source nom_dossier/bin/activate  =
+=====================================
+
+==> activate est un script bash, si on veut utiliser un shell csh ou fish, faudra faire activate.csh ou activate.fish
+
+Activer l'environnement virtuel change le prompt de votre ligne de commande pour afficher le nom de l'environnement virtuel que vous utilisez.
+
+Cela modifie aussi l'environnement afin, lorsque vous tapez python, d'exécuter la version spécifique de Python installée dans l'environnement.
+du coup si je fais python, ca va executer python3.8
+
+
+ensuite, pour sortir de l'environnement virtuel il suffit de faire
+deactivate
+
+
+gestion des paquets avec pip
+----------------------------
+
+ca sert a installer et mettre a jour des paquages python
+par defaut, pip installe les packages du paquet
+Python Package Index
+
+on peut voir le contenu de ce paquet ici
+https://pypi.org
+ou alors le parcourir avec la commande pip
+genre
+pip search astronomy
+
+ensuite, pour installer un paquet on fait
+python -m -pip install nom_paquet
+
+pour installer une version speciale du paquet on fait
+python -m pip install nom_paquet==2.6.1
+par exemple
+
+pour mettre a jour un paquet on fait
+python -m pip install --upgrade nom_paquet
+
+pour avoir des infos sur un paquet precis on fait
+python -m pip show nom_paquet
+
+pour avoir la liste des paquets installés, on fait
+python -m pip list
+
+on a aussi pip freeze, qui fait pareil que pip list MAIS qui donne un format qui peut être utilisé par pip install pour installer des dependances,
+genre
+python -m pip freeze
+==> le truc habituel, c'est de faire python -m pip freeze > dependancies.txt
+==> comme ca on peut ajouter le fichier texte a un systeme de gestion de versions, et les gens peuvent installer les dependances avec la commande install -r
+==> python -m pip install -r ./dependancies.txt
+
+
+
